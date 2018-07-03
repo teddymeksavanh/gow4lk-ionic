@@ -9,10 +9,12 @@ export class Items {
   constructor(public api: Api) { }
 
   query(params?: any) {
-    return this.api.get('/items', params);
+    console.log('enter');
+    return this.api.get('strolls', params);
   }
 
   add(item: Item) {
+    console.log('item added', item);
   }
 
   delete(item: Item) {

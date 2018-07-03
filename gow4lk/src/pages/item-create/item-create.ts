@@ -17,11 +17,16 @@ export class ItemCreatePage {
 
   form: FormGroup;
 
-  constructor(public navCtrl: NavController, public viewCtrl: ViewController, formBuilder: FormBuilder, public camera: Camera) {
-    this.form = formBuilder.group({
-      profilePic: [''],
-      name: ['', Validators.required],
-      about: ['']
+  constructor(
+      public navCtrl: NavController,
+      public viewCtrl: ViewController,
+      formBuilder: FormBuilder,
+      public camera: Camera
+    ) {
+      this.form = formBuilder.group({
+        profilePic: [''],
+        name: ['', Validators.required],
+        about: ['']
     });
 
     // Watch the form for changes, and

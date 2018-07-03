@@ -30,15 +30,28 @@ import { Items } from '../../providers';
 })
 export class ListMasterPage {
   currentItems: Item[];
+  currentStrolls: any[];
 
-  constructor(public navCtrl: NavController, public items: Items, public modalCtrl: ModalController) {
-    this.currentItems = this.items.query();
+  constructor(
+    public navCtrl: NavController,
+    public items: Items,
+    public modalCtrl: ModalController
+  ) {
+    console.log('query', this.items.query());
+    this.items
+      .query()
+      .subscribe((res: any) => {
+        console.log('res', res);
+      }, err => {
+        console.error('ERROR', err);
+      });
   }
 
   /**
    * The view loaded, let's query our items for the list
    */
   ionViewDidLoad() {
+    console.log('current', this);
   }
 
   /**
@@ -48,7 +61,9 @@ export class ListMasterPage {
   addItem() {
     let addModal = this.modalCtrl.create('ItemCreatePage');
     addModal.onDidDismiss(item => {
+      console.log('enter');
       if (item) {
+        console.log('create item');
         this.items.add(item);
       }
     })
