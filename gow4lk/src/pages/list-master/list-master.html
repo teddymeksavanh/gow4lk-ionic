@@ -15,21 +15,55 @@
 <ion-content>
 
   <ion-list>
-    <ion-item-sliding *ngFor="let item of currentItems">
-      <button ion-item (click)="openItem(item)">
-        <ion-avatar item-start>
-          <img [src]="item.profilePic" />
-        </ion-avatar>
-        <h2>{{item.name}}</h2>
-        <p>{{item.about}}</p>
-        <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note>
-      </button>
+      <ion-card style="margin: 0; width: 100%" class="list-ion-card" *ngFor="let item of currentItems">
+        <button class="list-button" style="background-color: white; padding-right: 0;" (click)="openItem(item)">
 
-      <ion-item-options>
-        <button ion-button color="danger" (click)="deleteItem(item)">
-          {{ 'DELETE_BUTTON' | translate }}
+          <img height="250" style="object-fit: cover;" [src]="item.profilePic"/>
+    
+          <ion-card-content style="text-align: left; padding-left: 25px; padding-right: 25px;">
+            <ion-card-title style="padding: 0;">
+              {{item.name}}
+            </ion-card-title>
+            <p>
+              {{item.about}}
+            </p>
+          </ion-card-content>
         </button>
-      </ion-item-options>
-    </ion-item-sliding>
+
+        <!-- <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note> -->
+<!--   
+        <ion-item>
+          <ion-icon name='musical-notes' item-start style="color: #d03e84"></ion-icon>
+          Albums
+          <ion-badge item-end>9</ion-badge>
+        </ion-item>
+  
+        <ion-item>
+          <ion-icon name='logo-twitter' item-start style="color: #55acee"></ion-icon>
+          Followers
+          <ion-badge item-end>260k</ion-badge>
+        </ion-item>
+
+        <ion-item-options>
+            <button ion-button color="danger" (click)="deleteItem(item)">
+              {{ 'DELETE_BUTTON' | translate }}
+            </button>
+        </ion-item-options> -->
+  
+      </ion-card>
+    <!-- <button ion-item (click)="openItem(item)">
+      <ion-avatar item-start>
+        <img [src]="item.profilePic" />
+      </ion-avatar>
+      <h2>{{item.name}}</h2>
+      <p>{{item.about}}</p>
+      <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note>
+    </button>
+
+    <ion-item-options>
+      <button ion-button color="danger" (click)="deleteItem(item)">
+        {{ 'DELETE_BUTTON' | translate }}
+      </button>
+    </ion-item-options> -->
   </ion-list>
 </ion-content>

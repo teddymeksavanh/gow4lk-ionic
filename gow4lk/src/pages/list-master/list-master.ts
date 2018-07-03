@@ -7,7 +7,26 @@ import { Items } from '../../providers';
 @IonicPage()
 @Component({
   selector: 'page-list-master',
-  templateUrl: 'list-master.html'
+  templateUrl: 'list-master.html',
+  styles: [`
+    .list-ion-car {
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+    }
+    
+    .list-button {
+        padding-left: 0 !important;
+    }
+    
+    item-inner {
+        padding-right: 0 !important;
+    }
+    
+    ion-label {
+        margin: 0 !important;
+    }
+  `]
 })
 export class ListMasterPage {
   currentItems: Item[];

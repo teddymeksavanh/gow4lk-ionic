@@ -1,3 +1,19 @@
 page-list-master {
+    .list-ion-car {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
 
+    .list-button {
+        padding-left: 0;
+    }
+
+    item-inner {
+        padding-right: 0;
+    }
+
+    ion-label {
+        margin: 0;
+    }
 }
