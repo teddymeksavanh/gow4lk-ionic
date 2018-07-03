@@ -1,5 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
+import { HeadersService } from '../headers/headers';
+import { CookieService } from 'ngx-cookie';
 
 /**
  * Api is a generic REST Api handler. Set your API url first.
@@ -8,8 +11,10 @@ import { Injectable } from '@angular/core';
 export class Api {
   url: string = 'http://0.0.0.0:3000';
 
-  constructor(public http: HttpClient) {
-  }
+  constructor(
+    public http: Http,
+    public headersService: HeadersService
+  ) { }
 
   get(endpoint: string, params?: any, reqOpts?: any) {
     if (!reqOpts) {
@@ -18,7 +23,6 @@ export class Api {
       };
     }
 
-    // Support easy query params for GET requests
     if (params) {
       reqOpts.params = new HttpParams();
       for (let k in params) {
@@ -26,7 +30,7 @@ export class Api {
       }
     }
 
-    return this.http.get(this.url + '/' + endpoint, reqOpts);
+    return this.http.get(this.url + '/' + endpoint, this.headersService.tokened());
   }
 
   post(endpoint: string, body: any, reqOpts?: any) {
@@ -43,5 +47,12 @@ export class Api {
 
   patch(endpoint: string, body: any, reqOpts?: any) {
     return this.http.patch(this.url + '/' + endpoint, body, reqOpts);
+  }
+
+  private isLogged(): boolean {
+    if (this.cookieService.getObject(this.COOKIE_AUTH_KEY)) {
+        return true;
+    }
+    return false;
   }
 }
