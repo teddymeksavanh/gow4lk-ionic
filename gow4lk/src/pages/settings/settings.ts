@@ -35,7 +35,6 @@ export class SettingsPage {
     pageTitleKey: 'SETTINGS_PAGE_PROFILE'
   };
 
-  fd: any;
   page: string = 'main';
   pageTitleKey: string = 'SETTINGS_TITLE';
   pageTitle: string;
@@ -71,7 +70,7 @@ export class SettingsPage {
 
   updateProfile() {
     if (this.formProfile.valid) {
-      this.formProfile.get('avatar').setValue(this.fd);
+      console.log('this.', this.formProfile);
       this.userService
         .update(this.formProfile.value)
         .subscribe(updatedUser => {
@@ -107,12 +106,10 @@ export class SettingsPage {
 
   processWebImage(event) {
     let reader = new FileReader();
+    let file = event.target.files[0];
     reader.onload = (readerEvent) => {
-      let fd = new FormData();
-      fd.append('avatar', event.target.files[0], event.target.files[0].name);
-      this.fd = fd;
       let imageData = (readerEvent.target as any).result;
-      this.formProfile.patchValue({ 'avatar': imageData });
+      this.formProfile.patchValue({ 'avatar': file });
     };
 
     reader.readAsDataURL(event.target.files[0]);
