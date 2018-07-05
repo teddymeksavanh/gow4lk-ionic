@@ -34,7 +34,6 @@ export class ItemCreatePage {
         length: [22],
         latitude: [22],
         longitude: [22]
-
     });
 
     // Watch the form for changes, and

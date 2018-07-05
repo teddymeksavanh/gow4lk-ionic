@@ -31,7 +31,6 @@ export class HeadersService {
     }
 
     public tokened(): RequestOptions {
-        console.log('authget', new RequestOptions({ headers: this.headers }));
         return new RequestOptions({ headers: this.headers });
     }
 

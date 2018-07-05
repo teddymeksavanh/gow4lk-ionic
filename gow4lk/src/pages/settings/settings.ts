@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { Camera } from '@ionic-native/camera';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { User } from '../../providers/user/user';
 
 import { Settings } from '../../providers';
 
@@ -16,12 +18,16 @@ import { Settings } from '../../providers';
   templateUrl: 'settings.html'
 })
 export class SettingsPage {
+  @ViewChild('fileInput') fileInput;
   // Our local settings object
+  isReadyToSave: boolean;
   options: any;
 
   settingsReady = false;
 
-  form: FormGroup;
+  formProfile: FormGroup;
+
+  user: any;
 
   profileSettings = {
     page: 'profile',
@@ -38,41 +44,51 @@ export class SettingsPage {
     public settings: Settings,
     public formBuilder: FormBuilder,
     public navParams: NavParams,
-    public translate: TranslateService) {
-  }
-
-  _buildForm() {
-    let group: any = {
-      option1: [this.options.option1],
-      option2: [this.options.option2],
-      option3: [this.options.option3]
-    };
-
-    switch (this.page) {
-      case 'main':
-        break;
-      case 'profile':
-        group = {
-          option4: [this.options.option4]
-        };
-        break;
-    }
-    this.form = this.formBuilder.group(group);
-
-    // Watch the form for changes, and
-    this.form.valueChanges.subscribe((v) => {
-      this.settings.merge(this.form.value);
-    });
-  }
+    public camera: Camera,
+    public translate: TranslateService,
+    public userService: User
+  ) {}
 
   ionViewDidLoad() {
     // Build an empty form for the template to render
-    this.form = this.formBuilder.group({});
+    this.fetchUser();
+  }
+
+  fetchUser() {
+    this.userService.getMe()
+      .subscribe(user => {
+        this.user = user;
+        this.formProfile = this.buildProfileForm();
+        this.isReadyToSave = this.formProfile.valid;
+        this.formProfile.valueChanges.subscribe((v) => {
+          this.isReadyToSave = this.formProfile.valid;
+          console.log('this', this);
+        });
+      });
+  }
+
+  updateProfile() {
+    console.log('this', this.formProfile.valid);
+    if (this.formProfile.valid) {
+      this.userService
+        .update(this.formProfile.value)
+        .subscribe(updatedUser => {
+          console.log('updatedUser', updatedUser);
+        });
+    }
+  }
+
+  buildProfileForm() {
+    return this.formBuilder.group({
+      profilePic: [this.user && this.user.avatar || null],
+      name: [this.user && this.user.name || null, Validators.required],
+      email: [this.user && this.user.email || null, Validators.required],
+      // password: [null]
+    });
   }
 
   ionViewWillEnter() {
     // Build an empty form for the template to render
-    this.form = this.formBuilder.group({});
 
     this.page = this.navParams.get('page') || this.page;
     this.pageTitleKey = this.navParams.get('pageTitleKey') || this.pageTitleKey;
@@ -84,8 +100,6 @@ export class SettingsPage {
     this.settings.load().then(() => {
       this.settingsReady = true;
       this.options = this.settings.allSettings;
-
-      this._buildForm();
     });
   }
 

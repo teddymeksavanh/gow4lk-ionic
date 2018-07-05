@@ -85,6 +85,14 @@ export class User {
     return seq;
   }
 
+  update(params?: any) {
+    return this.api.put('me', params);
+  }
+
+  getMe(params?: any) {
+    return this.api.get('me', params);
+  }
+
   /**
    * Send a POST request to our signup endpoint with the data
    * the user entered on the form.

@@ -39,19 +39,23 @@ export class Api {
   }
 
   post(endpoint: string, body: any, reqOpts?: any) {
-    console.log('posted');
     const req =
       this.http
           .post(this.url + '/' + endpoint, body, this.headersService.tokened())
           .map((httpResp: any) => {
-            console.log('httpResp', httpResp);
             return this._formatResp(httpResp);
           });
     return req;
   }
 
   put(endpoint: string, body: any, reqOpts?: any) {
-    return this.http.put(this.url + '/' + endpoint, body, reqOpts);
+    const req =
+      this.http
+        .put(this.url + '/' + endpoint, body, this.headersService.tokened())
+        .map((httpResp: any) => {
+          return this._formatResp(httpResp);
+        });
+    return req;
   }
 
   delete(endpoint: string, reqOpts?: any) {
