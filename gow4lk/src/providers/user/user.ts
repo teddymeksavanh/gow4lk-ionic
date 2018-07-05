@@ -125,7 +125,6 @@ export class User {
     this.headersService.remove('Authorization');
     this.cookieService.remove(this.COOKIE_AUTH_KEY);
     // this.userService.destroy();
-    // window.location.replace('/#/admin/login');
   }
 
   /**

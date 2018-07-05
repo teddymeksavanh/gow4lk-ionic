@@ -6,7 +6,8 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { User } from '../../providers/user/user';
 
 import { Settings } from '../../providers';
-
+import { MyApp } from '../../app/app.component';
+import { FirstRunPage } from '../.';
 /**
  * The Settings page is a simple form that syncs with a Settings provider
  * to enable the user to customize settings for the app.
@@ -34,6 +35,7 @@ export class SettingsPage {
     pageTitleKey: 'SETTINGS_PAGE_PROFILE'
   };
 
+  fd: any;
   page: string = 'main';
   pageTitleKey: string = 'SETTINGS_TITLE';
   pageTitle: string;
@@ -41,6 +43,7 @@ export class SettingsPage {
   subSettings: any = SettingsPage;
 
   constructor(public navCtrl: NavController,
+    private app: MyApp,
     public settings: Settings,
     public formBuilder: FormBuilder,
     public navParams: NavParams,
@@ -62,29 +65,61 @@ export class SettingsPage {
         this.isReadyToSave = this.formProfile.valid;
         this.formProfile.valueChanges.subscribe((v) => {
           this.isReadyToSave = this.formProfile.valid;
-          console.log('this', this);
         });
       });
   }
 
   updateProfile() {
-    console.log('this', this.formProfile.valid);
     if (this.formProfile.valid) {
+      this.formProfile.get('avatar').setValue(this.fd);
       this.userService
         .update(this.formProfile.value)
         .subscribe(updatedUser => {
-          console.log('updatedUser', updatedUser);
+          this.page = 'main';
         });
     }
   }
 
   buildProfileForm() {
     return this.formBuilder.group({
-      profilePic: [this.user && this.user.avatar || null],
+      avatar: [this.user && this.user.avatar || ''],
       name: [this.user && this.user.name || null, Validators.required],
       email: [this.user && this.user.email || null, Validators.required],
       // password: [null]
     });
+  }
+
+  getPicture() {
+    if (Camera['installed']()) {
+      this.camera.getPicture({
+        destinationType: this.camera.DestinationType.DATA_URL,
+        targetWidth: 96,
+        targetHeight: 96
+      }).then((data) => {
+        this.formProfile.patchValue({ 'avatar': 'data:image/jpg;base64,' + data });
+      }, (err) => {
+        alert('Unable to take photo');
+      })
+    } else {
+      this.fileInput.nativeElement.click();
+    }
+  }
+
+  processWebImage(event) {
+    let reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      let fd = new FormData();
+      fd.append('avatar', event.target.files[0], event.target.files[0].name);
+      this.fd = fd;
+      let imageData = (readerEvent.target as any).result;
+      this.formProfile.patchValue({ 'avatar': imageData });
+    };
+
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  getProfileImageStyle() {
+    return 'url(' + this.formProfile.controls['avatar'].value + ')'
   }
 
   ionViewWillEnter() {
@@ -101,6 +136,11 @@ export class SettingsPage {
       this.settingsReady = true;
       this.options = this.settings.allSettings;
     });
+  }
+
+  disconnect() {
+    this.userService.logout();
+    this.app.getRootNav().setRoot(FirstRunPage);
   }
 
   ngOnChanges() {

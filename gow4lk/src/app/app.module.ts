@@ -14,6 +14,8 @@ import { CookieModule, CookieService } from 'ngx-cookie';
 // import { Items } from '../mocks/providers/items';
 import { HeadersService, Items, Settings, User, Api } from '../providers';
 import { MyApp } from './app.component';
+// import WelcomePage from '../pages/welcome/welcome';
+// import { WelcomePageModule } from '../pages/welcome/welcome';
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -53,7 +55,7 @@ export function provideSettings(storage: Storage) {
     }),
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
-    CookieModule.forRoot()
+    CookieModule.forRoot(),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
