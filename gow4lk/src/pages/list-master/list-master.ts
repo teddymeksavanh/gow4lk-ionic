@@ -29,9 +29,9 @@ import { Items } from '../../providers';
   `]
 })
 export class ListMasterPage {
-  currentItems: any[];
-  currentStrolls: any[];
-  items: any[];
+  currentItems: any[] = [];
+  currentStrolls: any[] = [];
+  items: any[] = [];
 
   constructor(
     public navCtrl: NavController,
@@ -39,7 +39,7 @@ export class ListMasterPage {
     public modalCtrl: ModalController
   ) {
     this.itemService
-      .query()
+      .queryAll()
       .subscribe((res: any) => {
         if (res) this.items = res;
       }, err => {

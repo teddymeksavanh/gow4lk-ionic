@@ -33,7 +33,6 @@ export class ItemCreatePage {
         country: [''],
         length: [22],
         latitude: [22],
-        created_date: [''],
         longitude: [22]
 
     });
@@ -56,11 +55,7 @@ export class ItemCreatePage {
         targetHeight: 96
       }).then((data) => {
         this.form.patchValue({ 'profilePic': 'data:image/jpg;base64,' + data });
-      }, (err) => {var today = new Date();
-        var dd = today.getDate();
-        
-        var mm = today.getMonth()+1; 
-        var yyyy = today.getFullYear();
+      }, (err) => {
         alert('Unable to take photo');
       })
     } else {
@@ -95,13 +90,7 @@ export class ItemCreatePage {
    * back to the presenter.
    */
   done() {
-    if (!this.form.valid) { return; }
-    let today = new Date();
-    let dd = today.getDate();
-    let mm = today.getMonth()+1; 
-    let yyyy = today.getFullYear();
-    let created_date = dd+'/'+mm+'/'+yyyy;
-    this.form.get('created_date').setValue(created_date);
+    if (!this.form.valid) { return; }   
     this.viewCtrl.dismiss(this.form.value);
   }
 }
