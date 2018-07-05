@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Camera } from '@ionic-native/camera';
+import { Items } from '../../providers/items/items';
 import { IonicPage, NavController, ViewController } from 'ionic-angular';
 
 @IonicPage()
@@ -21,12 +22,20 @@ export class ItemCreatePage {
       public navCtrl: NavController,
       public viewCtrl: ViewController,
       formBuilder: FormBuilder,
-      public camera: Camera
+      public camera: Camera,
+      public itemService: Items
     ) {
       this.form = formBuilder.group({
         profilePic: [''],
         name: ['', Validators.required],
-        about: ['']
+        description: [''],
+        city: [''],
+        country: [''],
+        length: [22],
+        latitude: [22],
+        created_date: [''],
+        longitude: [22]
+
     });
 
     // Watch the form for changes, and
@@ -47,7 +56,11 @@ export class ItemCreatePage {
         targetHeight: 96
       }).then((data) => {
         this.form.patchValue({ 'profilePic': 'data:image/jpg;base64,' + data });
-      }, (err) => {
+      }, (err) => {var today = new Date();
+        var dd = today.getDate();
+        
+        var mm = today.getMonth()+1; 
+        var yyyy = today.getFullYear();
         alert('Unable to take photo');
       })
     } else {
@@ -83,6 +96,12 @@ export class ItemCreatePage {
    */
   done() {
     if (!this.form.valid) { return; }
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth()+1; 
+    let yyyy = today.getFullYear();
+    let created_date = dd+'/'+mm+'/'+yyyy;
+    this.form.get('created_date').setValue(created_date);
     this.viewCtrl.dismiss(this.form.value);
   }
 }

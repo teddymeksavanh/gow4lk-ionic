@@ -9,12 +9,12 @@ export class Items {
   constructor(public api: Api) { }
 
   query(params?: any) {
-    console.log('enter');
     return this.api.get('strolls', params);
   }
 
-  add(item: Item) {
-    console.log('item added', item);
+  create(item: Item) {
+    console.log('item in post', item);
+    return this.api.post('strolls', item);
   }
 
   delete(item: Item) {

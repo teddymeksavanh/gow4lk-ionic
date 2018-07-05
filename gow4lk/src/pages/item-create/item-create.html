@@ -24,7 +24,7 @@
 
 
 <ion-content>
-  <form *ngIf="form" [formGroup]="form" (ngSubmit)="createItem()">
+  <form *ngIf="form" [formGroup]="form">
     <input type="file" #fileInput style="visibility: hidden; height: 0px" name="files[]" (change)="processWebImage($event)" />
     <div class="profile-image-wrapper" (click)="getPicture()">
       <div class="profile-image-placeholder" *ngIf="!this.form.controls.profilePic.value">
@@ -33,14 +33,20 @@
           {{ 'ITEM_CREATE_CHOOSE_IMAGE' | translate }}
         </div>
       </div>
-      <div class="profile-image" [style.backgroundImage]="getProfileImageStyle()" *ngIf="this.form.controls.profilePic.value"></div>
+      <div class="profile-image" [style.backgroundImage]="getProfileImageStyle()" *ngIf="this.form.get('profilePic').value"></div>
     </div>
     <ion-list>
       <ion-item>
         <ion-input type="text" placeholder="{{ 'ITEM_NAME_PLACEHOLDER' | translate }}" formControlName="name"></ion-input>
       </ion-item>
       <ion-item>
-        <ion-input type="text" placeholder="{{ 'ITEM_ABOUT_PLACEHOLDER' | translate }}" formControlName="about"></ion-input>
+        <ion-input type="text" placeholder="{{ 'ITEM_ABOUT_PLACEHOLDER' | translate }}" formControlName="description"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="text" placeholder="City" formControlName="city"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="text" placeholder="Country" formControlName="country"></ion-input>
       </ion-item>
     </ion-list>
   </form>

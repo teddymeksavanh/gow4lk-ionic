@@ -29,18 +29,19 @@ import { Items } from '../../providers';
   `]
 })
 export class ListMasterPage {
-  currentItems: Item[];
+  currentItems: any[];
   currentStrolls: any[];
+  items: any[];
 
   constructor(
     public navCtrl: NavController,
-    public items: Items,
+    public itemService: Items,
     public modalCtrl: ModalController
   ) {
-    this.items
+    this.itemService
       .query()
       .subscribe((res: any) => {
-        console.log('res', res);
+        if (res) this.items = res;
       }, err => {
         console.error('ERROR', err);
       });
@@ -60,7 +61,14 @@ export class ListMasterPage {
     let addModal = this.modalCtrl.create('ItemCreatePage');
     addModal.onDidDismiss(item => {
       if (item) {
-        this.items.add(item);
+        console.log('enter');
+        this.itemService
+            .create(item)
+            .subscribe(res => {
+              if (res) this.items.push(res);
+              console.log('subscribed', res);
+            });
+        // this.items.add(item);
       }
     })
     addModal.present();
@@ -70,7 +78,7 @@ export class ListMasterPage {
    * Delete an item from the list of items.
    */
   deleteItem(item) {
-    this.items.delete(item);
+    // this.items.delete(item);
   }
 
   /**
