@@ -8,11 +8,71 @@
 
 
 <ion-content>
-  <div class="item-profile" text-center #profilePic [style.background-image]="'url(' + item.profilePic + ')'">
+  <div
+    *ngIf="item && item.profilePic"
+    class="item-profile"
+    text-center
+    #profilePic
+    [style.background-image]="'url(' + item.profilePic + ')'"
+  >
+  </div>
+
+  <div
+    class="item-profile"
+    text-center
+    #profilePic
+    [style.background-image]="'url(assets/img/home.jpg)'"
+  >
   </div>
 
   <div class="item-detail" padding>
     <h2>{{item.name}}</h2>
-    <p>{{item.about}}</p>
+    <p>{{item.description}}</p>
   </div>
+
+  <div>
+      <div>
+          <div id="map" [style.height.px]="400"></div>
+          <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
+              <div>
+                  <div class="btn-group-vertical">
+                    <button *ngIf="selectedShape"
+                      (click)="removeSelectedShape()">
+                    </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div *ngIf="withOutsideActionButtons">
+      <div>
+          <button *ngIf="selectedShape" (click)="removeSelectedShape()">
+              Remove the selected polygon
+          </button>
+          <button (click)="submitPolyline()">
+              Validate
+          </button>
+      </div>
+  </div>
+
+  <!-- <agm-map 
+    [latitude]="lat" 
+    [longitude]="lng"
+    [zoom]="zoomOption"
+    [fullscreenControl]="true"
+    [streetViewControl]="'false'"
+    [mapTypeControl]="'true'"
+  >
+    <ng-container>
+        <agm-polyline [strokeColor]="'red'" [strokeWeight]="2">
+            <agm-polyline-point *ngFor="let path of paths" [latitude]="path.latitude" [longitude]="path.longitude">
+              <agm-circle [latitude]="path.latitude" [longitude]="path.longitude" [fillOpacity]="1" [fillColor]="'red'" [radius]="15" ></agm-circle>
+            </agm-polyline-point>
+        </agm-polyline>
+    </ng-container>
+  </agm-map> -->
+
+  <button ion-item (click)="addPath()">
+    Ajouter un lieu
+  </button>
 </ion-content>

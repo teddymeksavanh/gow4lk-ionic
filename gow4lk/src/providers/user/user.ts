@@ -89,9 +89,17 @@ export class User {
     return this.api.put('me', params);
   }
 
+  // updateAvatar(params?: any) {
+  //   return this.api.post('me/avatar', params);
+  // }
+
   getMe(params?: any) {
     return this.api.get('me', params);
   }
+
+  // getMeAvatar() {
+  //   return this.api.get('me/avatar');
+  // }
 
   /**
    * Send a POST request to our signup endpoint with the data

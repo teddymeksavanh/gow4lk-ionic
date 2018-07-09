@@ -10,10 +10,30 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { CookieModule, CookieService } from 'ngx-cookie';
+import { AgmCoreModule, LAZY_MAPS_API_CONFIG } from '@agm/core';
 
 // import { Items } from '../mocks/providers/items';
 import { HeadersService, Items, Settings, User, Api } from '../providers';
 import { MyApp } from './app.component';
+
+import { Injectable } from "@angular/core";
+import { LazyMapsAPILoaderConfigLiteral } from '@agm/core';
+
+@Injectable()
+export class GoogleMapsConfig implements LazyMapsAPILoaderConfigLiteral {
+  apiKey: string;
+  libraries: string[];
+
+  constructor() {
+    this.apiKey = 'AIzaSyDM7t7_oc_w4_J0Pr661JBm5vVEL3gC_2I';
+    this.libraries = ['places','drawing'];
+  }
+}
+
+export const lazyGoogleMapsConfig = {
+  provide: LAZY_MAPS_API_CONFIG,
+  useClass: GoogleMapsConfig,
+};
 // import WelcomePage from '../pages/welcome/welcome';
 // import { WelcomePageModule } from '../pages/welcome/welcome';
 
@@ -38,6 +58,8 @@ export function provideSettings(storage: Storage) {
   });
 }
 
+//direction api : AIzaSyDM7t7_oc_w4_J0Pr661JBm5vVEL3gC_2I
+
 @NgModule({
   declarations: [
     MyApp
@@ -46,6 +68,7 @@ export function provideSettings(storage: Storage) {
     BrowserModule,
     HttpClientModule,
     HttpModule,
+    AgmCoreModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -69,6 +92,7 @@ export function provideSettings(storage: Storage) {
     HeadersService,
     CookieService,
     SplashScreen,
+    lazyGoogleMapsConfig,
     StatusBar,
     { provide: Settings, useFactory: provideSettings, deps: [Storage] },
     // Keep this to enable Ionic's runtime error handling during development

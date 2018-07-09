@@ -27,7 +27,9 @@ export class SettingsPage {
   settingsReady = false;
 
   formProfile: FormGroup;
+  formAvatar: FormGroup;
 
+  file: any;
   user: any;
 
   profileSettings = {
@@ -54,34 +56,63 @@ export class SettingsPage {
   ionViewDidLoad() {
     // Build an empty form for the template to render
     this.fetchUser();
+    // this.fetchAvatar();
+  }
+
+  fetchAvatar() {
+    // this.userService.getMeAvatar()
+    //   .subscribe(avatar => {
+    //     console.log('avatar', avatar);
+    //   });
   }
 
   fetchUser() {
     this.userService.getMe()
       .subscribe(user => {
         this.user = user;
+        
+        this.formAvatar = this.buildAvatarForm();
+        this.formAvatar.valueChanges.subscribe((v) => {
+          this.isReadyToSave = this.formAvatar.valid;
+        });
+        
         this.formProfile = this.buildProfileForm();
-        this.isReadyToSave = this.formProfile.valid;
         this.formProfile.valueChanges.subscribe((v) => {
           this.isReadyToSave = this.formProfile.valid;
         });
+        
+        this.isReadyToSave = this.formProfile.valid;
       });
   }
 
   updateProfile() {
     if (this.formProfile.valid) {
-      console.log('this.', this.formProfile);
       this.userService
         .update(this.formProfile.value)
         .subscribe(updatedUser => {
           this.page = 'main';
         });
+
+      if (this.formAvatar.valid && this.file) {
+        // this.userService
+        //     .updateAvatar(this.file)
+        //     .subscribe(updatedAvatar => {
+        //       console.log('updatedAvatar');
+        //       console.log('this', updatedAvatar);
+        //     });
+      }
     }
+  }
+
+  buildAvatarForm() {
+    return this.formBuilder.group({
+      avatar: [this.user && this.user.avatar || null]
+    });
   }
 
   buildProfileForm() {
     return this.formBuilder.group({
-      avatar: [this.user && this.user.avatar || ''],
+      // avatar: [this.user && this.user.avatar || ''],
       name: [this.user && this.user.name || null, Validators.required],
       email: [this.user && this.user.email || null, Validators.required],
       // password: [null]
@@ -95,7 +126,7 @@ export class SettingsPage {
         targetWidth: 96,
         targetHeight: 96
       }).then((data) => {
-        this.formProfile.patchValue({ 'avatar': 'data:image/jpg;base64,' + data });
+        this.formAvatar.patchValue({ 'avatar': 'data:image/jpg;base64,' + data });
       }, (err) => {
         alert('Unable to take photo');
       })
@@ -107,16 +138,17 @@ export class SettingsPage {
   processWebImage(event) {
     let reader = new FileReader();
     let file = event.target.files[0];
+    this.file = file;
     reader.onload = (readerEvent) => {
       let imageData = (readerEvent.target as any).result;
-      this.formProfile.patchValue({ 'avatar': file });
+      this.formAvatar.patchValue({ 'avatar': imageData });
     };
 
     reader.readAsDataURL(event.target.files[0]);
   }
 
   getProfileImageStyle() {
-    return 'url(' + this.formProfile.controls['avatar'].value + ')'
+    return 'url(' + this.formAvatar.controls['avatar'].value + ')'
   }
 
   ionViewWillEnter() {
