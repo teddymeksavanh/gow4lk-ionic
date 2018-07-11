@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef, OnChanges } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Items } from '../../providers';
 declare const google: any;
@@ -37,69 +37,95 @@ export class ItemDetailPage {
 
   constructor(public navCtrl: NavController, navParams: NavParams, items: Items, private mapLoader: MapsAPILoader, private cd: ChangeDetectorRef) {
     this.item = navParams.get('item') || [];
-    this.lat = 49.8566;
-    this.lng = 4.3522;
+    this.lat = 37.772;
+    this.lng = -122.214;
     // this.item = navParams.get('item') || items.defaultItem;
   }
 
   ionViewDidLoad() {
+    // this.polylines = [
+    //   { polyline: [
+    //       {
+    //         id: 5,
+    //         name: 'popopopo',
+    //         description: 'popopopo',
+    //         latitude: 49.8566,
+    //         longitude: 4.3522
+    //       },
+    //       {
+    //         id: 6,
+    //         name: 'azazaza',
+    //         description: 'azazazaza',
+    //         latitude: 49.8566,
+    //         longitude: 4.362
+    //       }
+    //     ]
+    //   }
+    // ];
+    // this.polylines = [
+    //     37.772,
+    //     -122.214,
+    //     21.291,
+    //     -157.821,
+    //     -18.142,
+    //     178.431,
+    //     -27.467,
+    //     153.027
+    // ];
     this.polylines = [
-      {
-        name: 'popopopo',
-        description: 'popopopo',
-        latitude: 49.8566,
-        longitude: 4.3522
-      },
-      {
-        name: 'azazaza',
-        description: 'azazazaza',
-        latitude: 49.8566,
-        longitude: 4.362
-      }
+      {lat: 37.772, lng: -122.214},
+      {lat: 21.291, lng: -157.821},
+      {lat: -18.142, lng: 178.431},
+      {lat: -27.467, lng: 153.027}
     ];
     this.setCommonPolylineConfig();
     this.map = this.initMap();
-    // this.map.then(map => {
-    //   if (this.polylines && this.polylines.length > 0) {
-    //     // we want to support multiple polylines
-    //     if (Array.isArray(this.polylines[0])) {
-    //       for (let index = 0; index < this.polylines.length; index++) {
-    //         this.preparePolylineToDraw(this.polylines[index]);
-    //       }
-    //     } else {
-    //       this.polylines.forEach(p => this.preparePolylineToDraw(p));
-    //     }
-    //   }
-    // });
+    this.map.then(map => {
+      if (this.polylines && this.polylines.length > 0) {
+        // if (Array.isArray(this.polylines[0])) {
+        //   for (let index = 0; index < this.polylines.length; index++) {
+        //     this.preparePolylineToDraw(this.polylines[index]);
+        //   }
+        // } else {
+        //   this.polylines.forEach(p => this.preparePolylineToDraw(p));
+        // }
+        this.preparePolylineToDraw(this.polylines);
+      }
+    });
   }
 
-  preparePolylineToDraw(polyline: any): void {
-    if (polyline) {
-      const formattedPolyline =
-        has(polyline, 'id') && this.formatCompanyActionZonesToMapPaths(polyline.polyline) ||
-        has(polyline.polyline[0], 'lat') && polyline.polyline ||
-        this.formatCompanyActionZonesToMapPaths(polyline.polyline) ||
-        null;
-      const googlePolyline = new google.maps.Polyline(
-        Object.assign(
-          {
-            paths: formattedPolyline,
-          },
-          this.commonPolylineConfig
-        )
-      );
+  preparePolylineToDraw(polylines: any): void {
+    if (polylines && polylines.length > 0) {
+      // const googlePolyline = new google.maps.Polyline(
+      //   Object.assign(
+      //     {
+      //       paths: polylines,
+      //     },
+      //     this.commonPolylineConfig
+      //   )
+      // );
+
+      const googlePolyline = new google.maps.Polyline({
+          path: polylines,
+          geodesic: true,
+          strokeColor: 'red',
+          strokeOpacity: 1,
+          strokeWeight: 5
+      });
       const finalPolylineObject = Object.assign(
         {},
         {
-          id: polyline.id,
+          id: polylines.id,
           polyline: googlePolyline
         }
       );
+      // console.log('finalPolyline', finalPolylineObject);
       if (this.readonly === false) {
         this.attachClickEventOnPolyline(googlePolyline);
         this.attachInsertAtEventOnPolyline(googlePolyline);
         this.attachSetAtEventOnPolyline(googlePolyline);
       }
+      // console.log('formatted', formattedPolyline);
       this.drawPolyline(googlePolyline);
       this.addPolylineToCollection(finalPolylineObject);
     }
@@ -107,13 +133,14 @@ export class ItemDetailPage {
 
   setCommonPolylineConfig() {
     this.commonPolylineConfig = {
-      strokeColor: '#000000',
+      strokeColor: 'red',
       strokeOpacity: 1,
-      strokeWeight: 2,
+      strokeWeight: 5,
       // fillColor: '#000000',
       // fillOpacity: 1,
-      editable: this.polylineEditable,
-      draggable: this.polylineDraggable
+      editable: true,
+      draggable: true,
+      geodesic: true,
     }
   }
 
@@ -133,15 +160,14 @@ export class ItemDetailPage {
     return drawingManager;
   }
 
-  drawPolyline(polyline: any): void {
+  drawPolyline(polylines: any): void {
     this.map.then((map) => {
-      polyline.setMap(map);
-      // Get paths from polyline and set event listeners for each path separately
-      polyline.getPath().forEach((path, index) => {
-        this.mapBounds.extend(path);
-      });
-      // Fit Polyline path bounds
-      map.fitBounds(this.mapBounds);
+      // console.log('polyline', polylines);
+      polylines.setMap(map);
+      // polylines.getPath().forEach((path, index) => {
+      //   this.mapBounds.extend(path);
+      // });
+      // map.fitBounds(this.mapBounds);
     });
   }
 
@@ -152,19 +178,29 @@ export class ItemDetailPage {
           center: new google.maps.LatLng(this.lat, this.lng),
           zoom: this.zoom,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
-          disableDoubleClickZoom: true,
           scrollwheel: false
         });
 
         this.mapBounds = this.initBounds();
         let drawingManager = null;
         if (this.readonly === false) {
-          drawingManager = this.initDrawingManager(map);
+          
+          const drawingManager = new google.maps.drawing.DrawingManager({
+            // drawingMode: google.maps.drawing.OverlayType.POLYLINE,
+            drawingMode: null,
+            drawingControl: true,
+            drawingControlOptions: {
+              position: google.maps.ControlPosition.BOTTOM_CENTER,
+              drawingModes: ['polyline']
+            },
+            polylineOptions: this.commonPolylineConfig
+          });
+          drawingManager.setMap(map);
+
           google.maps.event.addListener(
             drawingManager,
             'overlaycomplete',
             event => {
-              console.log('event', event);
               const polyline = event.overlay;
               if (event.type == 'polyline') {
                 this.clearSelection();
@@ -211,7 +247,7 @@ export class ItemDetailPage {
 formatCompanyActionZonesToMapPaths(polyline: any): any {
     const latLn: LatLngLiteral[] = [];
     each(chunk(polyline, 2), (p, i) => latLn.push({lat: Number(p[0]), lng: Number(p[1])}));
-    return [latLn];
+    return latLn;
 }
 
 // Handling polyline format for planet /call
@@ -239,7 +275,8 @@ formatMapPathsToDb(polylinesFromMap: any): any {
           let polylineesToPush = [];
           let polylineObject = {};
           poly.getPath().forEach((path, index) => {
-              polylineesToPush.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
+              polylineesToPush.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng}));
+              polylineesToPush.push(path.lng());
           });
           if (polyline.id) {
               polylineObject['id'] = polyline.id;
@@ -328,7 +365,8 @@ formatMapPathsToDb(polylinesFromMap: any): any {
         let polylineesToPush = [];
         let polylineObject = {};
         poly.getPath().forEach((path, index) => {
-          polylineesToPush.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
+            polylineesToPush.push(path.lat());
+            polylineesToPush.push(path.lng());
         });
         if (polyline.id) {
             polylineObject['id'] = polyline.id;
@@ -338,7 +376,6 @@ formatMapPathsToDb(polylinesFromMap: any): any {
       });
     }
     // send result to parent
-    console.log('poly', polylinesToDb);
     this.onPolylineDrawn.emit(polylinesToDb);
   }
 
