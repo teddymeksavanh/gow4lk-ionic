@@ -37,7 +37,7 @@ export class Items {
   }
 
   deleteAllPaths(strollId: number) {
-    return this.api.delete(`pathsdelete`);
+    return this.api.delete(`strolls/${strollId}/pathsdelete`);
   }
 
   deleteStroll(strollId: number) {

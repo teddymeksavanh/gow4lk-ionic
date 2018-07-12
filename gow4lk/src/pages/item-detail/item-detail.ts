@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Items } from '../../providers';
 import { ToastController } from 'ionic-angular';
@@ -43,6 +43,7 @@ export class ItemDetailPage {
     public navCtrl: NavController,
     public alertCtrl: AlertController,
     navParams: NavParams,
+    public viewCtrl: ViewController,
     public items: Items,
     public toastCtrl: ToastController,
     private mapLoader: MapsAPILoader,
@@ -121,7 +122,6 @@ export class ItemDetailPage {
         }
       ],
     });
-
     
     this.map.then(map => {
       this.poly.setMap(map);
@@ -225,36 +225,87 @@ export class ItemDetailPage {
 
   savePath() {
     let polylines = [];
+    // console.log('this', this);
+
+    // if(this.polylines && this.polylines) {
+    //   console.log('this.polylines', this.polylines);
+
+    //   const polyCopy = new google.maps.Polyline({
+    //     path: this.polylines,
+    //     strokeColor: 'red',
+    //     strokeOpacity: 1,
+    //     strokeWeight: 5,
+    //     editable: this.polylineEditable,
+    //     draggable: this.polylineDraggable,
+    //     geodesic: true,
+    //   });
+
+    //   this.polylines.map(p => {
+    //     if(p && p.id) {
+    //       this.items
+    //         .deletePath(this.item.id, p.id)
+    //         .subscribe(re => {
+            
+    //         });
+    //     }
+    //   });
+
+    // }
+    // console.log('this', this.paths);
+
     if(this.paths && this.paths.length > 0) {
       this.paths.forEach((path: any, index) => {
         polylines.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
       });
 
-      console.log('enter');
-
-      this.items
-        .deleteAllPaths(this.item.id)
-        .subscribe(
-          p => {
-            console.log('p', p);
-          });
-
-      polylines.map(po => {
-        this.items
-          .createPath(po, this.item.id)
-          .subscribe(
-            p => {
-              console.log('p', p);
-            }
-          );
+      this.polylines.map((p, index) => {
+        if(p && p.id) {
+          this.items
+            .deletePath(this.item.id, p.id)
+            .subscribe(re => {
+              if(index == this.polylines.length-1) {
+                this.saveNewPath(polylines);
+              }
+            });
+        }
       });
+
+      // this.items
+      //   .deleteAllPaths(this.item.id)
+      //   .subscribe(
+      //     p => {
+      //       console.log('p', p);
+      //       polylines.map(po => {
+      //         this.items
+      //           .createPath(po, this.item.id)
+      //           .subscribe(
+      //             p => {
+      //               console.log('p', p);
+      //             }
+      //           );
+      //       });
+      //     });
     }
+  }
+
+  saveNewPath(polylines: any) {
+      if(polylines && polylines.length > 0) {
+        polylines.map(po => {
+          this.items
+            .createPath(po, this.item.id)
+            .subscribe(
+              p => {
+                console.log('path added');
+              }
+            );
+        });
+      }
   }
 
   deleteStroll() {
     const confirm = this.alertCtrl.create({
       title: 'Supprimer le parcours?',
-      message: 'En supprimant le parcours, vous ne pourrez pas créer de balade.',
+      message: 'Attention, vous allez supprimer votre balade !',
       buttons: [
         {
           text: 'Annuler',
@@ -281,6 +332,7 @@ export class ItemDetailPage {
 
                 toast.present();
 
+                this.viewCtrl.dismiss();
                 this.navCtrl.push(Tab1Root);
               });
         

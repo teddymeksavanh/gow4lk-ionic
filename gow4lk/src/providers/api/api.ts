@@ -59,7 +59,13 @@ export class Api {
   }
 
   delete(endpoint: string, reqOpts?: any) {
-    return this.http.delete(this.url + '/' + endpoint, this.headersService.tokened());
+    const req = 
+      this.http
+        .delete(this.url + '/' + endpoint, this.headersService.tokened())
+        .map((httpResp: any) => {
+          return this._formatResp(httpResp);
+        });
+    return req;
   }
 
   patch(endpoint: string, body: any, reqOpts?: any) {

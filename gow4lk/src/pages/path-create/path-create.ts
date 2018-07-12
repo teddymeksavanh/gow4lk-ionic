@@ -27,6 +27,7 @@ export class PathCreatePage {
   @Input() withInsideActionButtons = false;
   @Input() polylines: any;
   poly: any;
+  showButtons: boolean = false;
   // map: any;
   private map: Promise<any>;
   private mapBounds: any;
@@ -135,6 +136,8 @@ export class PathCreatePage {
       // });
 
       map.addListener('click', event => {
+        this.showButtons = true;
+        console.log('this', this.showButtons);
         this.addLatLng(event);
       });
     });
@@ -294,22 +297,22 @@ export class PathCreatePage {
           handler: () => {
             this.polylines = null;
             this.paths = null;
+            this.showButtons = false;
             this.poly.setMap(null);
             this.initiateMap();
 
-            this.items
-              .deleteStroll(this.item.id)
-              .subscribe(a => {
-                const toast = this.toastCtrl.create({
-                  position: 'top',
-                  message: 'La balade a été supprimer.',
-                  duration: 3000
-                });
+            // this.items
+            //   .deleteStroll(this.item.id)
+            //   .subscribe(a => {
+            //     const toast = this.toastCtrl.create({
+            //       position: 'top',
+            //       message: 'La balade a été supprimer.',
+            //       duration: 3000
+            //     });
 
-                toast.present();
+            //     toast.present();
 
-                // this.navCtrl.push(Tab1Root);
-              });
+            //   });
         
           }
         }

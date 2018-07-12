@@ -28,10 +28,10 @@
   <div style="height: 100%">
       <div style="position: relative; height: 100%;">
           <div id="map" style="height: 100%;"></div>
-          <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;">
+          <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showButtons">
               Sauvegarder votre parcours
           </button>
-          <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;">
+          <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showButtons">
               Supprimer votre parcours
           </button>
           <!-- <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
