@@ -27,6 +27,8 @@ export class ItemDetailPage {
   @Input() withInsideActionButtons = false;
   @Input() polylines: any;
   poly: any;
+  showSaveButton: boolean = false;
+  showDeleteButton: boolean = false;
   // map: any;
   private map: Promise<any>;
   private mapBounds: any;
@@ -53,12 +55,22 @@ export class ItemDetailPage {
     this.user = navParams.get('user') || null;
     this.lat = 48.85341;
     this.lng = 2.3488;
+    if(this.user && this.user.admin) {
+      this.showDeleteButton = true;
+      this.showSaveButton = true;
+    }
+    if(this.item && this.item.created_by && this.user && this.user.id) {
+      if(parseInt(this.user.id) == parseInt(this.item.created_by)) {
+        this.showDeleteButton = true;
+      }
+    }
   }
 
   ionViewDidEnter() {
     if(this.isAdmin()) {
       this.polylineEditable = true;
       this.polylineDraggable = true;
+      this.showDeleteButton = true;
     }
     if(this.item.id) {
       this.items
@@ -136,6 +148,8 @@ export class ItemDetailPage {
 
       if(this.isAdmin()) {
         map.addListener('click', event => {
+          this.showSaveButton = true;
+          console.log('clicked', this.showSaveButton);
           this.addLatLng(event);
         });
       } else {

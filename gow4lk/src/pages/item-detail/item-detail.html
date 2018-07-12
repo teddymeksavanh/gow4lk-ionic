@@ -28,10 +28,10 @@
   <div>
       <div style="position: relative;">
           <div id="map" [style.height.px]="400"></div>
-          <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="isAdmin()">
+          <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showSaveButton">
               Sauvegarder votre parcours
           </button>
-          <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="isAdmin()">
+          <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showDeleteButton">
               Supprimer votre parcours
           </button>
           <!-- <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
