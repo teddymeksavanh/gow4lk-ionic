@@ -59,7 +59,7 @@ export class Api {
   }
 
   delete(endpoint: string, reqOpts?: any) {
-    return this.http.delete(this.url + '/' + endpoint, reqOpts);
+    return this.http.delete(this.url + '/' + endpoint, this.headersService.tokened());
   }
 
   patch(endpoint: string, body: any, reqOpts?: any) {

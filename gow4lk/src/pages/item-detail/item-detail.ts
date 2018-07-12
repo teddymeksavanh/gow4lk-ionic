@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Items } from '../../providers';
 declare const google: any;
@@ -16,7 +16,7 @@ export class ItemDetailPage {
   title: string = 'My first AGM project';
   lat: number = 49.8566;
   lng: number = 4.3522;
-  zoom: number = 15;
+  zoom: number = 17;
 
   paths: LatLngLiteral[];
   selectedShape: any;
@@ -24,6 +24,8 @@ export class ItemDetailPage {
   @Input() withInsideActionButtons = false;
 
   @Input() polylines: any[];
+  poly: any;
+  // map: any;
   private map: Promise<any>;
   private mapBounds: any;
   private commonPolylineConfig: any = {};
@@ -35,139 +37,92 @@ export class ItemDetailPage {
 
   @Output() onPolylineDrawn = new EventEmitter();
 
-  constructor(public navCtrl: NavController, navParams: NavParams, items: Items, private mapLoader: MapsAPILoader, private cd: ChangeDetectorRef) {
+  constructor(
+    public navCtrl: NavController,
+    navParams: NavParams,
+    public items: Items,
+    private mapLoader: MapsAPILoader,
+    private cd: ChangeDetectorRef,
+  ) {
     this.item = navParams.get('item') || [];
     this.lat = 37.772;
     this.lng = -122.214;
-    // this.item = navParams.get('item') || items.defaultItem;
   }
 
   ionViewDidLoad() {
-    // this.polylines = [
-    //   { polyline: [
-    //       {
-    //         id: 5,
-    //         name: 'popopopo',
-    //         description: 'popopopo',
-    //         latitude: 49.8566,
-    //         longitude: 4.3522
-    //       },
-    //       {
-    //         id: 6,
-    //         name: 'azazaza',
-    //         description: 'azazazaza',
-    //         latitude: 49.8566,
-    //         longitude: 4.362
-    //       }
-    //     ]
-    //   }
-    // ];
-    // this.polylines = [
-    //     37.772,
-    //     -122.214,
-    //     21.291,
-    //     -157.821,
-    //     -18.142,
-    //     178.431,
-    //     -27.467,
-    //     153.027
-    // ];
-    this.polylines = [
-      {lat: 37.772, lng: -122.214},
-      {lat: 21.291, lng: -157.821},
-      {lat: -18.142, lng: 178.431},
-      {lat: -27.467, lng: 153.027}
-    ];
-    this.setCommonPolylineConfig();
-    this.map = this.initMap();
-    this.map.then(map => {
-      if (this.polylines && this.polylines.length > 0) {
-        // if (Array.isArray(this.polylines[0])) {
-        //   for (let index = 0; index < this.polylines.length; index++) {
-        //     this.preparePolylineToDraw(this.polylines[index]);
-        //   }
-        // } else {
-        //   this.polylines.forEach(p => this.preparePolylineToDraw(p));
-        // }
-        this.preparePolylineToDraw(this.polylines);
-      }
-    });
-  }
-
-  preparePolylineToDraw(polylines: any): void {
-    if (polylines && polylines.length > 0) {
-      // const googlePolyline = new google.maps.Polyline(
-      //   Object.assign(
-      //     {
-      //       paths: polylines,
-      //     },
-      //     this.commonPolylineConfig
-      //   )
-      // );
-
-      const googlePolyline = new google.maps.Polyline({
-          path: polylines,
-          geodesic: true,
-          strokeColor: 'red',
-          strokeOpacity: 1,
-          strokeWeight: 5
-      });
-      const finalPolylineObject = Object.assign(
-        {},
-        {
-          id: polylines.id,
-          polyline: googlePolyline
-        }
-      );
-      // console.log('finalPolyline', finalPolylineObject);
-      if (this.readonly === false) {
-        this.attachClickEventOnPolyline(googlePolyline);
-        this.attachInsertAtEventOnPolyline(googlePolyline);
-        this.attachSetAtEventOnPolyline(googlePolyline);
-      }
-      // console.log('formatted', formattedPolyline);
-      this.drawPolyline(googlePolyline);
-      this.addPolylineToCollection(finalPolylineObject);
+    if(this.item.id) {
+      this.items
+        .getPaths(this.item.id)
+        .map(path => {
+          let formatedPath = [];
+          if(path) {
+            path.map(p => {
+              p['lat'] = p && p.latitude || null;
+              p['lng'] = p && p.longitude || null;
+              formatedPath.push(p);
+            });
+          }
+          return formatedPath;
+        })
+        .subscribe(
+          (res: any) => {
+            if (res) {
+              this.polylines = res; 
+            }
+            this.initiateMap();
+          }, err => {
+            this.initiateMap();
+          },
+          () => this.initiateMap()
+        );
     }
   }
 
-  setCommonPolylineConfig() {
-    this.commonPolylineConfig = {
+  initiateMap() {
+    this.setCommonPolylineConfig();
+    this.map = this.initMap();
+
+    var symbolThree = {
+      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+      strokeColor: 'red',
+      strokeWeight: 1,
+      scale: 3,
+      fillColor: 'red',
+      fillOpacity: 1
+    };
+
+    this.poly = new google.maps.Polyline({
+      path: this.polylines || {},
       strokeColor: 'red',
       strokeOpacity: 1,
       strokeWeight: 5,
-      // fillColor: '#000000',
-      // fillOpacity: 1,
       editable: true,
       draggable: true,
       geodesic: true,
-    }
-  }
-
-  initBounds = () => new google.maps.LatLngBounds();
-
-  initDrawingManager(googleMap: any): any {
-    const drawingManager = new google.maps.drawing.DrawingManager({
-      drawingMode: google.maps.drawing.OverlayType.POLYLINE,
-      drawingControl: true,
-      drawingControlOptions: {
-        position: google.maps.ControlPosition.TOP_CENTER,
-        drawingModes: ['polyline']
-      },
-      polylineOptions: this.commonPolylineConfig
+      icons: [
+       {
+          icon: symbolThree,
+          offset: '50%',
+          repeat: '100px'
+        }
+      ],
     });
-    drawingManager.setMap(googleMap);
-    return drawingManager;
-  }
 
-  drawPolyline(polylines: any): void {
-    this.map.then((map) => {
-      // console.log('polyline', polylines);
-      polylines.setMap(map);
-      // polylines.getPath().forEach((path, index) => {
-      //   this.mapBounds.extend(path);
+    
+    this.map.then(map => {
+      this.poly.setMap(map);
+      // WE NEED TO SET MARKER BY DEFAULT
+      // map.addListener('overlaycomplete', event => {
+      //   var marker = new google.maps.Marker({
+      //     position: event.latLng,
+      //     title: '#' + path.getLength(),
+      //     map: map
+      //   });
       // });
-      // map.fitBounds(this.mapBounds);
+
+      map.addListener('click', event => {
+        this.addLatLng(event);
+      });
     });
   }
 
@@ -181,206 +136,98 @@ export class ItemDetailPage {
           scrollwheel: false
         });
 
-        this.mapBounds = this.initBounds();
-        let drawingManager = null;
         if (this.readonly === false) {
           
-          const drawingManager = new google.maps.drawing.DrawingManager({
-            // drawingMode: google.maps.drawing.OverlayType.POLYLINE,
-            drawingMode: null,
-            drawingControl: true,
-            drawingControlOptions: {
-              position: google.maps.ControlPosition.BOTTOM_CENTER,
-              drawingModes: ['polyline']
-            },
-            polylineOptions: this.commonPolylineConfig
-          });
-          drawingManager.setMap(map);
+          // const drawingManager = new google.maps.drawing.DrawingManager({
+          //   drawingMode: null,
+          //   drawingControl: true,
+          //   drawingControlOptions: {
+          //     position: google.maps.ControlPosition.BOTTOM_CENTER,
+          //     drawingModes: ['polyline']
+          //   },
+          //   polylineOptions: this.commonPolylineConfig
+          // });
+          // drawingManager.setMap(map);
 
-          google.maps.event.addListener(
-            drawingManager,
-            'overlaycomplete',
-            event => {
-              const polyline = event.overlay;
-              if (event.type == 'polyline') {
-                this.clearSelection();
-                if (drawingManager) {
-                  drawingManager.setDrawingMode(null);
-                }
-                this.attachClickEventOnPolyline(polyline);
+          // google.maps.event.addListener(
+          //   drawingManager,
+          //   'overlaycomplete',
+          //   event => {
+          //     const polyline = event.overlay;
+          //     if (event.type == 'polyline') {
+          //       if (drawingManager) {
+          //         drawingManager.setDrawingMode(null);
+          //       }
+          //       this.attachClickEventOnPolyline(polyline);
 
-                this.attachInsertAtEventOnPolyline(polyline);
+          //       this.attachInsertAtEventOnPolyline(polyline);
 
-                this.attachSetAtEventOnPolyline(polyline);
+          //       this.attachSetAtEventOnPolyline(polyline);
 
-                this.addPolylineToCollection({polyline: polyline});
-                this.selectShape(polyline);
-                if (this.emitOnOverlayComplete) {
-                  this.fromMapPathsToDB();
-                }
-              }
-            }
-          );
+          //       this.addPolylineToCollection({polyline: polyline});
+          //       this.selectShape(polyline, event);
+          //       if (this.emitOnOverlayComplete) {
+          //         this.fromMapPathsToDB();
+          //       }
+          //     }
+          //   }
+          // );
         }
         resolve(map);
       });
     });
   }
 
-  addPolylineToCollection = (polyline: any): any => {
-    this.currentPolylines.push(polyline);
-    if (this.emitOnOverlayComplete) {
-      this.fromMapPathsToDB();
+  setCommonPolylineConfig() {
+    this.commonPolylineConfig = {
+      strokeColor: 'red',
+      strokeOpacity: 1,
+      strokeWeight: 5,
+      editable: true,
+      draggable: true,
+      geodesic: true,
     }
   }
 
-  // set_at is fired when we modify polyline area from highlighted edges
-  // (fire a lot of events when dragging the shape...)
-  attachSetAtEventOnPolyline(polyline): void {
-    google.maps.event.addListener(polyline.getPath(), 'set_at', () => {
-      if (this.emitOnOverlayComplete) {
-        this.fromMapPathsToDB();
-      }
+  addLatLng(event) {
+    var path = this.poly.getPath();
+    path.push(event.latLng);
+    this.paths = path;
+    this.map.then(map => {
+      var marker = new google.maps.Marker({
+        position: event.latLng,
+        animation: google.maps.Animation.DROP,
+        title: '#' + path.getLength(),
+        map: map
+      });
     });
   }
 
-formatCompanyActionZonesToMapPaths(polyline: any): any {
-    const latLn: LatLngLiteral[] = [];
-    each(chunk(polyline, 2), (p, i) => latLn.push({lat: Number(p[0]), lng: Number(p[1])}));
-    return latLn;
-}
+  savePath() {
+    let polylines = [];
+    this.paths.forEach((path: any, index) => {
+      polylines.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
+    });
 
-// Handling polyline format for planet /call
-formatPlanetCoordinatesToMapPaths(coordinates: any): any {
-    let polyline = [];
-    if (coordinates) {
-        for (let index = 0; index < coordinates.length; index++) {
-            const element = coordinates[index];
-            for (let i = 0; i < element.length; i++) {
-                const e = element[i];
-                polyline.push({ lat: Number(e[1]), lng: Number(e[0]) })
-            }
-        }
-        return {polyline: polyline};
-    }
-    return polyline;
-}
-
-// Format the polyline to send to the API => should be generic
-formatMapPathsToDb(polylinesFromMap: any): any {
-    const polylinesToDb = [];
-    if (polylinesFromMap && polylinesFromMap.length > 0 ) {
-      polylinesFromMap.forEach((polyline, i) => {
-          const poly = polyline.polyline;
-          let polylineesToPush = [];
-          let polylineObject = {};
-          poly.getPath().forEach((path, index) => {
-              polylineesToPush.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng}));
-              polylineesToPush.push(path.lng());
-          });
-          if (polyline.id) {
-              polylineObject['id'] = polyline.id;
+    // let strollPaths = {
+    //   paths: polylines
+    // };
+    polylines.map(po => {
+      this.items
+        .createPath(po, this.item.id)
+        .subscribe(
+          p => {
+            console.log('p', p);
           }
-          polylineObject['polyline'] = polylineesToPush;
-          polylinesToDb.push(polylineObject);
-      });
-    }
-    // send result to parent
-    return polylinesToDb;
-}
-
-
-  attachClickEventOnPolyline(polyline): void {
-    google.maps.event.addListener(polyline, 'click', event => {
-      this.clearSelection();
-      this.selectShape(polyline);
+        );
     });
   }
 
-  private selectShape(shape) {
-    this.selectedShape = shape;
-    shape.setEditable(true);
-    shape.setOptions({
-      strokeColor: '#00b4ab',
-      fillColor: '#00b4ab'
-    });
-    this.cd.detectChanges();
-  }
-
-  // insert_at is fired when we drag point that is between highlighted edges
-  attachInsertAtEventOnPolyline(polyline): void {
-    google.maps.event.addListener(polyline.getPath(), 'insert_at', () => {
-      if (this.emitOnOverlayComplete) {
-        this.fromMapPathsToDB();
-      }
-    });
-  }
-
-  submitPolyline() {
-    this.fromMapPathsToDB();
-  }
-
-  removeSelectedShape() {
-    if (this.selectedShape) {
-      const foundPolylineIdx = this.currentPolylines.findIndex(
-        p => this.selectedShape === p.polyline
-      );
-      if (foundPolylineIdx !== -1) {
-        this.currentPolylines.splice(foundPolylineIdx, 1);
-      }
-      this.selectedShape.setMap(null);
-      this.selectedShape = null;
-      this.cd.detectChanges();
-    }
-  }
-
-  private clearSelection() {
-    if (this.selectedShape) {
-      this.selectedShape.setEditable(false);
-      this.selectedShape.setOptions({
-        strokeColor: '#000000',
-        fillColor: '#000000'
+  deleteStroll() {
+    this.items
+      .deleteStroll(this.item.id)
+      .subscribe(a => {
+        console.log('deleted');
       });
-      this.selectedShape = null;
-      if (this.withInsideActionButtons) {
-        this.fromMapPathsToDB();
-      }
-      this.cd.detectChanges();
-    }
   }
-
-  fromDBToMapPaths(polylines: any[]): LatLngLiteral[] {
-    let latLn: LatLngLiteral[] = [];
-    each(chunk(polylines, 2), (polyline, i) =>
-      latLn.push({ lat: Number(polyline[0]), lng: Number(polyline[1]) })
-    );
-    return latLn;
-  }
-
-  fromMapPathsToDB(): void {
-    const polylinesToDb = [];
-    if (this.currentPolylines && this.currentPolylines.length > 0 ) {
-      this.currentPolylines.forEach((polyline, i) => {
-        const poly = polyline.polyline;
-        let polylineesToPush = [];
-        let polylineObject = {};
-        poly.getPath().forEach((path, index) => {
-            polylineesToPush.push(path.lat());
-            polylineesToPush.push(path.lng());
-        });
-        if (polyline.id) {
-            polylineObject['id'] = polyline.id;
-        }
-        polylineObject['polyline'] = polylineesToPush;
-        polylinesToDb.push(polylineObject);
-      });
-    }
-    // send result to parent
-    this.onPolylineDrawn.emit(polylinesToDb);
-  }
-
-  addPath() {
-    console.log('test');
-  }
-
 }

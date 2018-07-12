@@ -17,11 +17,26 @@ export class Items {
   }
 
   create(item: Item) {
-    console.log('item in post', item);
     return this.api.post('strolls', item);
   }
 
-  delete(item: Item) {
+  createPath(paths: any, strollId: number) {
+    return this.api.post(`strolls/${strollId}/paths`, paths);
   }
 
+  updateStroll(stroll: any, strollId: number) {
+    return this.api.put(`strolls/${strollId}`, stroll);
+  }
+
+  getPaths(strollId: number) {
+    return this.api.get(`strolls/${strollId}/paths`);
+  }
+
+  deletePath(strollId: number, pathId: number) {
+    return this.api.delete(`strolls/${strollId}/paths/${pathId}`);
+  }
+
+  deleteStroll(strollId: number) {
+    return this.api.delete(`strolls/${strollId}`);
+  }
 }

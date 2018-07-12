@@ -31,9 +31,16 @@
   </div>
 
   <div>
-      <div>
-          <div id="map" [style.height.px]="400"></div>
-          <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
+      <div style="position: relative;">
+          <div id="map" [style.height.px]="400">
+          </div>
+          <button (click)="savePath()" style="position: absolute; top: 15px; right: 15px; background-color: red; color: white;">
+              Sauvegarder votre parcours
+          </button>
+          <button (click)="deleteStroll()" style="position: absolute; top: 45px; right: 15px; background-color: red; color: white;">
+              Supprimer votre parcours
+          </button>
+          <!-- <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
               <div>
                   <div class="btn-group-vertical">
                     <button *ngIf="selectedShape"
@@ -41,10 +48,10 @@
                     </button>
                   </div>
               </div>
-          </div>
+          </div> -->
       </div>
   </div>
-  <div *ngIf="withOutsideActionButtons">
+  <!-- <div *ngIf="withOutsideActionButtons">
       <div>
           <button *ngIf="selectedShape" (click)="removeSelectedShape()">
               Remove the selected polygon
@@ -53,7 +60,7 @@
               Validate
           </button>
       </div>
-  </div>
+  </div> -->
 
   <!-- <agm-map 
     [latitude]="lat" 
