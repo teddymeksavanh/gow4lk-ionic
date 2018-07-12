@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, ModalController, NavParams } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Items } from '../../providers';
 import { ToastController } from 'ionic-angular';
@@ -10,10 +10,10 @@ export const Tab1Root = 'ListMasterPage';
 
 @IonicPage()
 @Component({
-  selector: 'page-item-detail',
-  templateUrl: 'item-detail.html'
+  selector: 'path-create',
+  templateUrl: 'path-create.html'
 })
-export class ItemDetailPage {
+export class PathCreatePage {
   item: any;
   user: any;
   title: string = 'My first AGM project';
@@ -46,53 +46,53 @@ export class ItemDetailPage {
     public items: Items,
     public toastCtrl: ToastController,
     private mapLoader: MapsAPILoader,
+    public modalCtrl: ModalController,
     private cd: ChangeDetectorRef,
   ) {
-    this.item = navParams.get('item') || {};
-    this.user = navParams.get('user') || null;
-    this.lat = 48.85341;
-    this.lng = 2.3488;
+    // this.item = navParams.get('item') || {};
+    // this.user = navParams.get('user') || null;
+    this.lat = 37.772;
+    this.lng = -122.214;
   }
 
   ionViewDidEnter() {
-    if(this.isAdmin()) {
-      this.polylineEditable = true;
-      this.polylineDraggable = true;
-    }
-    if(this.item.id) {
-      this.items
-        .getPaths(this.item.id)
-        .map(path => {
-          let formatedPath = [];
-          if(path) {
-            path.map(p => {
-              p['lat'] = p && p.latitude || null;
-              p['lng'] = p && p.longitude || null;
-              formatedPath.push(p);
-            });
-          }
-          return formatedPath;
-        })
-        .subscribe(
-          (res: any) => {
-            if (res) {
-              this.polylines = res;
-              this.lat = res[0] && res[0].latitude || null;
-              this.lng = res[0] && res[0].longitude || null;
-            }
-            this.initiateMap();
-          }, err => {
-            this.initiateMap();
-          },
-          () => this.initiateMap()
-        );
-    }
+    this.polylineEditable = true;
+    this.polylineDraggable = true;
+    this.initiateMap();
+    // if(this.item.id) {
+      // this.items
+      //   .getPaths(this.item.id)
+      //   .map(path => {
+      //     let formatedPath = [];
+      //     if(path) {
+      //       path.map(p => {
+      //         p['lat'] = p && p.latitude || null;
+      //         p['lng'] = p && p.longitude || null;
+      //         formatedPath.push(p);
+      //       });
+      //     }
+      //     return formatedPath;
+      //   })
+      //   .subscribe(
+      //     (res: any) => {
+      //       if (res) {
+      //         this.polylines = res; 
+      //       }
+      //       this.initiateMap();
+      //     }, err => {
+      //       this.initiateMap();
+      //     },
+      //     () => this.initiateMap()
+      //   );
+    // }
   }
 
   initiateMap() {
+    console.log('initaite map 1');
     this.setCommonPolylineConfig();
     this.map = this.initMap();
     this.setPolylineMap();
+    console.log('initaite map');
   }
 
   setPolylineMap() {
@@ -106,7 +106,6 @@ export class ItemDetailPage {
     };
 
     this.poly = new google.maps.Polyline({
-      path: this.polylines || {},
       strokeColor: 'red',
       strokeOpacity: 1,
       strokeWeight: 5,
@@ -134,15 +133,9 @@ export class ItemDetailPage {
       //   });
       // });
 
-      if(this.isAdmin()) {
-        map.addListener('click', event => {
-          this.addLatLng(event);
-        });
-      } else {
-        map.addListener('onLoad', event => {
-          this.addLatLng(event);
-        });
-      }
+      map.addListener('click', event => {
+        this.addLatLng(event);
+      });
     });
   }
 
@@ -230,24 +223,56 @@ export class ItemDetailPage {
         polylines.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
       });
 
-      console.log('enter');
+      // this.navCtrl.push('ItemCreatePage');
 
-      this.items
-        .deleteAllPaths(this.item.id)
-        .subscribe(
-          p => {
-            console.log('p', p);
-          });
+      let addModal = this.modalCtrl.create('ItemCreatePage');
+      addModal.onDidDismiss(item => {
+        if (item) {
+          console.log('enter');
+          this.items
+              .create(item)
+              .subscribe(res => {
+                // if (res) this.items.push(res);
+                console.log('res', res);
+                if(res && res.id) {
+                  polylines.map(po => {
+                    this.items
+                      .createPath(po, res.id)
+                      .subscribe(
+                        p => {
+                          console.log('p');
+                        }
+                      );
+                  });
+                  this.navCtrl.push('ListMasterPage', {
+                    item: res,
+                    user: this.user || null
+                  });
+                }
+              });
+          // this.items.add(item);
+        }
+      })
+      addModal.present();
 
-      polylines.map(po => {
-        this.items
-          .createPath(po, this.item.id)
-          .subscribe(
-            p => {
-              console.log('p', p);
-            }
-          );
-      });
+      // console.log('enter');
+
+      // this.items
+      //   .deleteAllPaths(this.item.id)
+      //   .subscribe(
+      //     p => {
+      //       console.log('p', p);
+      //     });
+
+      // polylines.map(po => {
+      //   this.items
+      //     .createPath(po, this.item.id)
+      //     .subscribe(
+      //       p => {
+      //         console.log('p', p);
+      //       }
+      //     );
+      // });
     }
   }
 
@@ -281,7 +306,7 @@ export class ItemDetailPage {
 
                 toast.present();
 
-                this.navCtrl.push(Tab1Root);
+                // this.navCtrl.push(Tab1Root);
               });
         
           }
@@ -290,17 +315,5 @@ export class ItemDetailPage {
     });
 
     confirm.present();
-  }
-  
-  isAdmin() {
-    if(this.user && this.user.admin) {
-      return true;
-    }
-    if(this.item && this.item.created_by && this.user && this.user.id) {
-      if(parseInt(this.user.id) == parseInt(this.item.created_by)) {
-        return true;
-      }
-    }
-    return false;
   }
 }
