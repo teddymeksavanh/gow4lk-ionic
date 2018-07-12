@@ -85,6 +85,7 @@ export class ItemDetailPage {
           () => this.initiateMap()
         );
     }
+    this.initiateMap();
   }
 
   initiateMap() {

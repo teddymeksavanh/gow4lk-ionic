@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { Item } from '../../models/item';
-import { Items } from '../../providers';
+import { Items, User } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -12,8 +12,21 @@ import { Items } from '../../providers';
 export class SearchPage {
 
   currentItems: any = [];
+  user: any;
+  result: any;
+  constructor(public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User) {
+    this.userService
+    .getMe()
+    .subscribe((res: any) => {
+      if (res) this.user = res;
+    });
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public items: Items) { }
+    this.items
+    .queryAll()
+    .subscribe(res => {
+      this.result = res;
+    });
+  }
 
   /**
    * Perform a service for the proper items.
@@ -24,8 +37,12 @@ export class SearchPage {
       this.currentItems = [];
       return;
     }
-    this.currentItems = this.items.query({
-      name: val
+    
+    this.currentItems = this.result.filter(r => {
+      if(r && r.name && r.name.toLowerCase().includes(val)) {
+        return true;
+      }
+      return false;
     });
   }
 
@@ -34,7 +51,8 @@ export class SearchPage {
    */
   openItem(item: Item) {
     this.navCtrl.push('ItemDetailPage', {
-      item: item
+      item: item,
+      user: this.user || null
     });
   }
 
