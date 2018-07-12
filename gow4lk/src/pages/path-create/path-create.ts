@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, ModalController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, ModalController, NavParams, ViewController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Items } from '../../providers';
 import { ToastController } from 'ionic-angular';
@@ -41,6 +41,7 @@ export class PathCreatePage {
 
   constructor(
     public navCtrl: NavController,
+    public viewCtrl: ViewController,
     public alertCtrl: AlertController,
     navParams: NavParams,
     public items: Items,
@@ -224,7 +225,7 @@ export class PathCreatePage {
       });
 
       // this.navCtrl.push('ItemCreatePage');
-
+      this.viewCtrl.dismiss();
       let addModal = this.modalCtrl.create('ItemCreatePage');
       addModal.onDidDismiss(item => {
         if (item) {
@@ -244,6 +245,7 @@ export class PathCreatePage {
                         }
                       );
                   });
+                  this.viewCtrl.dismiss();
                   this.navCtrl.push('ListMasterPage', {
                     item: res,
                     user: this.user || null
