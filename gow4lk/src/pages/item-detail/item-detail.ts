@@ -1,9 +1,12 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AlertController } from 'ionic-angular';
 import { Items } from '../../providers';
+import { ToastController } from 'ionic-angular';
 declare const google: any;
 import { LatLngLiteral, MapsAPILoader } from '@agm/core';
-import { each, chunk, has } from 'lodash';
+export const Tab1Root = 'ListMasterPage';
+// import { each, chunk, has } from 'lodash';
 
 @IonicPage()
 @Component({
@@ -12,7 +15,7 @@ import { each, chunk, has } from 'lodash';
 })
 export class ItemDetailPage {
   item: any;
-
+  user: any;
   title: string = 'My first AGM project';
   lat: number = 49.8566;
   lng: number = 4.3522;
@@ -22,7 +25,6 @@ export class ItemDetailPage {
   selectedShape: any;
   @Input() withOutsideActionButtons = true;
   @Input() withInsideActionButtons = false;
-
   @Input() polylines: any[];
   poly: any;
   // map: any;
@@ -39,17 +41,24 @@ export class ItemDetailPage {
 
   constructor(
     public navCtrl: NavController,
+    public alertCtrl: AlertController,
     navParams: NavParams,
     public items: Items,
+    public toastCtrl: ToastController,
     private mapLoader: MapsAPILoader,
     private cd: ChangeDetectorRef,
   ) {
     this.item = navParams.get('item') || [];
+    this.user = navParams.get('user') || null;
     this.lat = 37.772;
     this.lng = -122.214;
   }
 
   ionViewDidLoad() {
+    if(this.isAdmin()) {
+      this.polylineEditable = true;
+      this.polylineDraggable = true;
+    }
     if(this.item.id) {
       this.items
         .getPaths(this.item.id)
@@ -81,7 +90,10 @@ export class ItemDetailPage {
   initiateMap() {
     this.setCommonPolylineConfig();
     this.map = this.initMap();
+    this.setPolylineMap();
+  }
 
+  setPolylineMap() {
     var symbolThree = {
       path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
       strokeColor: 'red',
@@ -96,8 +108,8 @@ export class ItemDetailPage {
       strokeColor: 'red',
       strokeOpacity: 1,
       strokeWeight: 5,
-      editable: true,
-      draggable: true,
+      editable: this.polylineEditable,
+      draggable: this.polylineDraggable,
       geodesic: true,
       icons: [
        {
@@ -120,9 +132,15 @@ export class ItemDetailPage {
       //   });
       // });
 
-      map.addListener('click', event => {
-        this.addLatLng(event);
-      });
+      if(this.isAdmin()) {
+        map.addListener('click', event => {
+          this.addLatLng(event);
+        });
+      } else {
+        map.addListener('onLoad', event => {
+          this.addLatLng(event);
+        });
+      }
     });
   }
 
@@ -183,8 +201,8 @@ export class ItemDetailPage {
       strokeColor: 'red',
       strokeOpacity: 1,
       strokeWeight: 5,
-      editable: true,
-      draggable: true,
+      editable: this.polylineEditable,
+      draggable: this.polylineDraggable,
       geodesic: true,
     }
   }
@@ -196,7 +214,7 @@ export class ItemDetailPage {
     this.map.then(map => {
       var marker = new google.maps.Marker({
         position: event.latLng,
-        animation: google.maps.Animation.DROP,
+        // animation: google.maps.Animation.DROP,
         title: '#' + path.getLength(),
         map: map
       });
@@ -205,29 +223,72 @@ export class ItemDetailPage {
 
   savePath() {
     let polylines = [];
-    this.paths.forEach((path: any, index) => {
-      polylines.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
-    });
-
-    // let strollPaths = {
-    //   paths: polylines
-    // };
-    polylines.map(po => {
-      this.items
-        .createPath(po, this.item.id)
-        .subscribe(
-          p => {
-            console.log('p', p);
-          }
-        );
-    });
+    if(this.paths && this.paths.length > 0) {
+      this.paths.forEach((path: any, index) => {
+        polylines.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
+      });
+      polylines.map(po => {
+        this.items
+          .createPath(po, this.item.id)
+          .subscribe(
+            p => {
+              console.log('p', p);
+            }
+          );
+      });
+    }
   }
 
   deleteStroll() {
-    this.items
-      .deleteStroll(this.item.id)
-      .subscribe(a => {
-        console.log('deleted');
-      });
+    const confirm = this.alertCtrl.create({
+      title: 'Supprimer le parcours?',
+      message: 'En supprimant le parcours, vous ne pourrez pas créer de balade.',
+      buttons: [
+        {
+          text: 'Annuler',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Confirmer',
+          handler: () => {
+            this.polylines = null;
+            this.paths = null;
+            this.poly.setMap(null);
+            this.initiateMap();
+
+            this.items
+              .deleteStroll(this.item.id)
+              .subscribe(a => {
+                const toast = this.toastCtrl.create({
+                  position: 'top',
+                  message: 'La balade a été supprimer.',
+                  duration: 3000
+                });
+
+                toast.present();
+
+                this.navCtrl.push(Tab1Root);
+              });
+        
+          }
+        }
+      ]
+    });
+
+    confirm.present();
+  }
+  
+  isAdmin() {
+    if(this.user && this.user.admin) {
+      return true;
+    }
+    if(this.item && this.item.created_by && this.user && this.user.id) {
+      if(parseInt(this.user.id) == parseInt(this.item.created_by)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

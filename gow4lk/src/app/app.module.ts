@@ -10,6 +10,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { CookieModule, CookieService } from 'ngx-cookie';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AgmCoreModule, LAZY_MAPS_API_CONFIG } from '@agm/core';
 
 // import { Items } from '../mocks/providers/items';
@@ -68,6 +69,7 @@ export function provideSettings(storage: Storage) {
     BrowserModule,
     HttpClientModule,
     HttpModule,
+    BrowserAnimationsModule,
     AgmCoreModule.forRoot(),
     TranslateModule.forRoot({
       loader: {

@@ -8,36 +8,30 @@
 
 
 <ion-content>
-  <div
+  <!-- <div
     *ngIf="item && item.profilePic"
     class="item-profile"
     text-center
     #profilePic
     [style.background-image]="'url(' + item.profilePic + ')'"
   >
-  </div>
+  </div> -->
 
-  <div
+  <!-- <div
     class="item-profile"
     text-center
     #profilePic
     [style.background-image]="'url(assets/img/home.jpg)'"
   >
-  </div>
-
-  <div class="item-detail" padding>
-    <h2>{{item.name}}</h2>
-    <p>{{item.description}}</p>
-  </div>
+  </div> -->
 
   <div>
       <div style="position: relative;">
-          <div id="map" [style.height.px]="400">
-          </div>
-          <button (click)="savePath()" style="position: absolute; top: 15px; right: 15px; background-color: red; color: white;">
+          <div id="map" [style.height.px]="400"></div>
+          <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="isAdmin()">
               Sauvegarder votre parcours
           </button>
-          <button (click)="deleteStroll()" style="position: absolute; top: 45px; right: 15px; background-color: red; color: white;">
+          <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="isAdmin()">
               Supprimer votre parcours
           </button>
           <!-- <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
@@ -50,6 +44,11 @@
               </div>
           </div> -->
       </div>
+  </div>
+
+  <div class="item-detail" padding>
+    <h2>{{item.name}}</h2>
+    <p>{{item.description}}</p>
   </div>
   <!-- <div *ngIf="withOutsideActionButtons">
       <div>
@@ -78,8 +77,4 @@
         </agm-polyline>
     </ng-container>
   </agm-map> -->
-
-  <button ion-item (click)="addPath()">
-    Ajouter un lieu
-  </button>
 </ion-content>

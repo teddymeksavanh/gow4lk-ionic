@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, ModalController, NavController } from 'ionic-angular';
 
 import { Item } from '../../models/item';
-import { Items } from '../../providers';
+import { Items, User } from '../../providers';
 
 @IonicPage()
 @Component({
@@ -32,12 +32,20 @@ export class ListMasterPage {
   currentItems: any[] = [];
   currentStrolls: any[] = [];
   items: any[] = [];
+  user: any;
 
   constructor(
     public navCtrl: NavController,
     public itemService: Items,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    public userService: User
   ) {
+    this.userService
+      .getMe()
+      .subscribe((res: any) => {
+        if (res) this.user = res;
+      });
+
     this.itemService
       .queryAll()
       .subscribe((res: any) => {
@@ -86,7 +94,8 @@ export class ListMasterPage {
    */
   openItem(item: Item) {
     this.navCtrl.push('ItemDetailPage', {
-      item: item
+      item: item,
+      user: this.user || null
     });
   }
 }
