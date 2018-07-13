@@ -17,8 +17,8 @@ export class ItemDetailPage {
   item: any;
   user: any;
   title: string = 'My first AGM project';
-  lat: number = 48.8566;
-  lng: number = 2.3522;
+  lat: number = 48.849145;
+  lng: number = 2.389659;
   zoom: number = 17;
   paths: LatLngLiteral[];
   selectedShape: any;
@@ -65,7 +65,15 @@ export class ItemDetailPage {
     }
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
+    this.initiateComponent();
+  }
+
+  ionViewDidEnter() {
+    this.initiateComponent();
+  }
+
+  initiateComponent() {
     if(this.isAdmin()) {
       this.polylineEditable = true;
       this.polylineDraggable = true;
@@ -99,6 +107,7 @@ export class ItemDetailPage {
           () => this.initiateMap()
         );
     }
+    this.initiateMap();
   }
 
   initiateMap() {
@@ -151,7 +160,10 @@ export class ItemDetailPage {
           console.log('clicked', this.showSaveButton);
           this.addLatLng(event);
         });
-        // map.addListener\
+
+        map.addListener('dragend', event => {
+            console.log('draggued');
+        });
       } else {
         map.addListener('onLoad', event => {
           this.addLatLng(event);
@@ -225,6 +237,7 @@ export class ItemDetailPage {
 
   addLatLng(event) {
     this.currentPolyline = Object.assign({}, { poly: this.poly.getPath(), event: event.latLng });
+    this.currentPolylines = [];    var path = this.poly.getPath();
     var path = this.poly.getPath();
     path.push(event.latLng);
     this.paths = path;
@@ -233,70 +246,40 @@ export class ItemDetailPage {
 
   savePath() {
     let polylines = [];
-    // console.log('this', this);
+    let oldPolylines = [];
 
-    // if(this.polylines && this.polylines) {
-    //   console.log('this.polylines', this.polylines);
-
-    //   const polyCopy = new google.maps.Polyline({
-    //     path: this.polylines,
-    //     strokeColor: 'red',
-    //     strokeOpacity: 1,
-    //     strokeWeight: 5,
-    //     editable: this.polylineEditable,
-    //     draggable: this.polylineDraggable,
-    //     geodesic: true,
-    //   });
-
-    //   this.polylines.map(p => {
-    //     if(p && p.id) {
-    //       this.items
-    //         .deletePath(this.item.id, p.id)
-    //         .subscribe(re => {
-            
-    //         });
-    //     }
-    //   });
-
-    // }
-    // console.log('this', this.paths);
-
-    if(this.paths && this.paths.length > 0) {
-      this.paths.forEach((path: any, index) => {
+    if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.poly.getArray() && this.currentPolyline.poly.getArray().length && this.currentPolyline.poly.getArray().length > 0) {
+      this.currentPolyline.poly.forEach((path: any, index) => {
         polylines.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
       });
 
+      // this.paths.forEach((path: any, index) => {
+      //   oldPolylines.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
+      // });
+
+      console.log('1');
+
+      console.log('oldPath', polylines, this);
+
       this.polylines.map((p, index) => {
         if(p && p.id) {
+          console.log('1.5');
           this.items
             .deletePath(this.item.id, p.id)
             .subscribe(re => {
+              console.log('1.7');
               if(index == this.polylines.length-1) {
+                console.log('2', index, this.polylines.length-1);
                 this.saveNewPath(polylines);
               }
             });
         }
       });
-
-      // this.items
-      //   .deleteAllPaths(this.item.id)
-      //   .subscribe(
-      //     p => {
-      //       console.log('p', p);
-      //       polylines.map(po => {
-      //         this.items
-      //           .createPath(po, this.item.id)
-      //           .subscribe(
-      //             p => {
-      //               console.log('p', p);
-      //             }
-      //           );
-      //       });
-      //     });
     }
   }
 
   saveNewPath(polylines: any) {
+    console.log('3');
       if(polylines && polylines.length > 0) {
         polylines.map(po => {
           this.items
@@ -365,23 +348,19 @@ export class ItemDetailPage {
   }
 
   undo() {
-    // if(this.poly && this.poly.getPath() && this.poly.getPath().length > 0) {
-    //   this.poly.getPath().removeAt(this.poly.getPath().length-1);
-    // }
-    if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.event) {
-      // if(this.currentPolyline.poly.indexOf(this.currentPolyline.event)) {
-      this.currentPolylines.push(this.currentPolyline.event);
+    if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.event && this.currentPolyline.poly.getArray() && this.currentPolyline.poly.getArray().length && this.currentPolyline.poly.getArray().length > 0) {
+      let polyArray = this.currentPolyline.poly.getArray();
+      this.currentPolylines.push(polyArray[polyArray.length-1]);
       this.currentPolyline.poly.removeAt(this.currentPolyline.poly.length-1);
-      // }
     }
   }
 
   redo() {
     if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.event) {
-      // if(this.currentPolyline.poly.indexOf(this.currentPolyline.event)) {
-        // this.currentPolyline.poly.push(this.currentPolyline.event);
-      // }
-      this.currentPolyline.poly.push(this.currentPolylines[this.currentPolylines.length-1]);
+      if(this.currentPolylines.length > 0 ) {
+        this.currentPolyline.poly.push(this.currentPolylines[this.currentPolylines.length-1]);
+        this.currentPolylines.pop();
+      }
     }
   }
 }

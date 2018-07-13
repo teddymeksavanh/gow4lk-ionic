@@ -93,6 +93,8 @@ export class SettingsPage {
           this.page = 'main';
         });
 
+      this.navCtrl.pop();
+
       if (this.formAvatar.valid && this.file) {
         // this.userService
         //     .updateAvatar(this.file)

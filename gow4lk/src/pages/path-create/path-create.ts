@@ -17,8 +17,8 @@ export class PathCreatePage {
   item: any;
   user: any;
   title: string = 'My first AGM project';
-  lat: number = 48.8566;
-  lng: number = 2.3522;
+  lat: number = 48.849145;
+  lng: number = 2.389659;
   zoom: number = 17;
 
   paths: LatLngLiteral[];
