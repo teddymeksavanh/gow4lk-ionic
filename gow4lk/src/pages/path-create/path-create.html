@@ -27,7 +27,8 @@
 
   <div style="height: 100%">
       <div style="position: relative; height: 100%;">
-          <div id="map" style="height: 100%;"></div>
+            <input id="pac-input" class="controls" type="text" placeholder="Search Box" style="width: 250px; padding: 10px 25px; margin-top: 15px;">
+            <div id="map" style="height: 100%;"></div>
             <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showButtons">
                 Sauvegarder votre parcours
             </button>
