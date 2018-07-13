@@ -228,7 +228,7 @@ export class PathCreatePage {
       });
 
       // this.navCtrl.push('ItemCreatePage');
-      this.viewCtrl.dismiss();
+      // this.viewCtrl.dismiss();
       let addModal = this.modalCtrl.create('ItemCreatePage');
       addModal.onDidDismiss(item => {
         if (item) {
@@ -249,6 +249,7 @@ export class PathCreatePage {
                       );
                   });
                   this.viewCtrl.dismiss();
+                  // this.navCtrl.pop();
                   this.navCtrl.push('ListMasterPage', {
                     item: res,
                     user: this.user || null

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, ModalController, NavController } from 'ionic-angular';
+import { IonicPage, ModalController, NavController, NavParams } from 'ionic-angular';
 
 import { Item } from '../../models/item';
 import { Items, User } from '../../providers';
@@ -33,13 +33,20 @@ export class ListMasterPage {
   currentStrolls: any[] = [];
   items: any[] = [];
   user: any;
+  item: any;
 
   constructor(
     public navCtrl: NavController,
     public itemService: Items,
+    navParams: NavParams,
     public modalCtrl: ModalController,
     public userService: User
   ) {
+    if(navParams.get('item')) {
+      console.log("navParams.get('item')", navParams.get('item'));
+      this.currentItems.push(navParams.get('item'));
+    }
+
     this.userService
       .getMe()
       .subscribe((res: any) => {
@@ -50,6 +57,7 @@ export class ListMasterPage {
       .queryAll()
       .subscribe((res: any) => {
         if (res) this.items = res;
+        this.currentItems = res;
       }, err => {
         console.error('ERROR', err);
       });
@@ -70,13 +78,13 @@ export class ListMasterPage {
     // let addModal = this.modalCtrl.create('ItemCreatePage');
     addModal.onDidDismiss(item => {
       if (item) {
-        console.log('enter');
-        this.itemService
-            .create(item)
-            .subscribe(res => {
-              if (res) this.items.push(res);
-              console.log('subscribed', res);
-            });
+        console.log('enter noob');
+        // this.itemService
+        //     .create(item)
+        //     .subscribe(res => {
+        //       if (res) this.items.push(res);
+        //       console.log('subscribed', res);
+        //     });
         // this.items.add(item);
       }
     })
@@ -88,6 +96,10 @@ export class ListMasterPage {
    */
   deleteItem(item) {
     // this.items.delete(item);
+  }
+
+  updateList(ev) {
+    console.log('ev', ev);
   }
 
   /**

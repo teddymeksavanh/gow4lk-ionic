@@ -152,6 +152,7 @@ export class ItemDetailPage {
           console.log('clicked', this.showSaveButton);
           this.addLatLng(event);
         });
+        // map.addListener\
       } else {
         map.addListener('onLoad', event => {
           this.addLatLng(event);
@@ -368,5 +369,13 @@ export class ItemDetailPage {
       }
     }
     return false;
+  }
+
+  undo() {
+    console.log('undo');
+  }
+
+  redo() {
+    console.log('redo');
   }
 }
