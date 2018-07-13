@@ -28,17 +28,17 @@
   <div>
       <div style="position: relative;">
           <div id="map" [style.height.px]="400"></div>
-          <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showSaveButton">
+            <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showSaveButton">
               Sauvegarder votre parcours
-          </button>
-          <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showDeleteButton">
+            </button>
+            <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showDeleteButton">
               Supprimer votre parcours
-          </button>
-          <button ion-button color="danger" (click)="undo()" style="position: absolute; top: 80px; right: 15px;" *ngIf="showDeleteButton">
+            </button>
+             <button ion-button color="danger" (click)="undo()" style="position: absolute; top: 120px; right: 15px;" *ngIf="showDeleteButton">
               undo
-          </button>
-          <button ion-button color="danger" (click)="redo()" style="position: absolute; top: 100px; right: 15px;" *ngIf="showDeleteButton">
-                undo
+            </button>
+            <button ion-button color="danger" (click)="redo()" style="position: absolute; top: 180px; right: 15px;" *ngIf="showDeleteButton">
+                redo
             </button>
           <!-- <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
               <div>

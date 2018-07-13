@@ -17,10 +17,9 @@ export class ItemDetailPage {
   item: any;
   user: any;
   title: string = 'My first AGM project';
-  lat: number = 49.8566;
-  lng: number = 4.3522;
+  lat: number = 48.8566;
+  lng: number = 2.3522;
   zoom: number = 17;
-
   paths: LatLngLiteral[];
   selectedShape: any;
   @Input() withOutsideActionButtons = true;
@@ -37,7 +36,9 @@ export class ItemDetailPage {
   @Input() emitOnOverlayComplete = false;
   @Input() polylineDraggable = false;
   @Input() polylineEditable = false;
+  
   private currentPolylines: any[] = [];
+  private currentPolyline: any;
 
   @Output() onPolylineDrawn = new EventEmitter();
 
@@ -53,8 +54,6 @@ export class ItemDetailPage {
   ) {
     this.item = navParams.get('item') || {};
     this.user = navParams.get('user') || null;
-    this.lat = 48.85341;
-    this.lng = 2.3488;
     if(this.user && this.user.admin) {
       this.showDeleteButton = true;
       this.showSaveButton = true;
@@ -225,17 +224,11 @@ export class ItemDetailPage {
   }
 
   addLatLng(event) {
+    this.currentPolyline = Object.assign({}, { poly: this.poly.getPath(), event: event.latLng });
     var path = this.poly.getPath();
     path.push(event.latLng);
     this.paths = path;
-    this.map.then(map => {
-      var marker = new google.maps.Marker({
-        position: event.latLng,
-        // animation: google.maps.Animation.DROP,
-        title: '#' + path.getLength(),
-        map: map
-      });
-    });
+    // console.log('this.poly', this.poly.getPath().getArray());
   }
 
   savePath() {
@@ -372,10 +365,23 @@ export class ItemDetailPage {
   }
 
   undo() {
-    console.log('undo');
+    // if(this.poly && this.poly.getPath() && this.poly.getPath().length > 0) {
+    //   this.poly.getPath().removeAt(this.poly.getPath().length-1);
+    // }
+    if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.event) {
+      // if(this.currentPolyline.poly.indexOf(this.currentPolyline.event)) {
+      this.currentPolylines.push(this.currentPolyline.event);
+      this.currentPolyline.poly.removeAt(this.currentPolyline.poly.length-1);
+      // }
+    }
   }
 
   redo() {
-    console.log('redo');
+    if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.event) {
+      // if(this.currentPolyline.poly.indexOf(this.currentPolyline.event)) {
+        // this.currentPolyline.poly.push(this.currentPolyline.event);
+      // }
+      this.currentPolyline.poly.push(this.currentPolylines[this.currentPolylines.length-1]);
+    }
   }
 }

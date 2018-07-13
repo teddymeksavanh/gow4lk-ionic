@@ -17,8 +17,8 @@ export class PathCreatePage {
   item: any;
   user: any;
   title: string = 'My first AGM project';
-  lat: number = 49.8566;
-  lng: number = 4.3522;
+  lat: number = 48.8566;
+  lng: number = 2.3522;
   zoom: number = 17;
 
   paths: LatLngLiteral[];
@@ -28,6 +28,9 @@ export class PathCreatePage {
   @Input() polylines: any;
   poly: any;
   showButtons: boolean = false;
+
+  private currentPolylines: any[] = [];
+  private currentPolyline: any;
   // map: any;
   private map: Promise<any>;
   private mapBounds: any;
@@ -36,7 +39,6 @@ export class PathCreatePage {
   @Input() emitOnOverlayComplete = false;
   @Input() polylineDraggable = false;
   @Input() polylineEditable = false;
-  private currentPolylines: any[] = [];
 
   @Output() onPolylineDrawn = new EventEmitter();
 
@@ -53,8 +55,8 @@ export class PathCreatePage {
   ) {
     // this.item = navParams.get('item') || {};
     // this.user = navParams.get('user') || null;
-    this.lat = 37.772;
-    this.lng = -122.214;
+    // this.lat = 37.772;
+    // this.lng = -122.214;
   }
 
   ionViewDidEnter() {
@@ -122,7 +124,6 @@ export class PathCreatePage {
         }
       ],
     });
-
     
     this.map.then(map => {
       this.poly.setMap(map);
@@ -207,17 +208,18 @@ export class PathCreatePage {
   }
 
   addLatLng(event) {
+    this.currentPolyline = Object.assign({}, { poly: this.poly.getPath(), event: event.latLng });
+    this.currentPolylines = [];
     var path = this.poly.getPath();
     path.push(event.latLng);
     this.paths = path;
-    this.map.then(map => {
-      var marker = new google.maps.Marker({
-        position: event.latLng,
-        // animation: google.maps.Animation.DROP,
-        title: '#' + path.getLength(),
-        map: map
-      });
-    });
+    // this.map.then(map => {
+    //   var marker = new google.maps.Marker({
+    //     position: event.latLng,
+    //     title: '#' + path.getLength(),
+    //     map: map
+    //   });
+    // });
   }
 
   savePath() {
@@ -321,5 +323,22 @@ export class PathCreatePage {
     });
 
     confirm.present();
+  }
+
+  undo() {
+    if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.event && this.currentPolyline.poly.getArray() && this.currentPolyline.poly.getArray().length && this.currentPolyline.poly.getArray().length > 0) {
+      let polyArray = this.currentPolyline.poly.getArray();
+      this.currentPolylines.push(polyArray[polyArray.length-1]);
+      this.currentPolyline.poly.removeAt(this.currentPolyline.poly.length-1);
+    }
+  }
+
+  redo() {
+    if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.event) {
+      if(this.currentPolylines.length > 0 ) {
+        this.currentPolyline.poly.push(this.currentPolylines[this.currentPolylines.length-1]);
+        this.currentPolylines.pop();
+      }
+    }
   }
 }

@@ -28,12 +28,18 @@
   <div style="height: 100%">
       <div style="position: relative; height: 100%;">
           <div id="map" style="height: 100%;"></div>
-          <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showButtons">
-              Sauvegarder votre parcours
-          </button>
-          <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showButtons">
-              Supprimer votre parcours
-          </button>
+            <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showButtons">
+                Sauvegarder votre parcours
+            </button>
+            <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showButtons">
+                Supprimer votre parcours
+            </button>
+            <button ion-button color="danger" (click)="undo()" style="position: absolute; top: 120px; right: 15px;" *ngIf="showButtons">
+                undo
+            </button>
+            <button ion-button color="danger" (click)="redo()" style="position: absolute; top: 180px; right: 15px;" *ngIf="showButtons">
+                redo
+            </button>
           <!-- <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
               <div>
                   <div class="btn-group-vertical">
