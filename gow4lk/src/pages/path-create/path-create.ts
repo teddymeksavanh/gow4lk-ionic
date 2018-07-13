@@ -37,8 +37,8 @@ export class PathCreatePage {
   private commonPolylineConfig: any = {};
   @Input() readonly = false;
   @Input() emitOnOverlayComplete = false;
-  @Input() polylineDraggable = false;
-  @Input() polylineEditable = false;
+  @Input() polylineDraggable = true;
+  @Input() polylineEditable = true;
 
   @Output() onPolylineDrawn = new EventEmitter();
 
@@ -59,9 +59,11 @@ export class PathCreatePage {
     // this.lng = -122.214;
   }
 
+  ionViewWillEnter() {
+    this.initiateMap();
+  }
+
   ionViewDidEnter() {
-    this.polylineEditable = true;
-    this.polylineDraggable = true;
     this.initiateMap();
     // if(this.item.id) {
       // this.items
