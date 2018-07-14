@@ -5,7 +5,7 @@ import { Camera } from '@ionic-native/camera';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { User } from '../../providers/user/user';
 
-import { Settings } from '../../providers';
+import { Settings, Api } from '../../providers';
 import { MyApp } from '../../app/app.component';
 import { FirstRunPage } from '../.';
 /**
@@ -50,8 +50,10 @@ export class SettingsPage {
     public navParams: NavParams,
     public camera: Camera,
     public translate: TranslateService,
-    public userService: User
-  ) {}
+    public userService: User,
+    public apiService: Api
+  ) {
+  }
 
   ionViewDidLoad() {
     // Build an empty form for the template to render
@@ -61,8 +63,8 @@ export class SettingsPage {
 
   fetchAvatar() {
     // this.userService.getMeAvatar()
-    //   .subscribe(avatar => {
-    //     console.log('avatar', avatar);
+    //   .subscribe(picture => {
+    //     console.log('picture', picture);
     //   });
   }
 
@@ -87,6 +89,8 @@ export class SettingsPage {
 
   updateProfile() {
     if (this.formProfile.valid) {
+      this.formProfile.get('picture').setValue(this.formAvatar.get('picture').value);
+      console.log('this.formProfile', this.formProfile.value);
       this.userService
         .update(this.formProfile.value)
         .subscribe(updatedUser => {
@@ -94,6 +98,8 @@ export class SettingsPage {
         });
 
       this.navCtrl.pop();
+
+      console.log('this.', this.formAvatar.value);
 
       if (this.formAvatar.valid && this.file) {
         // this.userService
@@ -108,13 +114,13 @@ export class SettingsPage {
 
   buildAvatarForm() {
     return this.formBuilder.group({
-      avatar: [this.user && this.user.avatar || null]
+      picture: [this.user && this.user.picture && this.user.picture.url && (this.apiService.url + this.user.picture.url) || ''],
     });
   }
 
   buildProfileForm() {
     return this.formBuilder.group({
-      // avatar: [this.user && this.user.avatar || ''],
+      picture: [this.user && this.user.picture && this.user.picture.url && (this.apiService.url + this.user.picture.url) || ''],
       name: [this.user && this.user.name || null, Validators.required],
       email: [this.user && this.user.email || null, Validators.required],
       // password: [null]
@@ -128,7 +134,7 @@ export class SettingsPage {
         targetWidth: 96,
         targetHeight: 96
       }).then((data) => {
-        this.formAvatar.patchValue({ 'avatar': 'data:image/jpg;base64,' + data });
+        this.formAvatar.patchValue({ 'picture': 'data:image/jpg;base64,' + data });
       }, (err) => {
         alert('Unable to take photo');
       })
@@ -143,14 +149,14 @@ export class SettingsPage {
     this.file = file;
     reader.onload = (readerEvent) => {
       let imageData = (readerEvent.target as any).result;
-      this.formAvatar.patchValue({ 'avatar': imageData });
+      this.formAvatar.patchValue({ 'picture': imageData });
     };
 
     reader.readAsDataURL(event.target.files[0]);
   }
 
   getProfileImageStyle() {
-    return 'url(' + this.formAvatar.controls['avatar'].value + ')'
+    return 'url(' + this.formAvatar.controls['picture'].value + ')'
   }
 
   ionViewWillEnter() {
