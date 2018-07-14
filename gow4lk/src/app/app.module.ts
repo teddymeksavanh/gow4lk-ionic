@@ -27,7 +27,7 @@ export class GoogleMapsConfig implements LazyMapsAPILoaderConfigLiteral {
 
   constructor() {
     this.apiKey = 'AIzaSyDM7t7_oc_w4_J0Pr661JBm5vVEL3gC_2I';
-    this.libraries = ['places','drawing'];
+    this.libraries = ['places'];
   }
 }
 

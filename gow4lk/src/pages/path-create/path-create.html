@@ -26,14 +26,14 @@
   </div> -->
 
   <div style="height: 100%">
-      <div style="position: relative; height: 100%;">
-            <input id="pac-input" class="controls" type="text" placeholder="Search Box" style="width: 250px; padding: 10px 25px; margin-top: 15px;">
-            <div id="map" style="height: 100%;"></div>
+      <div style="position: relative; height: 100%; width: 100%;">
+          <div id="map" style="height: 100%;"></div>
+            <input id="pac-input" class="controls" type="text" placeholder="Search Box" style="position: absolute; bottom: 15px; left: 15px; width: 250px; padding: 10px 25px; margin-top: 15px;">
             <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showButtons">
-                Sauvegarder votre parcours
+                Sauvegarder
             </button>
             <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showButtons">
-                Supprimer votre parcours
+                Supprimer
             </button>
             <button ion-button color="danger" (click)="undo()" style="position: absolute; top: 120px; right: 15px;" *ngIf="showButtons">
                 undo

@@ -154,6 +154,37 @@ export class ItemDetailPage {
       //   });
       // });
 
+      let input = document.getElementById('pac-input');
+      let searchBox = new google.maps.places.SearchBox(input);
+      // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+      map.addListener('bounds_changed', () => {
+        searchBox.setBounds(map.getBounds());
+      });
+      
+      searchBox.addListener('places_changed', () => {
+        let places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+          return;
+        }
+
+        let bounds = new google.maps.LatLngBounds();
+        places.forEach((place, index) => {
+          if (!place.geometry) {
+            return;
+          }
+
+          if (place.geometry.viewport) {
+            bounds.union(place.geometry.viewport);
+          } else {
+            bounds.extend(place.geometry.location);
+          }
+        });
+
+        map.fitBounds(bounds);
+      });
+
       if(this.isAdmin()) {
         map.addListener('click', event => {
           this.showSaveButton = true;
