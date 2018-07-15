@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{ 'ITEM_CREATE_TITLE' | translate }}</ion-title>
+    <ion-title>{{ item ? "Modifier votre balade" : "Nouvel balade" }}</ion-title>
     <ion-buttons start>
       <button ion-button (click)="cancel()">
         <span color="primary" showWhen="ios">
@@ -26,13 +26,13 @@
   <form *ngIf="form" [formGroup]="form">
       <input type="file" #fileInput style="visibility: hidden; height: 0px" name="files[]" (change)="processWebImage($event)" />
       <div class="profile-image-wrapper" (click)="getPicture()">
-        <div class="profile-image-placeholder">
-          <ion-icon name="add"></ion-icon>
+          <div class="profile-image-placeholder" *ngIf="!this.form.controls.gallery.value">
+              <ion-icon name="add"></ion-icon>
           <div>
             {{ 'ITEM_CREATE_CHOOSE_IMAGE' | translate }}
           </div>
         </div>
-        <div class="profile-image" [style.backgroundImage]="getProfileImageStyle()"></div>
+        <div class="profile-image" [style.backgroundImage]="getProfileImageStyle()" *ngIf="this.form.get('gallery').value"></div>
       </div>
       <ion-list>
         <ion-item>

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { IonicPage, ModalController, NavController, NavParams, ViewController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Items } from '../../providers';
 import { ToastController } from 'ionic-angular';
@@ -51,6 +51,7 @@ export class ItemDetailPage {
     public toastCtrl: ToastController,
     private mapLoader: MapsAPILoader,
     private cd: ChangeDetectorRef,
+    public modalCtrl: ModalController
   ) {
     this.item = navParams.get('item') || {};
     this.user = navParams.get('user') || null;
@@ -201,6 +202,25 @@ export class ItemDetailPage {
         });
       }
     });
+  }
+
+  editStroll() {
+    console.log('edited');
+    let addModal = this.modalCtrl.create('ItemCreatePage', {item: this.item});
+      addModal.onDidDismiss(item => {
+        console.log('item', item);
+        if (item) {
+          console.log('enter');
+          this.items
+              .updateStroll(this.item.id, item)
+              .subscribe(res => {
+                // if (res) this.items.push(res);
+                console.log('res', res);
+              });
+          // this.items.add(item);
+        }
+      })
+      addModal.present();
   }
 
   initMap(): Promise<any> {

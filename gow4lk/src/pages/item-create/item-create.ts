@@ -2,7 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Camera } from '@ionic-native/camera';
 import { Items } from '../../providers/items/items';
-import { IonicPage, NavController, ViewController } from 'ionic-angular';
+import { Api } from '../../providers/api/api';
+import { NavParams, IonicPage, NavController, ViewController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -22,15 +23,22 @@ export class ItemCreatePage {
       public navCtrl: NavController,
       public viewCtrl: ViewController,
       public formBuilder: FormBuilder,
+      navParams: NavParams,
       public camera: Camera,
+      public apiService: Api,
       public itemService: Items
   ) {
-    this.form = formBuilder.group({
-      gallery: [''],
-      name: ['', Validators.required],
-      description: [''],
-      city: [''],
-      country: [''],
+    this.item = navParams.get('item') || {};
+  }
+
+  ionViewDidEnter() {
+    console.log('this.apiService.url + this.item.gallery.url', this.apiService.url + this.item.gallery.url);
+    this.form = this.formBuilder.group({
+      gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
+      name: [this.item && this.item.name || '', Validators.required],
+      description: [this.item && this.item.description || ''],
+      city: [this.item && this.item.city || ''],
+      country: [this.item && this.item.country || ''],
       length: [22],
       latitude: [22],
       longitude: [22]
@@ -40,9 +48,6 @@ export class ItemCreatePage {
     this.form.valueChanges.subscribe((v) => {
       this.isReadyToSave = this.form.valid;
     });
-  }
-
-  ionViewDidLoad() {
   }
 
   getPicture() {
