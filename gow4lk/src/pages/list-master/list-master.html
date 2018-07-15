@@ -18,7 +18,7 @@
       <ion-card style="margin: 0; width: 100%" class="list-ion-card" *ngFor="let item of currentItems">
         <button class="list-button" style="background-color: white; padding-right: 0; width: 100%;" (click)="openItem(item)">
 
-          <img height="250" style="object-fit: cover;" src="/assets/img/home.jpg"/>
+          <img height="250" style="object-fit: cover;" [src]="item && item.gallery && item.gallery.url && 'http://0.0.0.0:3000/' + item.gallery.url || '/assets/img/advance-card-jp.jpg'" />
     
           <ion-card-content style="text-align: left; padding-left: 25px; padding-right: 25px;">
             <ion-card-title style="padding: 0;">

@@ -219,6 +219,7 @@ export class PathCreatePage {
       // this.viewCtrl.dismiss();
       let addModal = this.modalCtrl.create('ItemCreatePage');
       addModal.onDidDismiss(item => {
+        console.log('item', item);
         if (item) {
           console.log('enter');
           this.items
