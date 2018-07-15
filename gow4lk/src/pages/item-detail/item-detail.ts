@@ -212,10 +212,11 @@ export class ItemDetailPage {
         if (item) {
           console.log('enter');
           this.items
-              .updateStroll(this.item.id, item)
+              .updateStroll(item, this.item.id)
               .subscribe(res => {
                 // if (res) this.items.push(res);
                 console.log('res', res);
+                // this.viewCtrl.dismiss(res);
               });
           // this.items.add(item);
         }
