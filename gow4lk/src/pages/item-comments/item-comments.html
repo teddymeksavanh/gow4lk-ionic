@@ -8,8 +8,10 @@
 
 <ion-content>
     <ion-list>
-      <button ion-item *ngFor="let comment of comments"(click)="modifyComments(comment)">
-        <span *ngIf="comment && comment.description">{{ comment.description }}</span>
+      <button ion-item *ngFor="let comment of comments"(click)="deleteComments(comment)">
+        <span *ngIf="comment && comment.description">{{ comment.description }}
+          <button *ngIf="isAdmin(comment)" ion-button color="danger" style="position: absolute; right: 0; top: 0; bottom: 0;" (click)="deleteComments(comment)">Supprimer</button>
+        </span>
       </button>  
     </ion-list>
 

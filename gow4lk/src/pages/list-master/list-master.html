@@ -39,7 +39,7 @@
         </div>
 
         <div>
-          <button ion-button (click)="checkComments(item)">Voir les commentaires</button>
+          <button ion-button (click)="checkComments(item)">Voir les {{ item && item.comments && item.comments.length && item.comments.length > 0 ? item.comments.length : '' }} commentaires</button>
         </div>
 
         <!-- <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note> -->

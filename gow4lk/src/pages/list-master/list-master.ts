@@ -64,7 +64,21 @@ export class ListMasterPage {
       .queryAll()
       .subscribe((res: any) => {
         if (res) this.items = res;
+        console.log(' if');
         this.currentItems = res;
+        this.currentItems.map(ci => {
+          console.log('of');
+          if(ci && ci.id) {
+            this.commentsService
+                .getComments(ci.id)
+                .subscribe( cmts => {
+                  if(cmts) {
+                    console.log('3', cmts);
+                    ci['comments'] = cmts;
+                  }
+                });
+          }
+        });
       }, err => {
         console.error('ERROR', err);
       });
@@ -83,14 +97,47 @@ export class ListMasterPage {
    * The view loaded, let's query our items for the list
    */
   ionViewWillEnter() {
+    this.refetch();
     this.commentForm = this.formBuilder.group({
-      description: ['']
+      description: [''],
+      created_by: [this.user && this.user.id || null]
     });
   
     // Watch the form for changes, and
     this.commentForm.valueChanges.subscribe((v) => {
       this.isReadyToSave = this.commentForm.valid;
     });
+  }
+
+  refetch() {
+    this.userService
+      .getMe()
+      .subscribe((res: any) => {
+        if (res) this.user = res;
+      });
+
+    this.itemService
+      .queryAll()
+      .subscribe((res: any) => {
+        if (res) this.items = res;
+        console.log(' if');
+        this.currentItems = res;
+        this.currentItems.map(ci => {
+          console.log('of');
+          if(ci && ci.id) {
+            this.commentsService
+                .getComments(ci.id)
+                .subscribe( cmts => {
+                  if(cmts) {
+                    console.log('3', cmts);
+                    ci['comments'] = cmts;
+                  }
+                });
+          }
+        });
+      }, err => {
+        console.error('ERROR', err);
+      });
   }
 
   /**
@@ -127,7 +174,8 @@ export class ListMasterPage {
   }
 
   publish(item: any) {
-    console.log('publier');
+    console.log('publier', this);
+    this.commentForm.get('created_by').setValue(this.user && this.user.id && this.user.id.toString() || null);
     if(!this.commentForm.valid) { return; }
     console.log('this.commentForm', this.commentForm.value);
     if(item && item.id) {
@@ -135,9 +183,12 @@ export class ListMasterPage {
         .createComment(this.commentForm.value, item.id)
         .subscribe(com => {
           console.log('com', com);
+          this.commentForm.get('description').setValue(null);
+          console.log('this', this);
+          this.refetch();
+          // console.log('com', com);this.comm
         });
     }
-    // this.commentsService.createComment()
   }
 
   checkComments(item: any) {
@@ -147,21 +198,22 @@ export class ListMasterPage {
       this.commentsService
         .getComments(item.id)
         .subscribe(allCom => {
-          let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: allCom});
-          // let addModal = this.modalCtrl.create('ItemCreatePage');
-          addModal.onDidDismiss(item => {
-            if (item) {
-              console.log('Item Comments Page', item);
-              // this.itemService
-              //     .create(item)
-              //     .subscribe(res => {
-              //       if (res) this.items.push(res);
-              //       console.log('subscribed', res);
-              //     });
-              // this.items.add(item);
-            }
-          })
-          addModal.present();
+          if(allCom) {            
+            let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: allCom, user: this.user});
+            // let addModal = this.modalCtrl.create('ItemCreatePage');
+            addModal.onDidDismiss(item => {
+              this.refetch();
+              console.log('closeModal', item);
+                // this.itemService
+                //     .create(item)
+                //     .subscribe(res => {
+                //       if (res) this.items.push(res);
+                //       console.log('subscribed', res);
+                //     });
+                // this.items.add(item);
+            })
+            addModal.present();
+          }
         });
     }
   }
