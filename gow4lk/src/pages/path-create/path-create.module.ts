@@ -3,19 +3,19 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
 
 import { AgmCoreModule } from '@agm/core';
-import { ItemDetailPage } from './item-detail';
+import { PathCreatePage } from './path-create';
 
 @NgModule({
   declarations: [
-    ItemDetailPage,
+    PathCreatePage,
   ],
   imports: [
-    IonicPageModule.forChild(ItemDetailPage),
+    IonicPageModule.forChild(PathCreatePage),
     TranslateModule.forChild(),
     AgmCoreModule
   ],
   exports: [
-    ItemDetailPage
+    PathCreatePage
   ]
 })
-export class ItemDetailPageModule { }
+export class PathCreatePageModule { }

@@ -9,13 +9,38 @@ export class Items {
   constructor(public api: Api) { }
 
   query(params?: any) {
-    return this.api.get('/items', params);
+    return this.api.get('strolls', params);
   }
 
-  add(item: Item) {
+  queryAll(params?: any) {
+    return this.api.get('alls', params);
   }
 
-  delete(item: Item) {
+  create(item: Item) {
+    return this.api.post('strolls', item);
   }
 
+  createPath(paths: any, strollId: number) {
+    return this.api.post(`strolls/${strollId}/paths`, paths);
+  }
+
+  updateStroll(stroll: any, strollId: number) {
+    return this.api.put(`strolls/${strollId}`, stroll);
+  }
+
+  getPaths(strollId: number) {
+    return this.api.get(`strolls/${strollId}/paths`);
+  }
+
+  deletePath(strollId: number, pathId: number) {
+    return this.api.delete(`strolls/${strollId}/paths/${pathId}`);
+  }
+
+  deleteAllPaths(strollId: number) {
+    return this.api.delete(`strolls/${strollId}/pathsdelete`);
+  }
+
+  deleteStroll(strollId: number) {
+    return this.api.delete(`strolls/${strollId}`);
+  }
 }

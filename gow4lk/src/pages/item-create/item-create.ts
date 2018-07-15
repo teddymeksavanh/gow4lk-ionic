@@ -1,7 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Camera } from '@ionic-native/camera';
-import { IonicPage, NavController, ViewController } from 'ionic-angular';
+import { Items } from '../../providers/items/items';
+import { Api } from '../../providers/api/api';
+import { NavParams, IonicPage, NavController, ViewController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -17,21 +19,35 @@ export class ItemCreatePage {
 
   form: FormGroup;
 
-  constructor(public navCtrl: NavController, public viewCtrl: ViewController, formBuilder: FormBuilder, public camera: Camera) {
-    this.form = formBuilder.group({
-      profilePic: [''],
-      name: ['', Validators.required],
-      about: ['']
-    });
+  constructor(
+      public navCtrl: NavController,
+      public viewCtrl: ViewController,
+      public formBuilder: FormBuilder,
+      navParams: NavParams,
+      public camera: Camera,
+      public apiService: Api,
+      public itemService: Items
+  ) {
+    this.item = navParams.get('item') || {};
+  }
 
+  ionViewDidEnter() {
+    console.log('this.apiService.url + this.item.gallery.url', this.apiService.url + this.item.gallery.url);
+    this.form = this.formBuilder.group({
+      gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
+      name: [this.item && this.item.name || '', Validators.required],
+      description: [this.item && this.item.description || ''],
+      city: [this.item && this.item.city || ''],
+      country: [this.item && this.item.country || ''],
+      length: [22],
+      latitude: [22],
+      longitude: [22]
+    });
+  
     // Watch the form for changes, and
     this.form.valueChanges.subscribe((v) => {
       this.isReadyToSave = this.form.valid;
     });
-  }
-
-  ionViewDidLoad() {
-
   }
 
   getPicture() {
@@ -41,7 +57,7 @@ export class ItemCreatePage {
         targetWidth: 96,
         targetHeight: 96
       }).then((data) => {
-        this.form.patchValue({ 'profilePic': 'data:image/jpg;base64,' + data });
+        this.form.patchValue({ 'gallery': 'data:image/jpg;base64,' + data });
       }, (err) => {
         alert('Unable to take photo');
       })
@@ -55,14 +71,14 @@ export class ItemCreatePage {
     reader.onload = (readerEvent) => {
 
       let imageData = (readerEvent.target as any).result;
-      this.form.patchValue({ 'profilePic': imageData });
+      this.form.patchValue({ 'gallery': imageData });
     };
 
     reader.readAsDataURL(event.target.files[0]);
   }
 
   getProfileImageStyle() {
-    return 'url(' + this.form.controls['profilePic'].value + ')'
+    return 'url(' + this.form.controls['gallery'].value + ')'
   }
 
   /**
@@ -78,6 +94,7 @@ export class ItemCreatePage {
    */
   done() {
     if (!this.form.valid) { return; }
+    console.log('this.form.value', this.form.value);  
     this.viewCtrl.dismiss(this.form.value);
   }
 }

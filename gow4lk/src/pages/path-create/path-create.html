@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>{{ item.name }}</ion-title>
+    <ion-title> Création de balade </ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -25,20 +25,20 @@
   >
   </div> -->
 
-  <div>
-      <div style="position: relative;">
-            <div id="map" [style.height.px]="400"></div>
+  <div style="height: 100%">
+      <div style="position: relative; height: 100%; width: 100%;">
+          <div id="map" style="height: 100%;"></div>
             <input id="pac-input" class="controls" type="text" placeholder="Search Box" style="position: absolute; bottom: 15px; left: 15px; width: 250px; padding: 10px 25px; margin-top: 15px;">
-            <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showSaveButton">
-              Sauvegarder votre parcours
+            <button ion-button (click)="savePath()" style="position: absolute; top: 15px; right: 15px;" *ngIf="showButtons">
+                Sauvegarder
             </button>
-            <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showDeleteButton">
-              Supprimer votre parcours
+            <button ion-button color="danger" (click)="deleteStroll()" style="position: absolute; top: 60px; right: 15px;" *ngIf="showButtons">
+                Supprimer
             </button>
-             <button ion-button color="danger" (click)="undo()" style="position: absolute; top: 120px; right: 15px;" *ngIf="showDeleteButton">
-              undo
+            <button ion-button color="danger" (click)="undo()" style="position: absolute; top: 120px; right: 15px;" *ngIf="showButtons">
+                undo
             </button>
-            <button ion-button color="danger" (click)="redo()" style="position: absolute; top: 180px; right: 15px;" *ngIf="showDeleteButton">
+            <button ion-button color="danger" (click)="redo()" style="position: absolute; top: 180px; right: 15px;" *ngIf="showButtons">
                 redo
             </button>
           <!-- <div class="inside-action-buttons" *ngIf="withInsideActionButtons">
@@ -53,11 +53,6 @@
       </div>
   </div>
 
-  <div class="item-detail" padding>
-    <button ion-button (click)="editStroll()">Editer</button>
-    <h2>{{item.name}}</h2>
-    <p>{{item.description}}</p>
-  </div>
   <!-- <div *ngIf="withOutsideActionButtons">
       <div>
           <button *ngIf="selectedShape" (click)="removeSelectedShape()">

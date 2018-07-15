@@ -2,10 +2,11 @@ import { Component, ViewChild } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { TranslateService } from '@ngx-translate/core';
+import { CookieService } from 'ngx-cookie';
 import { Config, Nav, Platform } from 'ionic-angular';
-
-import { FirstRunPage } from '../pages';
+import { FirstRunPage, MainPage } from '../pages';
 import { Settings } from '../providers';
+import { HeadersService } from '../providers';
 
 @Component({
   template: `<ion-menu [content]="content">
@@ -27,6 +28,7 @@ import { Settings } from '../providers';
   <ion-nav #content [root]="rootPage"></ion-nav>`
 })
 export class MyApp {
+  COOKIE_AUTH_KEY = 'me';
   rootPage = FirstRunPage;
 
   @ViewChild(Nav) nav: Nav;
@@ -42,10 +44,11 @@ export class MyApp {
     { title: 'Master Detail', component: 'ListMasterPage' },
     { title: 'Menu', component: 'MenuPage' },
     { title: 'Settings', component: 'SettingsPage' },
-    { title: 'Search', component: 'SearchPage' }
+    { title: 'Search', component: 'SearchPage' },
+    { title: 'Create Paths', component: 'CreatePathPage'}
   ]
 
-  constructor(private translate: TranslateService, platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {
+  constructor(private headersService: HeadersService, private cookieService: CookieService, private translate: TranslateService, platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -53,6 +56,16 @@ export class MyApp {
       this.splashScreen.hide();
     });
     this.initTranslate();
+
+    if (this.cookieService.getObject(this.COOKIE_AUTH_KEY)) {
+        // if a refresh happen, we have to reset headers
+        let me: any = this.cookieService.getObject(this.COOKIE_AUTH_KEY);
+        let parsedMe: any = JSON.parse(me);
+        this.headersService.setSecureHeaders(parsedMe);
+        this.rootPage = MainPage;
+    } else {
+      this.rootPage = FirstRunPage;
+    }
   }
 
   initTranslate() {
@@ -80,6 +93,14 @@ export class MyApp {
       this.config.set('ios', 'backButtonText', values.BACK_BUTTON_TEXT);
     });
   }
+
+  getRootNav() {
+    return this.nav;
+  }
+
+  // reloadApp() {
+  //   this.nav.setRoot(FirstRunPage);
+  // }
 
   openPage(page) {
     // Reset the content nav to have just this page

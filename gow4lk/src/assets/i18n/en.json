@@ -49,9 +49,9 @@
   "SIGNUP_ERROR": "Unable to create account. Please check your account information and try again.",
   "SIGNUP_BUTTON": "Sign up",
 
-  "LIST_MASTER_TITLE": "Items",
+  "LIST_MASTER_TITLE": "Strolls",
 
-  "ITEM_CREATE_TITLE": "New Item",
+  "ITEM_CREATE_TITLE": "New Stroll",
   "ITEM_CREATE_CHOOSE_IMAGE": "Add Image",
 
   "ITEM_NAME_PLACEHOLDER": "Name",
