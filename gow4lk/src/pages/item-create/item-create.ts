@@ -32,7 +32,6 @@ export class ItemCreatePage {
   }
 
   ionViewDidEnter() {
-    console.log('this.apiService.url + this.item.gallery.url', this.apiService.url + this.item.gallery.url);
     this.form = this.formBuilder.group({
       gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
       name: [this.item && this.item.name || '', Validators.required],

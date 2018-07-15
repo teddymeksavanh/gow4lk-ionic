@@ -14,7 +14,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AgmCoreModule, LAZY_MAPS_API_CONFIG } from '@agm/core';
 
 // import { Items } from '../mocks/providers/items';
-import { HeadersService, Items, Settings, User, Api } from '../providers';
+import { HeadersService, Items, Settings, User, Api, Comments, Notes } from '../providers';
 import { MyApp } from './app.component';
 
 import { Injectable } from "@angular/core";
@@ -90,6 +90,8 @@ export function provideSettings(storage: Storage) {
     Api,
     Items,
     User,
+    Comments,
+    Notes,
     Camera,
     HeadersService,
     CookieService,

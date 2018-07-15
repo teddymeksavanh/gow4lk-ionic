@@ -30,6 +30,18 @@
           </ion-card-content>
         </button>
 
+        <div style="position: relative;">
+          <form *ngIf="commentForm" [formGroup]="commentForm">
+            <ion-input type="text" placeholder="Ajouter un commentaire" formControlName="description">
+            </ion-input>
+            <button ion-button (click)="publish(item)" style="position: absolute; right: 0; z-index: 1; top: 0;">Publier</button>
+          </form>
+        </div>
+
+        <div>
+          <button ion-button (click)="checkComments(item)">Voir les commentaires</button>
+        </div>
+
         <!-- <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note> -->
 <!--   
         <ion-item>
