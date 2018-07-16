@@ -1,14 +1,48 @@
 <ion-content class="splash-bg" scroll="false">
-  <div>
+  <div style="position: absolute; top: 20vh;">
     <div class="splash-info">
       <!-- <div class="splash-logo"></div> -->
       <div class="splash-intro">
-        <span class="title">GOW4LK</span>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <img src="/assets/img/logo.png" height="110"/>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <span class="title" style="font-family: 'Montserrat', sans-serif; letter-spacing: 5px; text-transform: uppercase; font-size: 35px; margin-top: 10px;">Gowalk</span>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+                <span class="title" style="font-family: 'Montserrat', sans-serif; font-size: 20px; margin-top: 10px;">Everyone has a story to tell</span>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </div>
     </div>
-    <div padding>
-      <button ion-button block (click)="signup()" round>{{ 'SIGNUP' | translate }}</button>
-      <button ion-button block (click)="login()" class="login" round>{{ 'LOGIN' | translate }}</button>
-    </div>
+    <ion-grid style="position: fixed; bottom: 0; left:0; right: 0; margin: 0 auto; padding: 55px 45px">
+      <ion-row>
+        <ion-col>
+            <button class="full-button signin" color="light" ion-button style="border-radius: 0; padding-top: 22px; padding-bottom: 22px;" block (click)="signup()" outline>
+                <span class="button-inner" style="justify-content:flex-start;"> 
+                    <ion-icon ios="ios-arrow-forward" md="ios-arrow-forward" style="position: absolute; right: 15px;"></ion-icon>
+                    {{ 'SIGNUP' | translate }}
+                </span>
+            </button>
+        </ion-col>
+      </ion-row>
+      <ion-row> 
+        <ion-col>
+          <button class="full-button" color="light" ion-button block style="border-radius: 0; padding-top: 22px; padding-bottom: 22px;" (click)="login()" outline>
+              <span class="button-inner" style="justify-content:flex-start;">            
+                  <ion-icon ios="ios-arrow-forward" md="ios-arrow-forward" style="position: absolute; right: 15px;"></ion-icon>
+                  {{ 'LOGIN' | translate }}
+              </span>    
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
 </ion-content>
