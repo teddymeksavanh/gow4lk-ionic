@@ -24,6 +24,10 @@ export class Items {
     return this.api.post(`strolls/${strollId}/paths`, paths);
   }
 
+  getStroll(strollId: number) {
+    return this.api.get(`strolls/${strollId}`);
+  }
+
   updateStroll(stroll: any, strollId: number) {
     return this.api.put(`strolls/${strollId}`, stroll);
   }

@@ -1,9 +1,13 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, ModalController, NavController, NavParams, ViewController } from 'ionic-angular';
+import { ViewChild, Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { IonicPage, ModalController, NavController, NavParams, ViewController, Slides } from 'ionic-angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import { Observable } from 'rxjs';
 import { AlertController } from 'ionic-angular';
-import { Items } from '../../providers';
 import { ToastController } from 'ionic-angular';
 declare const google: any;
+import { Items, User, Comments, Notes } from '../../providers';
+
 import { LatLngLiteral, MapsAPILoader } from '@agm/core';
 export const Tab1Root = 'ListMasterPage';
 // import { each, chunk, has } from 'lodash';
@@ -14,6 +18,8 @@ export const Tab1Root = 'ListMasterPage';
   templateUrl: 'item-detail.html'
 })
 export class ItemDetailPage {
+  @ViewChild(Slides) slides: Slides;
+
   item: any;
   user: any;
   title: string = 'My first AGM project';
@@ -21,6 +27,7 @@ export class ItemDetailPage {
   lng: number = 2.389659;
   zoom: number = 17;
   paths: LatLngLiteral[];
+
   selectedShape: any;
   @Input() withOutsideActionButtons = true;
   @Input() withInsideActionButtons = false;
@@ -29,6 +36,9 @@ export class ItemDetailPage {
   showSaveButton: boolean = false;
   showDeleteButton: boolean = false;
   // map: any;
+
+  commentForm: FormGroup;
+
   private map: Promise<any>;
   private mapBounds: any;
   private commonPolylineConfig: any = {};
@@ -36,6 +46,7 @@ export class ItemDetailPage {
   @Input() emitOnOverlayComplete = false;
   @Input() polylineDraggable = false;
   @Input() polylineEditable = false;
+  isReadyToSave: boolean;
   
   private currentPolylines: any[] = [];
   private currentPolyline: any;
@@ -51,7 +62,11 @@ export class ItemDetailPage {
     public toastCtrl: ToastController,
     private mapLoader: MapsAPILoader,
     private cd: ChangeDetectorRef,
-    public modalCtrl: ModalController
+    public commentsService: Comments,
+    public formBuilder: FormBuilder,
+    public modalCtrl: ModalController,
+    public userService: User,
+    public notesService: Notes,
   ) {
     this.item = navParams.get('item') || {};
     this.user = navParams.get('user') || null;
@@ -64,14 +79,123 @@ export class ItemDetailPage {
         this.showDeleteButton = true;
       }
     }
+
+    this.commentForm = formBuilder.group({
+      description: [''],
+      created_by: [this.user && this.user.id || '']
+    });
+  
+    // Watch the form for changes, and
+    this.commentForm.valueChanges.subscribe((v) => {
+      this.isReadyToSave = this.commentForm.valid;
+    });
   }
 
   ionViewWillEnter() {
     this.initiateComponent();
+
+    this.commentForm = this.formBuilder.group({
+      description: [''],
+      created_by: [this.user && this.user.id || '']
+    });
+  
+    // Watch the form for changes, and
+    this.commentForm.valueChanges.subscribe((v) => {
+      this.isReadyToSave = this.commentForm.valid;
+    });
+
+    setTimeout(() => {
+        this.slides.lockSwipes(true);
+    }, 500);
   }
 
-  ionViewDidEnter() {
-    this.initiateComponent();
+  // ionViewDidEnter() {
+  //   this.initiateComponent();
+  // }
+  refetch() {
+    if(this.item && this.item.id) {
+      Observable
+        .forkJoin(
+          this.userService.getMe(),
+          this.items.getStroll(this.item.id)
+        )
+        .subscribe(
+          result => {
+            this.user = result && result[0];
+            this.item = result && result[1];
+            if(this.item && this.item.created_by) {
+              this.userService
+                .getUser(this.item.created_by)
+                .subscribe(user => {
+                  this.item['user'] = user;
+                });
+            }
+          }
+        )
+    }
+  }
+
+  publish(item: any) {
+    this.commentForm.get('created_by').setValue(this.user && this.user.id && this.user.id.toString() || null);
+    if(!this.commentForm.valid) { return; }
+    if(item && item.id && this.commentForm.get('description').value && this.commentForm.get('created_by').value) {
+      this.commentsService
+        .createComment(this.commentForm.value, item.id)
+        .subscribe(com => {
+          this.commentForm.get('description').setValue(null);
+          this.refetch();
+          // console.log('com', com);this.comm
+        });
+    } else {
+      const toast = this.toastCtrl.create({
+        message: 'Votre commentaire est vide !',
+        duration: 3000
+      });
+      toast.present();
+    }
+  }
+
+
+  addNotes(item: any) {
+    if(item && item.notes && item.notes.find(note => this.user && this.user.id && note && note.created_by  && note.created_by == this.user.id)) {
+      let userNote = item.notes.find(n => n.created_by == this.user.id);
+      if(userNote && userNote.id) {
+        this.notesService
+            .deleteNote(item.id, userNote.id)
+            .subscribe(no => {
+              console.log('no', no);
+              this.refetch();
+            });
+      }
+    } else {
+      if(this.user && this.user.id && item && item.id) {
+        this.notesService
+          .createNote({description: '1', created_by: this.user.id}, item.id)
+          .subscribe(no => {
+            console.log('no', no);
+            this.refetch();
+          });
+      }
+    }
+  }
+
+  isColored(item: any) {
+    if(item && item.notes && item.notes.find(note => this.user && this.user.id && note && note.created_by  && note.created_by == this.user.id)) {
+      return 'primary';
+    } else {
+      return 'dark';
+    }
+  }
+
+  checkComments(item: any) {
+    console.log('item', item);
+    if(item && item.id && item.comments && item.comments.length > 0) {
+          let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: item.comments, user: this.user || null});
+          addModal.onDidDismiss(item => {
+            this.refetch();
+          })
+          addModal.present();
+    }
   }
 
   initiateComponent() {
@@ -80,35 +204,22 @@ export class ItemDetailPage {
       this.polylineDraggable = true;
       this.showDeleteButton = true;
     }
-    if(this.item.id) {
-      this.items
-        .getPaths(this.item.id)
-        .map(path => {
-          let formatedPath = [];
-          if(path) {
-            path.map(p => {
-              p['lat'] = p && p.latitude || null;
-              p['lng'] = p && p.longitude || null;
-              formatedPath.push(p);
-            });
-          }
-          return formatedPath;
-        })
-        .subscribe(
-          (res: any) => {
-            if (res) {
-              this.polylines = res;
-              this.lat = res[0] && res[0].latitude || null;
-              this.lng = res[0] && res[0].longitude || null;
-            }
-            this.initiateMap();
-          }, err => {
-            this.initiateMap();
-          },
-          () => this.initiateMap()
-        );
+    // console.log('item', this.item);
+    if(this.item.id && this.item.paths && this.item.paths.length && this.item.paths.length > 0) {
+      
+      let formatedPath = [];
+
+      this.item.paths.map(p => {
+        p['lat'] = p && p.latitude || null;
+        p['lng'] = p && p.longitude || null;
+        formatedPath.push(p);
+        this.polylines = formatedPath;
+        this.lat = formatedPath[0] && formatedPath[0].latitude || null;
+        this.lng = formatedPath[0] && formatedPath[0].longitude || null;
+      });
+
+      this.initiateMap();
     }
-    this.initiateMap();
   }
 
   initiateMap() {
@@ -414,5 +525,17 @@ export class ItemDetailPage {
         this.currentPolylines.pop();
       }
     }
+  }
+
+  next() {
+    this.slides.lockSwipes(false);
+    this.slides.slideNext();
+    this.slides.lockSwipes(true);
+  }
+
+  prev() {
+    this.slides.lockSwipes(false);
+    this.slides.slidePrev();
+    this.slides.lockSwipes(true);
   }
 }
