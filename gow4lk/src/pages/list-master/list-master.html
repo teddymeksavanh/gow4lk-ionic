@@ -30,6 +30,15 @@
           </ion-card-content>
         </button>
 
+        <ion-row>
+          <ion-col>
+            <button ion-button color="{{colored}}" icon-start clear small (click)="addNotes(item)">
+              <ion-icon name="thumbs-up"></ion-icon>
+              <div>{{item && item.notes && item.notes.length}} Likes</div>
+            </button>
+          </ion-col>
+        </ion-row>
+
         <div style="position: relative;">
           <form *ngIf="commentForm" [formGroup]="commentForm">
             <ion-input type="text" placeholder="Ajouter un commentaire" formControlName="description">

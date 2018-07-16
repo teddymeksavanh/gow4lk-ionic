@@ -34,6 +34,8 @@ export class ListMasterPage {
   currentStrolls: any[] = [];
   items: any[] = [];
   user: any;
+  alreadyLiked: boolean = false;
+  colored: any = 'dark';
   item: any;
   isReadyToSave: boolean;
 
@@ -45,9 +47,9 @@ export class ListMasterPage {
     navParams: NavParams,
     public commentsService: Comments,
     public formBuilder: FormBuilder,
-    public notesService: Notes,
     public modalCtrl: ModalController,
-    public userService: User
+    public userService: User,
+    public notesService: Notes
   ) {
     if(navParams.get('item')) {
       console.log("navParams.get('item')", navParams.get('item'));
@@ -73,11 +75,28 @@ export class ListMasterPage {
                 .getComments(ci.id)
                 .subscribe( cmts => {
                   if(cmts) {
-                    console.log('3', cmts);
                     ci['comments'] = cmts;
                   }
                 });
+
+              this.notesService
+                .getNotes(ci.id)
+                .subscribe( nts => {
+                  if(nts) {
+                    if(this.user && this.user.id) {
+                      if(nts.find(n => n.created_by == this.user.id)) {
+                        this.alreadyLiked = true;
+                        this.colored = 'primary';
+                      } else {
+                        this.alreadyLiked = false;
+                        this.colored = 'dark';
+                      }
+                    }
+                    ci['notes'] = nts;
+                  }
+                });
           }
+          console.log('ci', ci);
         });
       }, err => {
         console.error('ERROR', err);
@@ -131,6 +150,23 @@ export class ListMasterPage {
                   if(cmts) {
                     console.log('3', cmts);
                     ci['comments'] = cmts;
+                  }
+                });
+
+              this.notesService
+                .getNotes(ci.id)
+                .subscribe( nts => {
+                  if(nts) {
+                    if(this.user && this.user.id) {
+                      if(nts.find(n => n.created_by == this.user.id)) {
+                        this.alreadyLiked = true;
+                        this.colored = 'primary';
+                      } else {
+                        this.alreadyLiked = false;
+                        this.colored = 'dark';
+                      }
+                    }
+                    ci['notes'] = nts;
                   }
                 });
           }
@@ -215,6 +251,29 @@ export class ListMasterPage {
             addModal.present();
           }
         });
+    }
+  }
+
+  addNotes(item: any) {
+    if(item && item.id && this.user && this.user.id && !this.alreadyLiked) {
+      this.notesService
+          .createNote({description: '1', created_by: this.user.id}, item.id)
+          .subscribe(no => {
+            console.log('no', no);
+            this.refetch();
+          });
+    } else {
+      if(this.user && this.user.id && item && item.notes && item.notes.length > 0) {
+        let userNote = item.notes.find(n => n.created_by == this.user.id);
+        if(userNote && userNote.id) {
+          this.notesService
+              .deleteNote(item.id, userNote.id)
+              .subscribe(no => {
+                console.log('no', no);
+                this.refetch();
+              });
+        }
+      }
     }
   }
 
