@@ -8,8 +8,10 @@
 
 <ion-content>
     <ion-list>
-      <button ion-item *ngFor="let comment of comments"(click)="deleteComments(comment)">
+      <button ion-item *ngFor="let comment of comments">
         <span *ngIf="comment && comment.description">{{ comment.description }}
+          <!-- <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="comment.created_at" *ngIf="comment && comment.created_at"></ion-datetime> -->
+          <span style="display: block;" *ngIf="comment && comment.created_at">{{ comment.created_at | date:'short'}}</span>
           <button *ngIf="isAdmin(comment)" ion-button color="danger" style="position: absolute; right: 0; top: 0; bottom: 0;" (click)="deleteComments(comment)">Supprimer</button>
         </span>
       </button>  
