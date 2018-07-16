@@ -135,6 +135,10 @@ export class User {
     // this.userService.destroy();
   }
 
+  getUser(userId: number) {
+    return this.api.get(`users/${userId}`);
+  }
+
   /**
    * Process a login/signup response to store user data
    */

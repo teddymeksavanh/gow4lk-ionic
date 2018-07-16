@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicPage, ModalController, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, ModalController, NavController, NavParams, ToastController } from 'ionic-angular';
 
 import { Item } from '../../models/item';
 import { Items, User, Comments, Notes } from '../../providers';
@@ -49,10 +49,10 @@ export class ListMasterPage {
     public formBuilder: FormBuilder,
     public modalCtrl: ModalController,
     public userService: User,
-    public notesService: Notes
+    public notesService: Notes,
+    public toastCtrl: ToastController
   ) {
     if(navParams.get('item')) {
-      console.log("navParams.get('item')", navParams.get('item'));
       this.currentItems.push(navParams.get('item'));
     }
 
@@ -66,44 +66,62 @@ export class ListMasterPage {
       .queryAll()
       .subscribe((res: any) => {
         if (res) this.items = res;
-        console.log(' if');
         this.currentItems = res;
         this.currentItems.map(ci => {
-          console.log('of');
           if(ci && ci.id) {
+            if(ci && ci.created_by) {
+              this.userService
+                .getUser(ci.created_by)
+                .subscribe(userStroll => {
+                  ci['user'] = userStroll;
+                });
+            }
+
             this.commentsService
                 .getComments(ci.id)
                 .subscribe( cmts => {
                   if(cmts) {
+                    if(cmts && cmts.length > 0) {
+                      cmts.map(ac => {
+                        if(ac && ac.created_by) {
+                          this.userService
+                            .getUser(ac.created_by)
+                            .subscribe(usr => {
+                              if (usr) ac['user'] = usr;
+                          });
+                        }
+                      });
+                      ci['comments'] = cmts;
+                    }
                     ci['comments'] = cmts;
                   }
                 });
 
-              this.notesService
-                .getNotes(ci.id)
-                .subscribe( nts => {
-                  if(nts) {
-                    if(this.user && this.user.id) {
-                      if(nts.find(n => n.created_by == this.user.id)) {
-                        this.alreadyLiked = true;
-                        this.colored = 'primary';
-                      } else {
-                        this.alreadyLiked = false;
-                        this.colored = 'dark';
-                      }
+            this.notesService
+              .getNotes(ci.id)
+              .subscribe( nts => {
+                if(nts) {
+                  if(this.user && this.user.id) {
+                    if(nts.find(n => n.created_by == this.user.id)) {
+                      this.alreadyLiked = true;
+                      this.colored = 'primary';
+                    } else {
+                      this.alreadyLiked = false;
+                      this.colored = 'dark';
                     }
-                    ci['notes'] = nts;
                   }
-                });
+                  ci['notes'] = nts;
+                }
+              });
           }
-          console.log('ci', ci);
         });
       }, err => {
         console.error('ERROR', err);
       });
 
     this.commentForm = formBuilder.group({
-      description: ['']
+      description: [''],
+      created_by: [this.user && this.user.id || '']
     });
   
     // Watch the form for changes, and
@@ -119,7 +137,7 @@ export class ListMasterPage {
     this.refetch();
     this.commentForm = this.formBuilder.group({
       description: [''],
-      created_by: [this.user && this.user.id || null]
+      created_by: [this.user && this.user.id || '']
     });
   
     // Watch the form for changes, and
@@ -139,41 +157,60 @@ export class ListMasterPage {
       .queryAll()
       .subscribe((res: any) => {
         if (res) this.items = res;
-        console.log(' if');
         this.currentItems = res;
         this.currentItems.map(ci => {
-          console.log('of');
           if(ci && ci.id) {
+
+            if(ci && ci.created_by) {
+              this.userService
+                .getUser(ci.created_by)
+                .subscribe(userStroll => {
+                  ci['user'] = userStroll;
+                });
+            }
+
             this.commentsService
                 .getComments(ci.id)
                 .subscribe( cmts => {
                   if(cmts) {
-                    console.log('3', cmts);
+                    if(cmts && cmts.length > 0) {
+                      cmts.map(ac => {
+                        if(ac && ac.created_by) {
+                          this.userService
+                            .getUser(ac.created_by)
+                            .subscribe(usr => {
+                              if (usr) ac['user'] = usr;
+                          });
+                        }
+                      });
+                      ci['comments'] = cmts;
+                    }
                     ci['comments'] = cmts;
                   }
                 });
 
-              this.notesService
-                .getNotes(ci.id)
-                .subscribe( nts => {
-                  if(nts) {
-                    if(this.user && this.user.id) {
-                      if(nts.find(n => n.created_by == this.user.id)) {
-                        this.alreadyLiked = true;
-                        this.colored = 'primary';
-                      } else {
-                        this.alreadyLiked = false;
-                        this.colored = 'dark';
-                      }
+            this.notesService
+              .getNotes(ci.id)
+              .subscribe( nts => {
+                if(nts) {
+                  if(this.user && this.user.id) {
+                    if(nts.find(n => n.created_by == this.user.id)) {
+                      this.alreadyLiked = true;
+                      this.colored = 'primary';
+                    } else {
+                      this.alreadyLiked = false;
+                      this.colored = 'dark';
                     }
-                    ci['notes'] = nts;
                   }
-                });
+                  ci['notes'] = nts;
+                }
+              });
           }
         });
       }, err => {
         console.error('ERROR', err);
       });
+      console.log('this', this);
   }
 
   /**
@@ -210,47 +247,61 @@ export class ListMasterPage {
   }
 
   publish(item: any) {
-    console.log('publier', this);
     this.commentForm.get('created_by').setValue(this.user && this.user.id && this.user.id.toString() || null);
     if(!this.commentForm.valid) { return; }
-    console.log('this.commentForm', this.commentForm.value);
-    if(item && item.id) {
+    if(item && item.id && this.commentForm.get('description').value && this.commentForm.get('created_by').value) {
       this.commentsService
         .createComment(this.commentForm.value, item.id)
         .subscribe(com => {
-          console.log('com', com);
           this.commentForm.get('description').setValue(null);
-          console.log('this', this);
           this.refetch();
           // console.log('com', com);this.comm
         });
+    } else {
+      const toast = this.toastCtrl.create({
+        message: 'Votre commentaire est vide !',
+        duration: 3000
+      });
+      toast.present();
     }
   }
 
   checkComments(item: any) {
-    console.log('check', item);
     if(item && item.id) {
-      console.log('check 1');
-      this.commentsService
-        .getComments(item.id)
-        .subscribe(allCom => {
-          if(allCom) {            
-            let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: allCom, user: this.user});
-            // let addModal = this.modalCtrl.create('ItemCreatePage');
-            addModal.onDidDismiss(item => {
-              this.refetch();
-              console.log('closeModal', item);
-                // this.itemService
-                //     .create(item)
-                //     .subscribe(res => {
-                //       if (res) this.items.push(res);
-                //       console.log('subscribed', res);
-                //     });
-                // this.items.add(item);
-            })
-            addModal.present();
-          }
-        });
+      if(this.currentItems.find(cui => cui && cui.id && cui.id == item.id)) {
+        let stroll = this.currentItems.find(cui => cui && cui.id && cui.id == item.id);
+        if(stroll['comments'] && stroll['comments'].length && stroll['comments'].length > 0) {
+          let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: stroll['comments'], user: this.user});
+          addModal.onDidDismiss(item => {
+            this.refetch();
+          })
+          addModal.present();
+        }
+
+      }
+      // this.commentsService
+      //   .getComments(item.id)
+      //   .subscribe(allCom => {
+      //     if(allCom && allCom.length && allCom.length > 0) {
+      //       allCom.map(ac => {
+      //         if(ac && ac.created_by) {
+      //           this.userService
+      //             .getUser(ac.created_by)
+      //             .subscribe(usr => {
+      //               if (usr) ac['user'] = usr;
+      //           });
+      //         }
+      //       });
+      //     }
+      //     if(allCom && allCom.length && allCom.length > 0) {
+      //       let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: allCom, user: this.user});
+      //       addModal.onDidDismiss(item => {
+      //         this.refetch();
+      //         console.log('closeModal', item);
+      //       })
+      //       addModal.present();
+      //     }
+      //   });
     }
   }
 

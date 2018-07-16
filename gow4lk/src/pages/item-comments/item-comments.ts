@@ -57,7 +57,7 @@ export class ItemCommentsPage {
       this.isReadyToSave = this.commentForm.valid;
     });
 
-    this.getComments();
+    // this.getComments();
     console.log('this', this);
   }
 
@@ -74,26 +74,22 @@ export class ItemCommentsPage {
   }
 
   deleteComments(comment: any) {
-    console.log('comment', comment);
     if(comment && comment.id && this.item && this.item.id) {
       this.commentsService
         .deleteComment(this.item.id, comment.id)
-        .subscribe(com => {
+        .subscribe(erztery => {
           this.comments = this.comments.filter(com => comment.id !== com.id);
         });
     }
   }
 
   publish(item: any) {
-    console.log('publier');
     if(!this.commentForm.valid) { return; }
-    console.log('this.commentForm', this.commentForm.value);
     if(item && item.id && this.user && this.user.id) {
       this.commentForm.get('created_by').setValue(this.user.id);
       this.commentsService
         .createComment(this.commentForm.value, item.id)
         .subscribe(com => {
-          console.log('com', com);
           this.commentForm.get('description').setValue(null);
           this.comments.push(com);
         });
@@ -102,15 +98,15 @@ export class ItemCommentsPage {
   }
 
   getComments() {
-    if(this.item && this.item.id) {
-      this.commentsService
-        .getComments(this.item.id)
-        .subscribe(allCom => {
-          if(allCom) {
-            this.comments = allCom;
-          }
-        });
-    }
+    // if(this.item && this.item.id) {
+    //   this.commentsService
+    //     .getComments(this.item.id)
+    //     .subscribe(allCom => {
+    //       if(allCom) {
+    //         this.comments = allCom;
+    //       }
+    //     });
+    // }
   }
 
   isAdmin(comment: any) {

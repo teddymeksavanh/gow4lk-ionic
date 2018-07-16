@@ -8,13 +8,18 @@
 
 <ion-content>
     <ion-list>
-      <button ion-item *ngFor="let comment of comments">
-        <span *ngIf="comment && comment.description">{{ comment.description }}
+      <div ion-item *ngFor="let comment of comments" style="z-index: 1;">
+        <ion-avatar item-start>
+          <img [src]="comment && comment.user && comment.user.picture && comment.user.picture.url && 'http://0.0.0.0:3000/' + comment.user.picture.url || '/assets/img/avatar-default.jpg'">
+        </ion-avatar>
+        <span style="font-size: 12px;" *ngIf="comment && comment.user && comment.user.name">{{item.user.name}}</span>
+            <!-- <p>Paris, France</p> -->
+        <span style="display: block;" *ngIf="comment && comment.description">{{ comment.description }}
           <!-- <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="comment.created_at" *ngIf="comment && comment.created_at"></ion-datetime> -->
-          <span style="display: block;" *ngIf="comment && comment.created_at">{{ comment.created_at | date:'short'}}</span>
-          <button *ngIf="isAdmin(comment)" ion-button color="danger" style="position: absolute; right: 0; top: 0; bottom: 0;" (click)="deleteComments(comment)">Supprimer</button>
+          <span style="display: block; font-size: 12px; opacity: 0.7; margin-top: 5px;" *ngIf="comment && comment.created_at">{{ comment.created_at | date:'short'}}</span>
+          <button *ngIf="isAdmin(comment)" ion-button color="danger" style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto 15px; z-index: 10;" (click)="deleteComments(comment)">Supprimer</button>
         </span>
-      </button>  
+      </div>  
     </ion-list>
 
     <div style="position: absolute; bottom: 0; width: 100%;">
