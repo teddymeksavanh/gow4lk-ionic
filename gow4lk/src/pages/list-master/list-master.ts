@@ -4,6 +4,7 @@ import { IonicPage, ModalController, NavController, NavParams, ToastController }
 
 import { Item } from '../../models/item';
 import { Items, User, Comments, Notes } from '../../providers';
+import { Observable } from 'rxjs';
 
 @IonicPage()
 @Component({
@@ -41,6 +42,10 @@ export class ListMasterPage {
 
   commentForm: FormGroup;
 
+  users: any;
+  comments: any;
+  notes: any;
+
   constructor(
     public navCtrl: NavController,
     public itemService: Items,
@@ -56,68 +61,26 @@ export class ListMasterPage {
       this.currentItems.push(navParams.get('item'));
     }
 
-    this.userService
-      .getMe()
-      .subscribe((res: any) => {
-        if (res) this.user = res;
-      });
-
-    this.itemService
-      .queryAll()
-      .subscribe((res: any) => {
-        if (res) this.items = res;
-        this.currentItems = res;
-        this.currentItems.map(ci => {
-          if(ci && ci.id) {
-            if(ci && ci.created_by) {
+    Observable
+      .forkJoin(
+        this.userService.getMe(),
+        this.itemService.queryAll()
+      )
+      .subscribe(
+        result => {
+          this.user = result && result[0];
+          this.currentItems = result && result[1];
+          this.currentItems.map(item => {
+            if(item && item.created_by) {
               this.userService
-                .getUser(ci.created_by)
-                .subscribe(userStroll => {
-                  ci['user'] = userStroll;
+                .getUser(item.created_by)
+                .subscribe(user => {
+                  item['user'] = user;
                 });
             }
-
-            this.commentsService
-                .getComments(ci.id)
-                .subscribe( cmts => {
-                  if(cmts) {
-                    if(cmts && cmts.length > 0) {
-                      cmts.map(ac => {
-                        if(ac && ac.created_by) {
-                          this.userService
-                            .getUser(ac.created_by)
-                            .subscribe(usr => {
-                              if (usr) ac['user'] = usr;
-                          });
-                        }
-                      });
-                      ci['comments'] = cmts;
-                    }
-                    ci['comments'] = cmts;
-                  }
-                });
-
-            this.notesService
-              .getNotes(ci.id)
-              .subscribe( nts => {
-                if(nts) {
-                  if(this.user && this.user.id) {
-                    if(nts.find(n => n.created_by == this.user.id)) {
-                      this.alreadyLiked = true;
-                      this.colored = 'primary';
-                    } else {
-                      this.alreadyLiked = false;
-                      this.colored = 'dark';
-                    }
-                  }
-                  ci['notes'] = nts;
-                }
-              });
-          }
-        });
-      }, err => {
-        console.error('ERROR', err);
-      });
+          });
+        }
+      )
 
     this.commentForm = formBuilder.group({
       description: [''],
@@ -147,70 +110,27 @@ export class ListMasterPage {
   }
 
   refetch() {
-    this.userService
-      .getMe()
-      .subscribe((res: any) => {
-        if (res) this.user = res;
-      });
-
-    this.itemService
-      .queryAll()
-      .subscribe((res: any) => {
-        if (res) this.items = res;
-        this.currentItems = res;
-        this.currentItems.map(ci => {
-          if(ci && ci.id) {
-
-            if(ci && ci.created_by) {
+    Observable
+      .forkJoin(
+        this.userService.getMe(),
+        this.itemService.queryAll()
+      )
+      .subscribe(
+        result => {
+          this.user = result && result[0];
+          this.currentItems = result && result[1];
+          this.currentItems.map(item => {
+            if(item && item.created_by) {
               this.userService
-                .getUser(ci.created_by)
-                .subscribe(userStroll => {
-                  ci['user'] = userStroll;
+                .getUser(item.created_by)
+                .subscribe(user => {
+                  item['user'] = user;
                 });
             }
-
-            this.commentsService
-                .getComments(ci.id)
-                .subscribe( cmts => {
-                  if(cmts) {
-                    if(cmts && cmts.length > 0) {
-                      cmts.map(ac => {
-                        if(ac && ac.created_by) {
-                          this.userService
-                            .getUser(ac.created_by)
-                            .subscribe(usr => {
-                              if (usr) ac['user'] = usr;
-                          });
-                        }
-                      });
-                      ci['comments'] = cmts;
-                    }
-                    ci['comments'] = cmts;
-                  }
-                });
-
-            this.notesService
-              .getNotes(ci.id)
-              .subscribe( nts => {
-                if(nts) {
-                  if(this.user && this.user.id) {
-                    if(nts.find(n => n.created_by == this.user.id)) {
-                      this.alreadyLiked = true;
-                      this.colored = 'primary';
-                    } else {
-                      this.alreadyLiked = false;
-                      this.colored = 'dark';
-                    }
-                  }
-                  ci['notes'] = nts;
-                }
-              });
-          }
-        });
-      }, err => {
-        console.error('ERROR', err);
-      });
-      console.log('this', this);
+          });
+          console.log('this', this);
+        }
+      )
   }
 
   /**
@@ -267,64 +187,44 @@ export class ListMasterPage {
   }
 
   checkComments(item: any) {
-    if(item && item.id) {
-      if(this.currentItems.find(cui => cui && cui.id && cui.id == item.id)) {
-        let stroll = this.currentItems.find(cui => cui && cui.id && cui.id == item.id);
-        if(stroll['comments'] && stroll['comments'].length && stroll['comments'].length > 0) {
-          let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: stroll['comments'], user: this.user});
+    console.log('item', item);
+    if(item && item.id && item.comments && item.comments.length > 0) {
+          let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: item.comments, user: this.user || null});
           addModal.onDidDismiss(item => {
             this.refetch();
           })
           addModal.present();
-        }
-
-      }
-      // this.commentsService
-      //   .getComments(item.id)
-      //   .subscribe(allCom => {
-      //     if(allCom && allCom.length && allCom.length > 0) {
-      //       allCom.map(ac => {
-      //         if(ac && ac.created_by) {
-      //           this.userService
-      //             .getUser(ac.created_by)
-      //             .subscribe(usr => {
-      //               if (usr) ac['user'] = usr;
-      //           });
-      //         }
-      //       });
-      //     }
-      //     if(allCom && allCom.length && allCom.length > 0) {
-      //       let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: allCom, user: this.user});
-      //       addModal.onDidDismiss(item => {
-      //         this.refetch();
-      //         console.log('closeModal', item);
-      //       })
-      //       addModal.present();
-      //     }
-      //   });
     }
   }
 
   addNotes(item: any) {
-    if(item && item.id && this.user && this.user.id && !this.alreadyLiked) {
-      this.notesService
+    if(item && item.notes && item.notes.find(note => this.user && this.user.id && note && note.created_by  && note.created_by == this.user.id)) {
+      let userNote = item.notes.find(n => n.created_by == this.user.id);
+      if(userNote && userNote.id) {
+        this.notesService
+            .deleteNote(item.id, userNote.id)
+            .subscribe(no => {
+              console.log('no', no);
+              this.refetch();
+            });
+      }
+    } else {
+      if(this.user && this.user.id && item && item.id) {
+        this.notesService
           .createNote({description: '1', created_by: this.user.id}, item.id)
           .subscribe(no => {
             console.log('no', no);
             this.refetch();
           });
-    } else {
-      if(this.user && this.user.id && item && item.notes && item.notes.length > 0) {
-        let userNote = item.notes.find(n => n.created_by == this.user.id);
-        if(userNote && userNote.id) {
-          this.notesService
-              .deleteNote(item.id, userNote.id)
-              .subscribe(no => {
-                console.log('no', no);
-                this.refetch();
-              });
-        }
       }
+    }
+  }
+
+  isColored(item: any) {
+    if(item && item.notes && item.notes.find(note => this.user && this.user.id && note && note.created_by  && note.created_by == this.user.id)) {
+      return 'primary';
+    } else {
+      return 'dark';
     }
   }
 

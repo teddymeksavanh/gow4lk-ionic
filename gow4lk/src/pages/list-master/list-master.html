@@ -50,7 +50,7 @@
 
         <ion-row style="margin-bottom: 25px;">
           <ion-col>
-            <button ion-button icon-start clear small color="{{colored}}" (click)="addNotes(item)">
+            <button ion-button icon-start clear small color="{{isColored(item)}}" (click)="addNotes(item)">
               <ion-icon name="thumbs-up"></ion-icon>
               <div>{{item && item.notes && item.notes.length}} Likes</div>
             </button>

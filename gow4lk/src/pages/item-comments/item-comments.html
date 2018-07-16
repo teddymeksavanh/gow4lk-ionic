@@ -12,7 +12,7 @@
         <ion-avatar item-start>
           <img [src]="comment && comment.user && comment.user.picture && comment.user.picture.url && 'http://0.0.0.0:3000/' + comment.user.picture.url || '/assets/img/avatar-default.jpg'">
         </ion-avatar>
-        <span style="font-size: 12px;" *ngIf="comment && comment.user && comment.user.name">{{item.user.name}}</span>
+        <span style="font-size: 12px;" *ngIf="comment && comment.user && comment.user.name">{{comment.user.name}}</span>
             <!-- <p>Paris, France</p> -->
         <span style="display: block;" *ngIf="comment && comment.description">{{ comment.description }}
           <!-- <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="comment.created_at" *ngIf="comment && comment.created_at"></ion-datetime> -->
@@ -26,7 +26,7 @@
       <form *ngIf="commentForm" [formGroup]="commentForm">
         <ion-input type="text" placeholder="Ajouter un commentaire" formControlName="description">
         </ion-input>
-        <button ion-button (click)="publish(item)" style="position: absolute; right: 0; z-index: 1; top: 0;">Publier</button>
+        <button ion-button (click)="publish(item)" clear style="position: absolute; right: 0; z-index: 1; top: 0;">Publier</button>
       </form>
     </div>
 </ion-content>

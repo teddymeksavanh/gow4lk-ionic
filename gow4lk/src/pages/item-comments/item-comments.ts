@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Camera } from '@ionic-native/camera';
 import { Items } from '../../providers/items/items';
 import { Comments } from '../../providers/comments/comments';
+import { User } from '../../providers/user/user';
 import { Api } from '../../providers/api/api';
 import { NavParams, IonicPage, NavController, ViewController } from 'ionic-angular';
 import { IfStmt } from '../../../node_modules/@angular/compiler';
@@ -29,12 +30,25 @@ export class ItemCommentsPage {
       public camera: Camera,
       public apiService: Api,
       public commentsService:  Comments,
-      public itemService: Items
+      public itemService: Items,
+      public userService: User
   ) {
     console.log('navParams', navParams);
     this.comments = navParams.get('comments') || [];
     this.user = navParams.get('user') || undefined;
     this.item = navParams.get('item') || undefined;
+
+    if(this.comments && this.comments.length > 0) {
+      this.comments.map(com => {
+        if(com && com.created_by) {
+          this.userService
+            .getUser(com.created_by)
+            .subscribe(user => {
+              com['user'] = user;
+            });
+        }
+      });
+    }
 
     this.commentForm = formBuilder.group({
       description: [''],
@@ -48,20 +62,19 @@ export class ItemCommentsPage {
   }
 
   ionViewWillEnter() {
-    this.commentForm = this.formBuilder.group({
-      description: ['']
-    });
-  
-    // Watch the form for changes, and
-    this.commentForm.valueChanges.subscribe((v) => {
-      this.isReadyToSave = this.commentForm.valid;
-    });
 
-    // this.getComments();
-    console.log('this', this);
-  }
+    if(this.comments && this.comments.length > 0) {
+      this.comments.map(com => {
+        if(com && com.created_by) {
+          this.userService
+            .getUser(com.created_by)
+            .subscribe(user => {
+              com['user'] = user;
+            });
+        }
+      });
+    }
 
-  ionViewDidEnter() {
     this.commentForm = this.formBuilder.group({
       description: [''],
       created_by: [this.user && this.user.id || '']
@@ -91,22 +104,10 @@ export class ItemCommentsPage {
         .createComment(this.commentForm.value, item.id)
         .subscribe(com => {
           this.commentForm.get('description').setValue(null);
+          com['user'] = this.user || null;
           this.comments.push(com);
         });
     }
-    // this.commentsService.createComment()
-  }
-
-  getComments() {
-    // if(this.item && this.item.id) {
-    //   this.commentsService
-    //     .getComments(this.item.id)
-    //     .subscribe(allCom => {
-    //       if(allCom) {
-    //         this.comments = allCom;
-    //       }
-    //     });
-    // }
   }
 
   isAdmin(comment: any) {
