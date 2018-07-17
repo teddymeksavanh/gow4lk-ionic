@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 
 import { Item } from '../../models/item';
 import { Items, User, Comments } from '../../providers';
 import { Observable } from '../../../node_modules/rxjs';
+import { ToastController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -19,7 +20,7 @@ export class AdminPage {
   usersResult: any;
 
   user: any;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User, public commentsService: Comments) {
+  constructor(public toastCtrl: ToastController, public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User, public commentsService: Comments, private alertCtrl: AlertController) {
     this.userService
     .getMe()
     .subscribe((res: any) => {
@@ -58,7 +59,6 @@ export class AdminPage {
       this.currentItems = [];
       return;
     }
-    console.log('raeza', this.result);
     
     if(this.result && val) {
       this.currentItems = this.result.filter(r => {
@@ -71,6 +71,69 @@ export class AdminPage {
         return false;
       });
     }
+  }
+
+  desactivateItem(opener: any) {
+    let datas = {};
+    let openerKeys = Object.keys(opener);
+    let isUser = openerKeys.find(k => k === 'admin');
+
+    if(isUser) {
+      datas['user'] = opener;
+    } else {
+      datas['item'] = opener;
+      datas['user'] = this.user || null;
+    }
+
+    const confirm = this.alertCtrl.create({
+      title: 'Désactiver?',
+      message: `Attention, vous allez désactiver ${opener && opener.name} !`,
+      buttons: [
+        {
+          text: 'Annuler',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Confirmer',
+          handler: () => {
+            
+            if(isUser) {
+              if(datas && datas['user'] && datas['user'].id) {
+                this.userService
+                    .deleteUser(datas['user'].id)
+                    .subscribe(user => {
+                      const toast = this.toastCtrl.create({
+                        position: 'top',
+                        message: "L'utilisateur a été désactivé.",
+                        duration: 3000
+                      });
+      
+                      toast.present();
+                    });
+              }
+            } else {
+              if(datas && datas['item'] && datas['item'].id) {
+                this.items
+                  .deleteStroll(datas['item'].id)
+                  .subscribe(a => {
+                    const toast = this.toastCtrl.create({
+                      position: 'top',
+                      message: 'La balade a été supprimée.',
+                      duration: 3000
+                    });
+    
+                    toast.present();
+                  });
+              }
+            }
+          }
+        }
+      ]
+    });
+
+    confirm.present();
   }
 
   /**

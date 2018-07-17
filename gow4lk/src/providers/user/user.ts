@@ -143,6 +143,12 @@ export class User {
     return this.api.get(`usersall`);
   }
 
+  deleteUser(userId) {
+    let params = {};
+    params['is_active'] = true;
+    return this.api.put(`users/${userId}`, params);
+  }
+
   /**
    * Process a login/signup response to store user data
    */

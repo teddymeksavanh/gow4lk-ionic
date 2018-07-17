@@ -10,7 +10,7 @@
   <ion-searchbar (ionInput)="getItems($event)" placeholder="'Paris', 'La coulée verte', 'Kylian Mbappe'"></ion-searchbar>
   <!-- <ion-searchbar (ionInput)="getUsers($event)" placeholder="Rechercher un user"></ion-searchbar> -->
   <ion-list *ngIf="currentItems && currentItems.length && currentItems.length > 0">
-    <button ion-item (click)="openItem(item)" *ngFor="let item of currentItems">
+    <div ion-item *ngFor="let item of currentItems">
       <ion-avatar item-start *ngIf="item && item.gallery">
           <img height="250" style="object-fit: cover;" [src]="item && item.gallery && item.gallery.url && 'http://0.0.0.0:3000/' + item.gallery.url || '/assets/img/placeholder.png'" />
       </ion-avatar>
@@ -20,7 +20,14 @@
       <h2>{{item.name}}</h2>
       <p>{{item.city}}</p>
       <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note>
-    </button>
+      <button ion-button color="danger" (click)="desactivateItem(item)" style="margin-top: 15px; left: right; margin-right: 5px;">
+        Désactiver
+      </button>
+      <button ion-button (click)="openItem(item)" style="margin-top: 15px; float: left; margin-right: 5px;">
+        Voir
+      </button>
+    </div>
+    
   </ion-list>
 
     <!-- <ion-list *ngIf="currentUsers && currentUsers.length && currentUsers.length > 0">
