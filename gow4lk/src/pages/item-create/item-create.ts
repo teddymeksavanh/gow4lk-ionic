@@ -112,6 +112,8 @@ export class ItemCreatePage {
         );
   
         if(distance) {
+          distance = parseFloat(distance);
+          distance = distance.toFixed(3);
           this.form.get('length').setValue(distance);
         }
       }

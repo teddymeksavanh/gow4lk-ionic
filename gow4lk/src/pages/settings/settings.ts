@@ -76,7 +76,6 @@ export class SettingsPage {
   }
 
   openAdmin() {
-    console.log('this', this);
     if(this.user && this.user.admin) {
       let addModal = this.modalCtrl.create('AdminPage', {user: this.user});
       addModal.onDidDismiss(res => {

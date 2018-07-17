@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { Item } from '../../models/item';
 import { Items, User } from '../../providers';
+import { Observable } from '../../../node_modules/rxjs';
 
 @IonicPage()
 @Component({
@@ -21,11 +22,27 @@ export class SearchPage {
       if (res) this.user = res;
     });
 
-    this.items
-    .queryAll()
-    .subscribe(res => {
-      this.result = res;
-    });
+    Observable
+      .forkJoin(
+        this.items.queryAll(),
+        this.userService.queryAll()
+      )
+      .subscribe(result => {
+        this.result = result[0];
+        this.result = this.result.concat(result[1]);
+      });
+  }
+
+  ionViewWillEnter() {
+    Observable
+      .forkJoin(
+        this.items.queryAll(),
+        this.userService.queryAll()
+      )
+      .subscribe(result => {
+        this.result = result[0];
+        this.result = this.result.concat(result[1]);
+      });
   }
 
   /**
@@ -37,26 +54,41 @@ export class SearchPage {
       this.currentItems = [];
       return;
     }
+    console.log('raeza', this.result);
     
-    this.currentItems = this.result.filter(r => {
-      if(r && r.city && r.city.toLowerCase().includes(val)) {
-        return true;
-      }
-      if(r && r.name && r.name.toLowerCase().includes(val)) {
-        return true;
-      }
-      return false;
-    });
+    if(this.result && val) {
+      this.currentItems = this.result.filter(r => {
+        if(r && r.city && r.city.toLowerCase().includes(val.toLowerCase())) {
+          return true;
+        }
+        if(r && r.name && r.name.toLowerCase().includes(val.toLowerCase())) {
+          return true;
+        }
+        return false;
+      });
+    }
   }
 
   /**
    * Navigate to the detail page for this item.
    */
-  openItem(item: Item) {
-    this.navCtrl.push('ItemDetailPage', {
-      item: item,
-      user: this.user || null
-    });
+  openItem(opener: any) {
+    let datas = {};
+    let openerKeys = Object.keys(opener);
+    let isUser = openerKeys.find(k => k === 'admin');
+
+    if(isUser) {
+      datas['user'] = opener;
+    } else {
+      datas['item'] = opener;
+      datas['user'] = this.user || null;
+    }
+  
+    if(isUser) {
+      this.navCtrl.push('UserCardPage', datas);
+    } else {
+      this.navCtrl.push('ItemDetailPage', datas);
+    }
   }
 
 }

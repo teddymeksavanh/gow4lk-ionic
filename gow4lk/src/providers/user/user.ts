@@ -139,6 +139,10 @@ export class User {
     return this.api.get(`users/${userId}`);
   }
 
+  queryAll() {
+    return this.api.get(`usersall`);
+  }
+
   /**
    * Process a login/signup response to store user data
    */

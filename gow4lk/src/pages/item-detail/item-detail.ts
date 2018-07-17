@@ -490,6 +490,8 @@ export class ItemDetailPage {
       );
 
       if(distance) {
+        distance = parseFloat(distance);
+        distance = distance.toFixed(3);
         stroll['length'] = distance;
       }
     }

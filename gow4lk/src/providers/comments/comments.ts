@@ -11,10 +11,6 @@ export class Comments {
     return this.api.get('comments', params);
   }
 
-  queryAll(params?: any) {
-    return this.api.get('allscomments', params);
-  }
-
   createComment(comment: any, strollId: number) {
     return this.api.post(`strolls/${strollId}/comments`, comment);
   }
@@ -26,6 +22,7 @@ export class Comments {
   getComments(strollId: number) {
     return this.api.get(`strolls/${strollId}/comments`);
   }
+
 
   deleteComment(strollId: number, commentId: number) {
     return this.api.delete(`strolls/${strollId}/comments/${commentId}`);
