@@ -144,6 +144,7 @@ export class ItemDetailPage {
         )
         .subscribe(
           result => {
+            console.log('result', result);
             this.user = result && result[0];
             this.item = result && result[1];
             if(this.item && this.item.created_by) {
@@ -296,16 +297,16 @@ export class ItemDetailPage {
 
           if(this.isAdmin()) {
             pictureShow = content.appendChild(document.createElement('img'));
-            pictureShow.src = pol && pol.photo && pol.photo.url && 'http://0.0.0.0:3000/' + pol.photo.url || '';
+            pictureShow.src = pol && pol.photo && pol.photo.url && 'http://0.0.0.0:3000/' + pol.photo.url || '/assets/img/placeholder.png';
             pictureShow.style = "height: 150px; margin-top: 20px;";
 
             inputDescriptionTitle = content.appendChild(document.createElement('span'));
-            inputDescriptionTitle.innerHTML = 'Annecdotes :';
+            inputDescriptionTitle.innerHTML = 'Annecdotes';
             inputDescriptionTitle.style = 'display: block; text-align: left; margin: 10px auto 0 auto; padding: 5px 15px 0 0; font-weight: 600; opacity: 0.8;';
 
             inputDescription = content.appendChild(document.createElement('input'));
             inputDescription.type = 'text';
-            inputDescription.value = pol && pol.name || '';
+            inputDescription.value = pol && pol.name || "Je n'ai pas écrit d'anecdotes pour le moment";
             inputDescription.placeholder = 'Description';
             inputDescription.style = 'display: block; margin: 10px auto; padding: 5px 15px; width: 100%;';
   
@@ -332,18 +333,19 @@ export class ItemDetailPage {
             // SUBMIT
             google.maps.event.addDomListener(submitBtn, 'click', () => {
               this.savePathDetails({path: pol, name: inputDescription.value, picture: pictureBtn.value});
+              infowindow.close();
             });
           } else {
             pictureShow = content.appendChild(document.createElement('img'));
-            pictureShow.src = pol && pol.photo && pol.photo.url && 'http://0.0.0.0:3000/' + pol.photo.url || '';
+            pictureShow.src = pol && pol.photo && pol.photo.url && 'http://0.0.0.0:3000/' + pol.photo.url || '/assets/img/placeholder.png';
             pictureShow.style = "height: 150px; margin-top: 20px;";
             
             inputDescriptionTitle = content.appendChild(document.createElement('span'));
-            inputDescriptionTitle.innerHTML = 'Annecdotes :';
+            inputDescriptionTitle.innerHTML = 'Annecdotes';
             inputDescriptionTitle.style = 'display: block; text-align: left; margin: 10px auto 0 auto; padding: 5px 15px 0 0; font-weight: 600; opacity: 0.8;';
 
             inputDescription = content.appendChild(document.createElement('span'));
-            inputDescription.innerHTML = pol && pol.name || '';
+            inputDescription.innerHTML = pol && pol.name || "Je n'ai pas écrit d'anecdotes pour le moment";
             inputDescription.style = 'display: block; text-align: left; margin: 10px auto 10px auto; padding: 0 5px 15px 0;';
 
             closeBtn = content.appendChild(document.createElement('input'));
@@ -453,6 +455,8 @@ export class ItemDetailPage {
         .updatePath(this.item.id, pathDetails.id, pathDetailsData)
         .subscribe(newPath => {
           console.log('newPath', newPath);
+          this.refetch();
+          // this.initiateComponent();
         });
     }
   }

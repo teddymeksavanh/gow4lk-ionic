@@ -20,14 +20,14 @@
         <button class="list-button" style="background-color: white; padding-right: 0; width: 100%;" (click)="openItem(item)">
           <ion-item>
             <ion-avatar item-start>
-              <img [src]="item && item.user && item.user.picture && item.user.picture.url && 'http://0.0.0.0:3000/' + item.user.picture.url || '/assets/img/avatar-default.jpg'">
+              <img [src]="item && item.user && item.user.picture && item.user.picture.url && 'http://0.0.0.0:3000/' + item.user.picture.url || '/assets/img/placeholder.png'">
             </ion-avatar>
             <h2 *ngIf="item && item.user && item.user.name">{{item.user.name}}</h2>
             <p *ngIf="item && item.city">{{item.city}}</p>
             <p *ngIf="item && item.length" style="font-size: 11px;">{{item.length/1000}} km / {{item.length}} m <ion-icon name="walk" style="margin-left: 5px;"></ion-icon></p>
           </ion-item>
         
-          <img height="250" style="object-fit: cover;" [src]="item && item.gallery && item.gallery.url && 'http://0.0.0.0:3000/' + item.gallery.url || '/assets/img/advance-card-jp.jpg'" />
+          <img height="250" style="object-fit: cover;" [src]="item && item.gallery && item.gallery.url && 'http://0.0.0.0:3000/' + item.gallery.url || '/assets/img/placeholder.png'" />
         
           <ion-card-content>
             <p style="text-align: left;">
