@@ -13,6 +13,13 @@ import { CookieModule, CookieService } from 'ngx-cookie';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AgmCoreModule, LAZY_MAPS_API_CONFIG } from '@agm/core';
 
+import * as FusionCharts from 'fusioncharts';
+import * as Charts from 'fusioncharts/fusioncharts.charts';
+import * as FintTheme from 'fusioncharts/themes/fusioncharts.theme.fint';
+import { FusionChartsModule } from 'angular4-fusioncharts';
+
+FusionChartsModule.fcRoot(FusionCharts, Charts, FintTheme);
+
 // import { Items } from '../mocks/providers/items';
 import { HeadersService, Items, Settings, User, Api, Comments, Notes } from '../providers';
 import { MyApp } from './app.component';
@@ -81,6 +88,7 @@ export function provideSettings(storage: Storage) {
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
     CookieModule.forRoot(),
+    FusionChartsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

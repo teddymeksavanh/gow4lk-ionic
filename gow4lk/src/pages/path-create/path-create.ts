@@ -216,7 +216,7 @@ export class PathCreatePage {
       });
 
       // this.navCtrl.push('ItemCreatePage');
-      // this.viewCtrl.dismiss();
+      this.viewCtrl.dismiss();
       let addModal = this.modalCtrl.create('ItemCreatePage', { polylines: polylines });
       addModal.onDidDismiss(item => {
         console.log('item', item);

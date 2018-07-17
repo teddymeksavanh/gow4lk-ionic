@@ -16,8 +16,8 @@
 
   <ion-list>
       <ion-card style="margin: 0; width: 100%" class="list-ion-card" *ngFor="let item of currentItems">
-
-        <button class="list-button" style="background-color: white; padding-right: 0; width: 100%;" (click)="openItem(item)">
+        <!-- <button class="list-button" (click)="openU()" style="z-index: 1000;"></button> -->
+        <button class="list-button" (click)="openUser(item && item.user, item.created_by)" style="z-index: 1000;">
           <ion-item>
             <ion-avatar item-start>
               <img [src]="item && item.user && item.user.picture && item.user.picture.url && 'http://0.0.0.0:3000/' + item.user.picture.url || '/assets/img/placeholder.png'">
@@ -26,7 +26,9 @@
             <p *ngIf="item && item.city">{{item.city}}</p>
             <p *ngIf="item && item.length" style="font-size: 11px;">{{item.length/1000}} km / {{item.length}} m <ion-icon name="walk" style="margin-left: 5px;"></ion-icon></p>
           </ion-item>
+        </button>
         
+        <button class="list-button" style="background-color: white; padding-right: 0; width: 100%;" (click)="openItem(item)">
           <ion-slides pager style="height: 350px;">
             <ion-slide>
               <img style="height: 350px; width: 100%; object-fit: cover;" [src]="item && item.gallery && item.gallery.url && 'http://0.0.0.0:3000/' + item.gallery.url || '/assets/img/placeholder.png'" />

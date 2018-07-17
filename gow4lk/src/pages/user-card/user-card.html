@@ -1,0 +1,108 @@
+
+<ion-header>
+    <ion-navbar>
+      <ion-title>Explorateur</ion-title>
+    </ion-navbar>
+  </ion-header>
+  
+  <ion-content>
+  
+    <ion-card>
+      <img style="height: 350px; width: 100%; object-fit: cover;" [src]="user && user.picture && user.picture.url && 'http://0.0.0.0:3000/' + user.picture.url || '/assets/img/placeholder.png'">
+  
+      <ion-card-content >
+
+          <ion-card-title>
+            {{ user && user.name ? user.name : 'John' }}
+          </ion-card-title>
+          <p *ngIf="user && user.created_at" style="margin-bottom: 25px;">Membre depuis le {{user.created_at | date:'short'}}</p>
+
+          <ion-list class="accordion-list" *ngIf="accordions && user && user.strolls && user.strolls.length > 0">
+            <!-- First Level -->
+            <ion-list-header *ngFor="let item of accordions.items; let i = index" no-lines no-padding style="margin: 0;">
+              <!-- Toggle Button -->
+              <button ion-item (click)="toggleSection(i)" detail-none [ngClass]="{'section-active': item.open, 'section': !item.open}">
+                <ion-icon item-left name="arrow-forward" *ngIf="!item.open"></ion-icon>
+                <ion-icon item-left name="arrow-down" *ngIf="item.open"></ion-icon>
+                  {{ item.name }}
+              </button>
+          
+              <ion-list *ngIf="item.children && item.open" no-lines>
+                <!-- Second Level -->
+                <ion-list-header *ngFor="let child of item.children; let j = index" no-padding style="margin: 0;">
+                  <!-- Toggle Button -->
+                  <button ion-item (click)="toggleItem(i, j)" *ngIf="child.children" class="child" detail-none>
+                    <ion-icon item-left name="add" *ngIf="!child.open"></ion-icon>
+                    <ion-icon item-left name="close" *ngIf="child.open"></ion-icon>
+                    {{ child.name }}
+                  </button>
+          
+                  <!-- Direct Add Button as Fallback -->
+                  <ion-item *ngIf="!child.children" ion-item detail-none class="child-item" text-wrap>
+                    <ion-avatar item-start *ngIf="child && child.gallery && child.gallery.url">
+                        <img height="250" style="object-fit: cover;" [src]="child && child.gallery && child.gallery.url && 'http://0.0.0.0:3000/' + child.gallery.url || '/assets/img/advance-card-jp.jpg'" />
+                    </ion-avatar>
+                    <h2 *ngIf="child && child.name">{{ child.name }}</h2>
+                    <h2 *ngIf="child && child.description">{{ child.description }}</h2>
+                    <p *ngIf="child && child.city" text-lowercase>
+                      {{ child.city }}
+                      <button ion-button (click)="openItem(child)" style="position: absolute; right: 25px; top: 0; bottom: 0; margin: auto;">
+                        <ion-icon name="flash"></ion-icon>
+                      </button>
+                    </p>
+                    <!-- <button ion-button outline item-end (click)="buyItem(child)">{{ child.price }}</button> -->
+                  </ion-item>
+          
+                  <ion-list *ngIf="child.children && child.open">
+                    <!-- Third Level -->
+                    <ion-item *ngFor="let item of child.children; let k = index" detail-none class="child-item" text-wrap>
+                      <h2 *ngIf="child && child.name">{{ child.name }}</h2>
+                      <h2 *ngIf="child && child.description">{{ child.description }}</h2>
+                      <p *ngIf="child && child.city" text-lowercase>
+                        {{ child.city }}
+                        <button ion-button (click)="openItem(child)" style="position: absolute; right: 25px; top: 0; bottom: 0; margin: auto;">
+                          <ion-icon name="flash"></ion-icon>
+                        </button>
+                      </p>
+                      <!-- Direct Add Button -->
+                      <!-- <button ion-button outline item-end (click)="buyItem(item)">{{ item.price }}</button> -->
+                    </ion-item>
+                  </ion-list>
+          
+                </ion-list-header>
+              </ion-list>
+              
+            </ion-list-header>
+          </ion-list>
+        <!-- <p> -->
+          <!-- Björk first came to prominence as one of the lead vocalists of the avant pop Icelandic sextet the Sugarcubes, but when... -->
+        <!-- </p> -->
+      </ion-card-content>
+  
+      <ion-item class="ion-item-fusion" style="display: flex; align-items: center; justify-content: center;">
+        <!-- <ion-icon name='musical-notes' item-start style="color: #d03e84"></ion-icon> -->
+          <!-- Balades -->
+        <fusioncharts
+            [width]="width"
+            [height]="height"
+            [type]="type"
+            [dataFormat]="dataFormat"
+            [dataSource]="dataSource">
+        </fusioncharts>
+      </ion-item>
+
+      <!-- <ng-container *ngIf="user && user.strolls && user.strolls.length > 0">
+        <ion-list>
+          <button ion-item (click)="openItem(item)" *ngFor="let item of user.strolls">
+            <ion-avatar item-start>
+                <img height="250" style="object-fit: cover;" [src]="item && item.gallery && item.gallery.url && 'http://0.0.0.0:3000/' + item.gallery.url || '/assets/img/advance-card-jp.jpg'" />
+            </ion-avatar>
+            <h2>{{item.name}}</h2>
+            <p>{{item.about}}</p>
+            <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note>
+          </button>
+        </ion-list>
+      </ng-container> -->
+    </ion-card>
+  
+  </ion-content>

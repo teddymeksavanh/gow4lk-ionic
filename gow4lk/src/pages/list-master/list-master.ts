@@ -6,7 +6,7 @@ declare const google: any;
 import { Item } from '../../models/item';
 import { Items, User, Comments, Notes } from '../../providers';
 import { Observable } from 'rxjs';
-import { removeSummaryDuplicates } from '../../../node_modules/@angular/compiler';
+import { removeSummaryDuplicates } from '@angular/compiler';
 
 @IonicPage()
 @Component({
@@ -227,6 +227,20 @@ export class ListMasterPage {
       return 'primary';
     } else {
       return 'dark';
+    }
+  }
+
+  openU() {
+    console.log('u');
+  }
+
+  openUser(user: any, userId: any) {
+    if(user && userId) {
+      let addModal = this.modalCtrl.create('UserCardPage', {user: user, userId: userId});
+      addModal.onDidDismiss(res => {
+        // this.refetch();
+      })
+      addModal.present();
     }
   }
 

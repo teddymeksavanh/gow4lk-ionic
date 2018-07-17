@@ -9,7 +9,6 @@ declare const google: any;
 import { Items, User, Comments, Notes } from '../../providers';
 
 import { LatLngLiteral, MapsAPILoader } from '@agm/core';
-import { removeSummaryDuplicates } from '../../../node_modules/@angular/compiler';
 export const Tab1Root = 'ListMasterPage';
 // import { each, chunk, has } from 'lodash';
 
