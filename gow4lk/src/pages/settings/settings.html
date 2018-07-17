@@ -16,6 +16,9 @@
 
 <ion-content>
   <ion-list *ngIf="page == 'main'">
+    <button *ngIf="user && user.admin" ion-item class="ion-btn-param" (click)="openAdmin()">
+      Admin
+    </button>
     <button ion-item class="ion-btn-param" [navPush]="subSettings" [navParams]="profileSettings">
       Editer son profil
     </button>

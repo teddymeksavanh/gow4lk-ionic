@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicPage, ModalController, NavController, NavParams, ToastController } from 'ionic-angular';
+import { IonicPage, ModalController, NavController, NavParams, ToastController, Slides } from 'ionic-angular';
 
 declare const google: any;
 import { Item } from '../../models/item';
@@ -33,6 +33,7 @@ import { removeSummaryDuplicates } from '@angular/compiler';
   `]
 })
 export class ListMasterPage {
+  @ViewChild(Slides) slides: Slides;
   currentItems: any[] = [];
   currentStrolls: any[] = [];
   items: any[] = [];
@@ -252,5 +253,19 @@ export class ListMasterPage {
       item: item,
       user: this.user || null
     });
+  }
+  
+  next() {
+    console.log('next');
+    this.slides.lockSwipes(false);
+    this.slides.slideNext();
+    this.slides.lockSwipes(true);
+  }
+
+  prev() {
+    console.log('previous');
+    this.slides.lockSwipes(false);
+    this.slides.slidePrev();
+    this.slides.lockSwipes(true);
   }
 }

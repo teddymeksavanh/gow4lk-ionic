@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Camera } from '@ionic-native/camera';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
 import { User } from '../../providers/user/user';
 
 import { Settings, Api } from '../../providers';
@@ -37,10 +37,16 @@ export class SettingsPage {
     pageTitleKey: 'SETTINGS_PAGE_PROFILE'
   };
 
+  adminSettings = {
+    page: 'admin',
+    pageTitleKey: 'Admin'
+  };
+
   page: string = 'main';
   pageTitleKey: string = 'SETTINGS_TITLE';
   pageTitle: string;
 
+  // adminPage: any = AdminPage;
   subSettings: any = SettingsPage;
 
   constructor(public navCtrl: NavController,
@@ -51,7 +57,8 @@ export class SettingsPage {
     public camera: Camera,
     public translate: TranslateService,
     public userService: User,
-    public apiService: Api
+    public apiService: Api,
+    public modalCtrl: ModalController
   ) {
   }
 
@@ -66,6 +73,17 @@ export class SettingsPage {
     //   .subscribe(picture => {
     //     console.log('picture', picture);
     //   });
+  }
+
+  openAdmin() {
+    console.log('this', this);
+    if(this.user && this.user.admin) {
+      let addModal = this.modalCtrl.create('AdminPage', {user: this.user});
+      addModal.onDidDismiss(res => {
+        // this.refetch();
+      })
+      addModal.present();
+    }
   }
 
   fetchUser() {
