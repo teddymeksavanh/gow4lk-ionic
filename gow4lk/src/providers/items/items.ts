@@ -44,6 +44,10 @@ export class Items {
     return this.api.delete(`strolls/${strollId}/pathsdelete`);
   }
 
+  updatePath(strollId: number, pathId: number, data: any) {
+    return this.api.put(`strolls/${strollId}/paths/${pathId}`, data);
+  }
+
   deleteStroll(strollId: number) {
     return this.api.delete(`strolls/${strollId}`);
   }

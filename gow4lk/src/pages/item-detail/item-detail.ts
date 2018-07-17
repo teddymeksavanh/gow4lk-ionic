@@ -29,6 +29,8 @@ export class ItemDetailPage {
   zoom: number = 17;
   paths: LatLngLiteral[];
 
+  pathDetailsForm: FormGroup;
+
   selectedShape: any;
   @Input() withOutsideActionButtons = true;
   @Input() withInsideActionButtons = false;
@@ -90,6 +92,16 @@ export class ItemDetailPage {
     this.commentForm.valueChanges.subscribe((v) => {
       this.isReadyToSave = this.commentForm.valid;
     });
+
+    this.pathDetailsForm = formBuilder.group({
+      name: [''],
+      photo: ['']
+    });
+  
+    // Watch the form for changes, and
+    this.pathDetailsForm.valueChanges.subscribe((v) => {
+      this.isReadyToSave = this.pathDetailsForm.valid;
+    });
   }
 
   ionViewWillEnter() {
@@ -103,6 +115,16 @@ export class ItemDetailPage {
     // Watch the form for changes, and
     this.commentForm.valueChanges.subscribe((v) => {
       this.isReadyToSave = this.commentForm.valid;
+    });
+
+    this.pathDetailsForm = this.formBuilder.group({
+      name: [''],
+      photo: ['']
+    });
+  
+    // Watch the form for changes, and
+    this.pathDetailsForm.valueChanges.subscribe((v) => {
+      this.isReadyToSave = this.pathDetailsForm.valid;
     });
 
     setTimeout(() => {
@@ -155,7 +177,6 @@ export class ItemDetailPage {
       toast.present();
     }
   }
-
 
   addNotes(item: any) {
     if(item && item.notes && item.notes.find(note => this.user && this.user.id && note && note.created_by  && note.created_by == this.user.id)) {
@@ -257,15 +278,106 @@ export class ItemDetailPage {
     });
     
     this.map.then(map => {
+
+      // SET PATHS STYLE
+
+      this.polylines.map(pol => {
+        if(pol && pol.latitude && pol.longitude) {
+
+          // CREATE DIV INSIDE INFO BULLES
+          let content = document.createElement('div');
+          // content.style = 'width: 250px; text-align: left;';
+          let closeBtn;
+          let inputDescription;
+          let submitBtn;
+          let pictureShow;
+          let pictureBtn;
+          let inputDescriptionTitle;
+
+          if(this.isAdmin()) {
+            pictureShow = content.appendChild(document.createElement('img'));
+            pictureShow.src = pol && pol.photo && pol.photo.url && 'http://0.0.0.0:3000/' + pol.photo.url || '';
+            pictureShow.style = "height: 150px; margin-top: 20px;";
+
+            inputDescriptionTitle = content.appendChild(document.createElement('span'));
+            inputDescriptionTitle.innerHTML = 'Annecdotes :';
+            inputDescriptionTitle.style = 'display: block; text-align: left; margin: 10px auto 0 auto; padding: 5px 15px 0 0; font-weight: 600; opacity: 0.8;';
+
+            inputDescription = content.appendChild(document.createElement('input'));
+            inputDescription.type = 'text';
+            inputDescription.value = pol && pol.name || '';
+            inputDescription.placeholder = 'Description';
+            inputDescription.style = 'display: block; margin: 10px auto; padding: 5px 15px; width: 100%;';
+  
+            pictureBtn = content.appendChild(document.createElement('input'));
+            pictureBtn.type = 'file';
+            pictureBtn.placeholder = 'Prendre une photo';
+            pictureBtn.style = 'display: block; margin: 10px auto; padding: 5px 15px;';
+  
+            submitBtn = content.appendChild(document.createElement('input'));
+            submitBtn.type = 'button';
+            submitBtn.value = 'Sauvegarder';
+            submitBtn.style = 'margin: 10px auto; padding: 5px 10px; background-color: #488aff; color: white; border: none; border-radius: 2px; float: right;';
+
+            closeBtn = content.appendChild(document.createElement('input'));
+            closeBtn.type = 'button';
+            closeBtn.value = 'Fermer';
+            closeBtn.style = 'margin: 10px auto; padding: 5px 10px; background-color: #f53d3d; color: white; border: none; border-radius: 2px; float: left;';
+
+            // SAUVEGARDER LES INFOS
+            google.maps.event.addDomListener(pictureBtn, 'change', $event => {
+              this.processWebImage($event);
+            });
+            
+            // SUBMIT
+            google.maps.event.addDomListener(submitBtn, 'click', () => {
+              this.savePathDetails({path: pol, name: inputDescription.value, picture: pictureBtn.value});
+            });
+          } else {
+            pictureShow = content.appendChild(document.createElement('img'));
+            pictureShow.src = pol && pol.photo && pol.photo.url && 'http://0.0.0.0:3000/' + pol.photo.url || '';
+            pictureShow.style = "height: 150px; margin-top: 20px;";
+            
+            inputDescriptionTitle = content.appendChild(document.createElement('span'));
+            inputDescriptionTitle.innerHTML = 'Annecdotes :';
+            inputDescriptionTitle.style = 'display: block; text-align: left; margin: 10px auto 0 auto; padding: 5px 15px 0 0; font-weight: 600; opacity: 0.8;';
+
+            inputDescription = content.appendChild(document.createElement('span'));
+            inputDescription.innerHTML = pol && pol.name || '';
+            inputDescription.style = 'display: block; text-align: left; margin: 10px auto 10px auto; padding: 0 5px 15px 0;';
+
+            closeBtn = content.appendChild(document.createElement('input'));
+            closeBtn.type = 'button';
+            closeBtn.value = 'Fermer';
+            closeBtn.style = 'margin: 10px auto; padding: 5px 10px; background-color: #f53d3d; color: white; border: none; border-radius: 2px;';
+          }
+
+          // SET INFO BULLES
+          var infowindow = new google.maps.InfoWindow();
+          infowindow.setContent(content);
+
+          // CLOSE INFO BULLES
+          google.maps.event.addDomListener(closeBtn,'click', () => {
+            infowindow.close();
+          });
+
+          // SET MARKERS
+          let marker = new google.maps.Marker({
+            position: {lat: pol.latitude, lng: pol.longitude},
+            title: 'ok',
+            map: map
+          });
+
+          marker.setMap(map);
+
+          marker.addListener('click', function() {
+            infowindow.open(map, marker);
+          });
+        }
+      });
+      // FIN PATH STYLES
+
       this.poly.setMap(map);
-      // WE NEED TO SET MARKER BY DEFAULT
-      // map.addListener('overlaycomplete', event => {
-      //   var marker = new google.maps.Marker({
-      //     position: event.latLng,
-      //     title: '#' + path.getLength(),
-      //     map: map
-      //   });
-      // });
 
       let input = document.getElementById('pac-input');
       let searchBox = new google.maps.places.SearchBox(input);
@@ -300,20 +412,49 @@ export class ItemDetailPage {
 
       if(this.isAdmin()) {
         map.addListener('click', event => {
+          let marker = new google.maps.Marker({
+            position: event.latLng,
+            title: 'ok',
+            map: map
+          });
           this.showSaveButton = true;
-          console.log('clicked', this.showSaveButton);
           this.addLatLng(event);
         });
 
-        map.addListener('dragend', event => {
-            console.log('draggued');
-        });
+        // map.addListener('dragend', event => {
+        //     console.log('draggued');
+        // });
       } else {
         map.addListener('onLoad', event => {
           this.addLatLng(event);
         });
       }
     });
+  }
+
+  savePathDetails(pathDetails: any) {
+    if(pathDetails && pathDetails.name) this.pathDetailsForm.get('name').setValue(pathDetails.name);
+    if(pathDetails && pathDetails.path && this.pathDetailsForm.value) this.updatePathDetails(pathDetails.path, this.pathDetailsForm.value);
+  }
+
+  processWebImage(event) {
+    let reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      let imageData = (readerEvent.target as any).result;
+      this.pathDetailsForm.patchValue({ 'photo': imageData });
+    };
+
+    reader.readAsDataURL(event.target.files[0]);
+  }
+
+  updatePathDetails(pathDetails: any, pathDetailsData: any) {
+    if(this.item && this.item.id && pathDetails && pathDetails.id) {
+      this.items
+        .updatePath(this.item.id, pathDetails.id, pathDetailsData)
+        .subscribe(newPath => {
+          console.log('newPath', newPath);
+        });
+    }
   }
 
   editStroll() {
