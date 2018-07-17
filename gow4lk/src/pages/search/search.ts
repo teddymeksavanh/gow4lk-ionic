@@ -28,6 +28,7 @@ export class SearchPage {
         this.userService.queryAll()
       )
       .subscribe(result => {
+        console.log('result', result);
         this.result = result[0];
         this.result = this.result.concat(result[1]);
       });
@@ -40,6 +41,8 @@ export class SearchPage {
         this.userService.queryAll()
       )
       .subscribe(result => {
+        console.log('result', result);
+
         this.result = result[0];
         this.result = this.result.concat(result[1]);
       });
