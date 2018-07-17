@@ -216,7 +216,7 @@ export class PathCreatePage {
       });
 
       // this.navCtrl.push('ItemCreatePage');
-      this.viewCtrl.dismiss();
+      // this.viewCtrl.dismiss();
       let addModal = this.modalCtrl.create('ItemCreatePage', { polylines: polylines });
       addModal.onDidDismiss(item => {
         console.log('item', item);
@@ -236,12 +236,12 @@ export class PathCreatePage {
                         }
                       );
                   });
-                  this.viewCtrl.dismiss();
-                  // this.navCtrl.pop();
-                  this.navCtrl.push('ListMasterPage', {
-                    item: res,
-                    user: this.user || null
-                  });
+                  // this.viewCtrl.dismiss();
+                  this.navCtrl.pop();
+                  // this.navCtrl.push('ListMasterPage', {
+                  //   item: res,
+                  //   user: this.user || null
+                  // });
                 }
               });
           // this.items.add(item);

@@ -121,9 +121,7 @@ export class ListMasterPage {
     let addModal = this.modalCtrl.create('PathCreatePage');
     // let addModal = this.modalCtrl.create('ItemCreatePage');
     addModal.onDidDismiss(item => {
-      if (item) {
-        console.log('enter noob');
-      }
+      this.refetch();
     })
     addModal.present();
   }
