@@ -146,13 +146,6 @@ export class ItemDetailPage {
             console.log('result', result);
             this.user = result && result[0];
             this.item = result && result[1];
-            if(this.item && this.item.created_by) {
-              this.userService
-                .getUser(this.item.created_by)
-                .subscribe(user => {
-                  this.item['user'] = user;
-                });
-            }
           }
         )
     }
@@ -244,6 +237,29 @@ export class ItemDetailPage {
     }
   }
 
+  initiateComponent2(item: any) {
+    if(this.isAdmin()) {
+      this.polylineEditable = true;
+      this.polylineDraggable = true;
+      this.showDeleteButton = true;
+    }
+    if(item.id && item.paths && item.paths.length && item.paths.length > 0) {
+      
+      let formatedPath = [];
+
+      item.paths.map(p => {
+        p['lat'] = p && p.latitude || null;
+        p['lng'] = p && p.longitude || null;
+        formatedPath.push(p);
+        this.polylines = formatedPath;
+        this.lat = formatedPath[0] && formatedPath[0].latitude || null;
+        this.lng = formatedPath[0] && formatedPath[0].longitude || null;
+      });
+
+      this.initiateMap();
+    }
+  }
+
   initiateMap() {
     this.setCommonPolylineConfig();
     this.map = this.initMap();
@@ -265,8 +281,8 @@ export class ItemDetailPage {
       strokeColor: 'red',
       strokeOpacity: 1,
       strokeWeight: 5,
-      editable: this.polylineEditable,
-      draggable: this.polylineDraggable,
+      editable: false,
+      draggable: false,
       geodesic: true,
       icons: [
        {
@@ -450,21 +466,38 @@ export class ItemDetailPage {
 
   updatePathDetails(pathDetails: any, pathDetailsData: any) {
     if(this.item && this.item.id && pathDetails && pathDetails.id) {
-      this.items
-        .updatePath(this.item.id, pathDetails.id, pathDetailsData)
-        .subscribe(newPath => {
-          console.log('newPath', newPath);
-          this.refetch();
-          // this.initiateComponent();
+      Observable
+        .forkJoin(
+          this.items.updatePath(this.item.id, pathDetails.id, pathDetailsData),
+          this.items.getStroll(this.item.id)
+        )
+        .subscribe(result => {
+          this.item = result && result[1];
+          if(this.item) {
+            this.viewCtrl.dismiss();
+            // this.navCtrl.push(ItemDetailPage, {item: this.item, user: this.user});
+          }
         });
     }
   }
 
   editStroll() {
-    let addModal = this.modalCtrl.create('ItemCreatePage', {item: this.item});
+    let addModal = this.modalCtrl.create('ItemCreatePage', {item: this.item, polylines: this.polylines});
       addModal.onDidDismiss(item => {
-        if (item && this.item && this.item.id) {
-          this.updateStroll(item, this.item.id);
+        // console.log('item', item, this);
+        let newItem = {
+          name: item && item.name,
+          description: item && item.description,
+          gallery: item && item.gallery
+        };
+        if (newItem && this.item && this.item.id) {
+          this.items
+            .updateStroll(newItem, this.item.id)
+            .subscribe(res => {
+              this.refetch();
+              // if (res) this.item = res;
+              // this.viewCtrl.dismiss(res);
+            });
         }
       })
       addModal.present();
@@ -490,8 +523,8 @@ export class ItemDetailPage {
       );
 
       if(distance) {
-        distance = parseFloat(distance);
-        distance = distance.toFixed(3);
+        // distance = parseFloat(distance);
+        // distance = distance.toFixed(3);
         stroll['length'] = distance;
       }
     }
@@ -560,8 +593,8 @@ export class ItemDetailPage {
       strokeColor: 'red',
       strokeOpacity: 1,
       strokeWeight: 5,
-      editable: this.polylineEditable,
-      draggable: this.polylineDraggable,
+      editable: false,
+      draggable: false,
       geodesic: true,
     }
   }
@@ -606,7 +639,6 @@ export class ItemDetailPage {
   }
 
   saveNewPath(polylines: any) {
-    console.log('3');
       if(polylines && polylines.length > 0) {
         polylines.map(po => {
           this.items
@@ -617,6 +649,17 @@ export class ItemDetailPage {
               }
             );
         });
+        let toast = this.toastCtrl.create({
+          message: 'Les chemins ont été mis à jours.',
+          duration: 3000,
+          position: 'top'
+        });
+      
+        toast.onDidDismiss(() => {
+          console.log('Dismissed toast');
+        });
+      
+        toast.present();
       }
   }
 
@@ -634,10 +677,10 @@ export class ItemDetailPage {
         {
           text: 'Confirmer',
           handler: () => {
-            this.polylines = null;
-            this.paths = null;
-            this.poly.setMap(null);
-            this.initiateMap();
+            // this.polylines = null;
+            // this.paths = null;
+            // this.poly.setMap(null);
+            // this.initiateMap();
 
             this.items
               .deleteStroll(this.item.id)

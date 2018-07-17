@@ -37,7 +37,7 @@ export class LoginPage {
     this.user.login(this.account).subscribe((resp) => {
       this.navCtrl.push(MainPage);
     }, (err) => {
-      this.navCtrl.push(MainPage);
+      // this.navCtrl.push(LoginPage);
       // Unable to log in
       let toast = this.toastCtrl.create({
         message: this.loginErrorString,

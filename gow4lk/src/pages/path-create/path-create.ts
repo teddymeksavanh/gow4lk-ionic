@@ -115,8 +115,8 @@ export class PathCreatePage {
       strokeColor: 'red',
       strokeOpacity: 1,
       strokeWeight: 5,
-      editable: this.polylineEditable,
-      draggable: this.polylineDraggable,
+      editable: false,
+      draggable: false,
       geodesic: true,
       icons: [
        {

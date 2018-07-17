@@ -39,7 +39,7 @@ export class SignupPage {
       this.navCtrl.push(MainPage);
     }, (err) => {
 
-      this.navCtrl.push(MainPage);
+      // this.navCtrl.push(SignupPage);
 
       // Unable to sign up
       let toast = this.toastCtrl.create({
