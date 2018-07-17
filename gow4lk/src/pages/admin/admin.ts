@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 
 import { Item } from '../../models/item';
@@ -20,7 +20,7 @@ export class AdminPage {
   usersResult: any;
 
   user: any;
-  constructor(public toastCtrl: ToastController, public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User, public commentsService: Comments, private alertCtrl: AlertController) {
+  constructor(public cd: ChangeDetectorRef, public toastCtrl: ToastController, public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User, public commentsService: Comments, private alertCtrl: AlertController) {
     this.userService
     .getMe()
     .subscribe((res: any) => {
@@ -30,7 +30,7 @@ export class AdminPage {
     Observable
       .forkJoin(
         this.items.queryAll(),
-        this.userService.queryAll()
+        this.userService.queryAllAdmin()
       )
       .subscribe(result => {
         this.result = result[0];
@@ -39,14 +39,19 @@ export class AdminPage {
   }
 
   ionViewWillEnter() {
+    this.fetchDatas();
+  }
+
+  fetchDatas() {
     Observable
       .forkJoin(
         this.items.queryAll(),
-        this.userService.queryAll()
+        this.userService.queryAllAdmin()
       )
       .subscribe(result => {
         this.result = result[0];
         this.result = this.result.concat(result[1]);
+        this.cd.markForCheck();
       });
   }
 
@@ -74,6 +79,7 @@ export class AdminPage {
   }
 
   desactivateItem(opener: any) {
+    console.log('opener', opener);
     let datas = {};
     let openerKeys = Object.keys(opener);
     let isUser = openerKeys.find(k => k === 'admin');
@@ -100,10 +106,31 @@ export class AdminPage {
           handler: () => {
             
             if(isUser) {
-              if(datas && datas['user'] && datas['user'].id) {
+              if(datas && datas['user'] && datas['user'].id && datas['user'].is_active) {
+                this.userService
+                  .reactivateUser(datas['user'].id)
+                  .subscribe(user => {
+                    let index = this.currentItems.findIndex(c => c && c.id && c.name && c.id == user.id && c.name == user.name);
+                    if(index) {
+                      this.currentItems[index] = user;
+                    }
+                    const toast = this.toastCtrl.create({
+                      position: 'top',
+                      message: "L'utilisateur a été désactivé.",
+                      duration: 3000
+                    });
+    
+                    toast.present();
+                  });
+              } else {
                 this.userService
                     .deleteUser(datas['user'].id)
                     .subscribe(user => {
+                      let index = this.currentItems.findIndex(c => c && c.id && c.name && c.id == user.id && c.name == user.name);
+                      if(index) {
+                        this.currentItems[index] = user;
+                      }
+
                       const toast = this.toastCtrl.create({
                         position: 'top',
                         message: "L'utilisateur a été désactivé.",
@@ -118,6 +145,15 @@ export class AdminPage {
                 this.items
                   .deleteStroll(datas['item'].id)
                   .subscribe(a => {
+                    let index = this.currentItems.findIndex(c => c.id && c.id == datas['item'].id);
+                    if(index !== -1) {
+                      let ke = Object.keys(datas['item']);
+                      let isStroll = ke.indexOf('city') !== -1;
+                      if(isStroll) {
+                        this.currentItems = this.currentItems.filter(cI => cI && cI.id !== datas['item'].id);
+                      }
+                    }
+
                     const toast = this.toastCtrl.create({
                       position: 'top',
                       message: 'La balade a été supprimée.',

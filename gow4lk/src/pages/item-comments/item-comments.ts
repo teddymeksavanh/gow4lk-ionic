@@ -5,7 +5,7 @@ import { Items } from '../../providers/items/items';
 import { Comments } from '../../providers/comments/comments';
 import { User } from '../../providers/user/user';
 import { Api } from '../../providers/api/api';
-import { NavParams, IonicPage, NavController, ViewController } from 'ionic-angular';
+import { NavParams, IonicPage, NavController, ViewController, ToastController, AlertController } from 'ionic-angular';
 import { IfStmt } from '../../../node_modules/@angular/compiler';
 
 @IonicPage()
@@ -31,24 +31,13 @@ export class ItemCommentsPage {
       public apiService: Api,
       public commentsService:  Comments,
       public itemService: Items,
-      public userService: User
+      public userService: User,
+      public alertCtrl: AlertController,
+      public toastCtrl: ToastController
   ) {
-    console.log('navParams', navParams);
     this.comments = navParams.get('comments') || [];
     this.user = navParams.get('user') || undefined;
     this.item = navParams.get('item') || undefined;
-
-    if(this.comments && this.comments.length > 0) {
-      this.comments.map(com => {
-        if(com && com.created_by) {
-          this.userService
-            .getUser(com.created_by)
-            .subscribe(user => {
-              com['user'] = user;
-            });
-        }
-      });
-    }
 
     this.commentForm = formBuilder.group({
       description: [''],
@@ -63,18 +52,6 @@ export class ItemCommentsPage {
 
   ionViewWillEnter() {
 
-    if(this.comments && this.comments.length > 0) {
-      this.comments.map(com => {
-        if(com && com.created_by) {
-          this.userService
-            .getUser(com.created_by)
-            .subscribe(user => {
-              com['user'] = user;
-            });
-        }
-      });
-    }
-
     this.commentForm = this.formBuilder.group({
       description: [''],
       created_by: [this.user && this.user.id || '']
@@ -88,11 +65,36 @@ export class ItemCommentsPage {
 
   deleteComments(comment: any) {
     if(comment && comment.id && this.item && this.item.id) {
-      this.commentsService
-        .deleteComment(this.item.id, comment.id)
-        .subscribe(erztery => {
-          this.comments = this.comments.filter(com => comment.id !== com.id);
-        });
+      const confirm = this.alertCtrl.create({
+        title: 'Supprimer?',
+        message: 'Attention, vous allez supprimer votre commentaire !',
+        buttons: [
+          {
+            text: 'Annuler',
+            handler: () => {
+              console.log('Disagree clicked');
+            }
+          },
+          {
+            text: 'Confirmer',
+            handler: () => {
+              this.commentsService
+                .deleteComment(this.item.id, comment.id)
+                .subscribe(erztery => {
+                  this.comments = this.comments.filter(com => comment.id !== com.id);
+                  const toast = this.toastCtrl.create({
+                    position: 'top',
+                    message: "Le commentaire a été supprimé.",
+                    duration: 3000
+                  });
+  
+                  toast.present();
+                });             
+            }
+          }
+        ]
+      });
+      confirm.present();
     }
   }
 
@@ -104,7 +106,14 @@ export class ItemCommentsPage {
         .createComment(this.commentForm.value, item.id)
         .subscribe(com => {
           this.commentForm.get('description').setValue(null);
-          com['user'] = this.user || null;
+          // com['user'] = this.user || null;
+          const toast = this.toastCtrl.create({
+            position: 'top',
+            message: "Le commentaire a été ajouté.",
+            duration: 3000
+          });
+
+          toast.present();
           this.comments.push(com);
         });
     }

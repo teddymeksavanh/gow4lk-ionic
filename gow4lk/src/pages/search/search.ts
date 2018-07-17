@@ -54,7 +54,6 @@ export class SearchPage {
       this.currentItems = [];
       return;
     }
-    console.log('raeza', this.result);
     
     if(this.result && val) {
       this.currentItems = this.result.filter(r => {

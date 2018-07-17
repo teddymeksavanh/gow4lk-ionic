@@ -20,8 +20,8 @@
       <h2>{{item.name}}</h2>
       <p>{{item.city}}</p>
       <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note>
-      <button ion-button color="danger" (click)="desactivateItem(item)" style="margin-top: 15px; left: right; margin-right: 5px;">
-        Désactiver
+      <button ion-button color="{{ item && item.is_active ? 'secondary' : 'danger' }}" (click)="desactivateItem(item)" style="margin-top: 15px; left: right; margin-right: 5px;">
+        {{ item && item.is_active ? 'Réactiver' : 'Désactiver' }}
       </button>
       <button ion-button (click)="openItem(item)" style="margin-top: 15px; float: left; margin-right: 5px;">
         Voir

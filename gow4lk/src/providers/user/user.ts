@@ -143,9 +143,19 @@ export class User {
     return this.api.get(`usersall`);
   }
 
+  queryAllAdmin() {
+    return this.api.get(`allsforce`);
+  }
+
   deleteUser(userId) {
     let params = {};
     params['is_active'] = true;
+    return this.api.put(`users/${userId}`, params);
+  }
+
+  reactivateUser(userId) {
+    let params = {};
+    params['is_active'] = false;
     return this.api.put(`users/${userId}`, params);
   }
 

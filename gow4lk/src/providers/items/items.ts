@@ -16,6 +16,10 @@ export class Items {
     return this.api.get('alls', params);
   }
 
+  // queryAllAdmin(params?: any) {
+  //   return this.api.get('allsforce', params);
+  // }
+
   create(item: Item) {
     return this.api.post('strolls', item);
   }

@@ -72,16 +72,7 @@ export class ListMasterPage {
       .subscribe(
         result => {
           this.user = result && result[0];
-          this.currentItems = result && result[1];
-          this.currentItems.map(item => {
-            if(item && item.created_by) {
-              this.userService
-                .getUser(item.created_by)
-                .subscribe(user => {
-                  item['user'] = user;
-                });
-            }
-          });
+          this.currentItems = result && result[1] && result[1].filter(r1 => r1 && r1.user && !r1.user.is_active);
         }
       )
 
@@ -121,52 +112,20 @@ export class ListMasterPage {
       .subscribe(
         result => {
           this.user = result && result[0];
-          this.currentItems = result && result[1];
-          this.currentItems.map(item => {
-            if(item && item.created_by) {
-              this.userService
-                .getUser(item.created_by)
-                .subscribe(user => {
-                  item['user'] = user;
-                });
-            }
-          });
-          console.log('this', this);
+          this.currentItems = result && result[1] && result[1].filter(r1 => r1 && r1.user && !r1.user.is_active);
         }
       )
   }
 
-  /**
-   * Prompt the user to add a new item. This shows our ItemCreatePage in a
-   * modal and then adds the new item to our data source if the user created one.
-   */
   addItem() {
     let addModal = this.modalCtrl.create('PathCreatePage');
     // let addModal = this.modalCtrl.create('ItemCreatePage');
     addModal.onDidDismiss(item => {
       if (item) {
         console.log('enter noob');
-        // this.itemService
-        //     .create(item)
-        //     .subscribe(res => {
-        //       if (res) this.items.push(res);
-        //       console.log('subscribed', res);
-        //     });
-        // this.items.add(item);
       }
     })
     addModal.present();
-  }
-
-  /**
-   * Delete an item from the list of items.
-   */
-  deleteItem(item) {
-    // this.items.delete(item);
-  }
-
-  updateList(ev) {
-    console.log('ev', ev);
   }
 
   publish(item: any) {
@@ -192,11 +151,11 @@ export class ListMasterPage {
   checkComments(item: any) {
     console.log('item', item);
     if(item && item.id && item.comments && item.comments.length > 0) {
-          let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: item.comments, user: this.user || null});
-          addModal.onDidDismiss(item => {
-            this.refetch();
-          })
-          addModal.present();
+      let addModal = this.modalCtrl.create('ItemCommentsPage', {item: item, comments: item.comments, user: this.user || null});
+      addModal.onDidDismiss(item => {
+        this.refetch();
+      })
+      addModal.present();
     }
   }
 

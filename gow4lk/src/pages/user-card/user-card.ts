@@ -46,7 +46,7 @@ export class UserCardPage {
     this.user = this.navParams.get('user') || undefined;
     this.userId = this.navParams.get('userId') || undefined;
 
-    if(!this.user && this.userId) {
+    if(this.userId) {
       this.userService
         .getUser(this.userId)
         .subscribe(user => {
@@ -103,61 +103,7 @@ export class UserCardPage {
     this.user = this.navParams.get('user') || undefined;
     this.userId = this.navParams.get('userId') || undefined;
 
-    if(!this.user && this.userId) this.fetchUser(this.userId);
-
-    if(this.user) {
-
-      if(this.user && this.user.comments && this.user.comments.length && this.user.comments.length > 3) {
-        this.smallComments = this.user.comments.slice(this.user.comments.length-2);
-      } else {
-        this.smallComments = this.user.comments;
-      }
-      
-      this.dataSource = {
-        "chart": {
-            "caption": "Mon exploration",
-            "subCaption": `La contribution totale de ${this.user && this.user.name}`,
-            "theme": "fint"
-        },
-        "data": [
-            {
-                "label": "Balades",
-                "value": this.user && this.user.strolls && this.user.strolls.length
-            },
-            {
-                "label": "Commentaires",
-                "value": this.user && this.user.strolls && this.user.comments.length
-            },
-            {
-                "label": "Likes",
-                "value": this.user && this.user.strolls && this.user.notes.length
-            }
-        ]
-      };
-
-      this.accordions = {
-        "items": [
-          {
-            "name": "Balades",
-            "open": true,
-            "children": this.user && this.user.strolls
-          },
-          {
-            "name": "Derniers commentaires",
-            "open": false,
-            "children": this.smallComments
-          }
-        ]
-      };
-    }
-  }
-
-
-  ionViewDidEnter() {
-    this.user = this.navParams.get('user') || undefined;
-    this.userId = this.navParams.get('userId') || undefined;
-
-    if(!this.user && this.userId) this.fetchUser(this.userId);
+    if(this.userId) this.fetchUser(this.userId);
 
     if(this.user) {
 
@@ -207,7 +153,6 @@ export class UserCardPage {
   }
 
   openItem(item: any) {
-    console.log('any', item);
     if(item && item.id) {
       this.itemService
           .getStroll(item.id)
@@ -222,7 +167,6 @@ export class UserCardPage {
 
   fetchUser(userId: number) {
     if(userId) {
-      console.log('break2', userId);
       this.userService
         .getUser(userId)
         .subscribe(user => {
