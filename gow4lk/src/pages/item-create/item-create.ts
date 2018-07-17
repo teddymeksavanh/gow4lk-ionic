@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Camera } from '@ionic-native/camera';
 import { Items } from '../../providers/items/items';
 import { Api } from '../../providers/api/api';
+declare const google: any;
 import { NavParams, IonicPage, NavController, ViewController } from 'ionic-angular';
 
 @IonicPage()
@@ -16,6 +17,7 @@ export class ItemCreatePage {
   isReadyToSave: boolean;
 
   item: any;
+  polylines: any;
 
   form: FormGroup;
 
@@ -29,10 +31,9 @@ export class ItemCreatePage {
       public itemService: Items
   ) {
     this.item = navParams.get('item') || {};
-  }
+    this.polylines = navParams.get('polylines') || [];
 
-  ionViewDidEnter() {
-    this.form = this.formBuilder.group({
+    this.form = formBuilder.group({
       gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
       name: [this.item && this.item.name || '', Validators.required],
       description: [this.item && this.item.description || ''],
@@ -47,6 +48,74 @@ export class ItemCreatePage {
     this.form.valueChanges.subscribe((v) => {
       this.isReadyToSave = this.form.valid;
     });
+
+    if(this.polylines && this.polylines.length && this.polylines.length > 0 && this.polylines[0] && this.polylines[0].latitude && this.polylines[0].longitude) {
+
+      let geocoder = new google.maps.Geocoder;
+      var infowindow = new google.maps.InfoWindow;
+
+      geocoder.geocode( {'location': {lat: this.polylines[0].latitude, lng: this.polylines[0].longitude}}, (rs, st) => {
+        if(st === 'OK') {
+          if(rs && rs.length > 0 && rs[0] && rs[0].formatted_address) {
+            this.form.get('city').setValue(rs[0].formatted_address);
+          }
+        }
+      });
+
+      if(this.polylines.length > 2) {
+        let distance = google.maps.geometry.spherical.computeDistanceBetween(
+          new google.maps.LatLng(this.polylines[0].latitude, this.polylines[0].longitude),
+          new google.maps.LatLng(this.polylines[this.polylines.length-1].latitude, this.polylines[this.polylines.length-1].longitude)
+        );
+  
+        if(distance) {
+          this.form.get('length').setValue(distance);
+        }
+      }
+    }
+  }
+
+  ionViewDidEnter() {
+    this.form = this.formBuilder.group({
+      gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
+      name: [this.item && this.item.name || '', Validators.required],
+      description: [this.item && this.item.description || ''],
+      city: [this.item && this.item.city || ''],
+      country: [this.item && this.item.country || ''],
+      length: [''],
+      latitude: [22],
+      longitude: [22]
+    });
+  
+    // Watch the form for changes, and
+    this.form.valueChanges.subscribe((v) => {
+      this.isReadyToSave = this.form.valid;
+    });
+
+    if(this.polylines && this.polylines.length && this.polylines.length > 0 && this.polylines[0] && this.polylines[0].latitude && this.polylines[0].longitude) {
+
+      var geocoder = new google.maps.Geocoder;
+      var infowindow = new google.maps.InfoWindow;
+
+      geocoder.geocode( {'location': {lat: this.polylines[0].latitude, lng: this.polylines[0].longitude}}, (rs, st) => {
+        if(st === 'OK') {
+          if(rs && rs.length > 0 && rs[0] && rs[0].formatted_address) {
+            this.form.get('city').setValue(rs[0].formatted_address);
+          }
+        }
+      });
+
+      if(this.polylines.length > 2) {
+        let distance = google.maps.geometry.spherical.computeDistanceBetween(
+          new google.maps.LatLng(this.polylines[0].latitude, this.polylines[0].longitude),
+          new google.maps.LatLng(this.polylines[this.polylines.length-1].latitude, this.polylines[this.polylines.length-1].longitude)
+        );
+  
+        if(distance) {
+          this.form.get('length').setValue(distance);
+        }
+      }
+    }
   }
 
   getPicture() {

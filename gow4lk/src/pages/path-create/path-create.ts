@@ -217,11 +217,10 @@ export class PathCreatePage {
 
       // this.navCtrl.push('ItemCreatePage');
       // this.viewCtrl.dismiss();
-      let addModal = this.modalCtrl.create('ItemCreatePage');
+      let addModal = this.modalCtrl.create('ItemCreatePage', { polylines: polylines });
       addModal.onDidDismiss(item => {
         console.log('item', item);
         if (item) {
-          console.log('enter');
           this.items
               .create(item)
               .subscribe(res => {

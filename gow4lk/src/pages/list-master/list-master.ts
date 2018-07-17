@@ -2,9 +2,11 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicPage, ModalController, NavController, NavParams, ToastController } from 'ionic-angular';
 
+declare const google: any;
 import { Item } from '../../models/item';
 import { Items, User, Comments, Notes } from '../../providers';
 import { Observable } from 'rxjs';
+import { removeSummaryDuplicates } from '../../../node_modules/@angular/compiler';
 
 @IonicPage()
 @Component({

@@ -84,7 +84,8 @@
                 <img [src]="item && item.user && item.user.picture && item.user.picture.url && 'http://0.0.0.0:3000/' + item.user.picture.url || '/assets/img/avatar-default.jpg'">
               </ion-avatar>
               <h2 *ngIf="item && item.user && item.user.name">{{item.user.name}}</h2>
-              <!-- <p>Paris, France</p> -->
+              <p *ngIf="item && item.city">{{item.city}}</p>
+              <p *ngIf="item && item.length" style="font-size: 11px;">{{item.length/1000}} km / {{item.length}} m <ion-icon name="walk" style="margin-left: 5px;"></ion-icon></p>
               <button style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto 15px;" float-right *ngIf="isAdmin()" ion-button (click)="editStroll()">
                   <ion-icon name="folder"></ion-icon>
                 </button>

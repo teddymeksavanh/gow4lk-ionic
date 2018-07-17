@@ -34,17 +34,17 @@
         </div>
         <div class="profile-image" [style.backgroundImage]="getProfileImageStyle()" *ngIf="this.form.get('gallery').value"></div>
       </div>
-      <ion-list>
-        <ion-item>
-          <ion-input type="text" placeholder="{{ 'ITEM_NAME_PLACEHOLDER' | translate }}" formControlName="name"></ion-input>
+      <ion-list style="padding: 0 15px;">
+        <ion-item style="padding-left: 0">
+          <ion-input type="text" placeholder="Nom" formControlName="name"></ion-input>
         </ion-item>
-        <ion-item>
-          <ion-input type="text" placeholder="{{ 'ITEM_ABOUT_PLACEHOLDER' | translate }}" formControlName="description"></ion-input>
+        <ion-item style="padding-left: 0">
+          <ion-input type="text" placeholder="Description" formControlName="description"></ion-input>
         </ion-item>
-        <ion-item>
+        <ion-item style="padding-left: 0" hidden>
           <ion-input type="text" placeholder="City" formControlName="city"></ion-input>
         </ion-item>
-        <ion-item>
+        <ion-item style="padding-left: 0" hidden>
           <ion-input type="text" placeholder="Country" formControlName="country"></ion-input>
         </ion-item>
       </ion-list>

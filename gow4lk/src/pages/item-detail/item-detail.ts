@@ -9,6 +9,7 @@ declare const google: any;
 import { Items, User, Comments, Notes } from '../../providers';
 
 import { LatLngLiteral, MapsAPILoader } from '@agm/core';
+import { removeSummaryDuplicates } from '../../../node_modules/@angular/compiler';
 export const Tab1Root = 'ListMasterPage';
 // import { each, chunk, has } from 'lodash';
 
@@ -316,23 +317,45 @@ export class ItemDetailPage {
   }
 
   editStroll() {
-    console.log('edited');
     let addModal = this.modalCtrl.create('ItemCreatePage', {item: this.item});
       addModal.onDidDismiss(item => {
-        console.log('item', item);
-        if (item) {
-          console.log('enter');
-          this.items
-              .updateStroll(item, this.item.id)
-              .subscribe(res => {
-                // if (res) this.items.push(res);
-                console.log('res', res);
-                // this.viewCtrl.dismiss(res);
-              });
-          // this.items.add(item);
+        if (item && this.item && this.item.id) {
+          this.updateStroll(item, this.item.id);
         }
       })
       addModal.present();
+  }
+
+  updateStroll(item, itemId: number) {
+    let geocoder = new google.maps.Geocoder;
+    let infowindow = new google.maps.InfoWindow;
+    let stroll = {city: '', length: ''};
+
+    geocoder.geocode( {'location': {lat: this.polylines[0].latitude, lng: this.polylines[0].longitude}}, (rs, st) => {
+      if(st === 'OK') {
+        if(rs && rs.length > 0 && rs[0] && rs[0].formatted_address) {
+          stroll['city'] = rs[0].formatted_address;
+        }
+      }
+    });
+
+    if(this.polylines.length > 2) {
+      let distance = google.maps.geometry.spherical.computeDistanceBetween(
+        new google.maps.LatLng(this.polylines[0].latitude, this.polylines[0].longitude),
+        new google.maps.LatLng(this.polylines[this.polylines.length-1].latitude, this.polylines[this.polylines.length-1].longitude)
+      );
+
+      if(distance) {
+        stroll['length'] = distance;
+      }
+    }
+
+    this.items
+        .updateStroll(stroll, itemId)
+        .subscribe(res => {
+          if (res) this.item = res;
+          // this.viewCtrl.dismiss(res);
+        });
   }
 
   initMap(): Promise<any> {
@@ -344,7 +367,6 @@ export class ItemDetailPage {
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           scrollwheel: false
         });
-
         if (this.readonly === false) {
           
           // const drawingManager = new google.maps.drawing.DrawingManager({
@@ -419,10 +441,6 @@ export class ItemDetailPage {
       // this.paths.forEach((path: any, index) => {
       //   oldPolylines.push(Object.assign({}, {latitude: path.lat(), longitude: path.lng()}));
       // });
-
-      console.log('1');
-
-      console.log('oldPath', polylines, this);
 
       this.polylines.map((p, index) => {
         if(p && p.id) {
