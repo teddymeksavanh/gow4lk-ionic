@@ -39,6 +39,9 @@ export class SearchPage {
     }
     
     this.currentItems = this.result.filter(r => {
+      if(r && r.city && r.city.toLowerCase().includes(val)) {
+        return true;
+      }
       if(r && r.name && r.name.toLowerCase().includes(val)) {
         return true;
       }
