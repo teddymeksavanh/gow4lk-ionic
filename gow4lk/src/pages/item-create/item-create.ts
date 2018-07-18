@@ -52,7 +52,7 @@ export class ItemCreatePage {
     if(this.polylines && this.polylines.length && this.polylines.length > 0 && this.polylines[0] && this.polylines[0].latitude && this.polylines[0].longitude) {
 
       let geocoder = new google.maps.Geocoder;
-      var infowindow = new google.maps.InfoWindow;
+      // var infowindow = new google.maps.InfoWindow;
 
       geocoder.geocode( {'location': {lat: this.polylines[0].latitude, lng: this.polylines[0].longitude}}, (rs, st) => {
         if(st === 'OK') {
@@ -95,7 +95,7 @@ export class ItemCreatePage {
     if(this.polylines && this.polylines.length && this.polylines.length > 0 && this.polylines[0] && this.polylines[0].latitude && this.polylines[0].longitude) {
 
       var geocoder = new google.maps.Geocoder;
-      var infowindow = new google.maps.InfoWindow;
+      // var infowindow = new google.maps.InfoWindow;
 
       geocoder.geocode( {'location': {lat: this.polylines[0].latitude, lng: this.polylines[0].longitude}}, (rs, st) => {
         if(st === 'OK') {

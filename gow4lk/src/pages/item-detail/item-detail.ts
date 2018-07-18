@@ -1,6 +1,6 @@
-import { ViewChild, Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { ViewChild, Component, Input, Output, EventEmitter } from '@angular/core';
 import { IonicPage, ModalController, NavController, NavParams, ViewController, Slides } from 'ionic-angular';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { Observable } from 'rxjs';
 import { AlertController } from 'ionic-angular';
@@ -42,8 +42,8 @@ export class ItemDetailPage {
   commentForm: FormGroup;
 
   private map: Promise<any>;
-  private mapBounds: any;
-  private commonPolylineConfig: any = {};
+  mapBounds: any;
+  commonPolylineConfig: any = {};
   @Input() readonly = false;
   @Input() emitOnOverlayComplete = false;
   @Input() polylineDraggable = false;
@@ -63,7 +63,7 @@ export class ItemDetailPage {
     public items: Items,
     public toastCtrl: ToastController,
     private mapLoader: MapsAPILoader,
-    private cd: ChangeDetectorRef,
+    // private cd: ChangeDetectorRef,
     public commentsService: Comments,
     public formBuilder: FormBuilder,
     public modalCtrl: ModalController,
@@ -312,7 +312,7 @@ export class ItemDetailPage {
 
           if(this.isAdmin()) {
             pictureShow = content.appendChild(document.createElement('img'));
-            pictureShow.src = pol && pol.photo && pol.photo.url && 'http://0.0.0.0:3000/' + pol.photo.url || '/assets/img/placeholder.png';
+            pictureShow.src = pol && pol.photo && pol.photo.url && 'https://gowalkapi.herokuapp.com/' + pol.photo.url || '/assets/img/placeholder.png';
             pictureShow.style = "height: 150px; margin-top: 20px;";
 
             inputDescriptionTitle = content.appendChild(document.createElement('span'));
@@ -352,7 +352,7 @@ export class ItemDetailPage {
             });
           } else {
             pictureShow = content.appendChild(document.createElement('img'));
-            pictureShow.src = pol && pol.photo && pol.photo.url && 'http://0.0.0.0:3000/' + pol.photo.url || '/assets/img/placeholder.png';
+            pictureShow.src = pol && pol.photo && pol.photo.url && 'https://gowalkapi.herokuapp.com/' + pol.photo.url || '/assets/img/placeholder.png';
             pictureShow.style = "height: 150px; margin-top: 20px;";
             
             inputDescriptionTitle = content.appendChild(document.createElement('span'));
@@ -429,11 +429,11 @@ export class ItemDetailPage {
 
       if(this.isAdmin()) {
         map.addListener('click', event => {
-          let marker = new google.maps.Marker({
-            position: event.latLng,
-            title: 'ok',
-            map: map
-          });
+          // let marker = new google.maps.Marker({
+          //   position: event.latLng,
+          //   title: 'ok',
+          //   map: map
+          // });
           this.showSaveButton = true;
           this.addLatLng(event);
         });
@@ -505,7 +505,7 @@ export class ItemDetailPage {
 
   updateStroll(item, itemId: number) {
     let geocoder = new google.maps.Geocoder;
-    let infowindow = new google.maps.InfoWindow;
+    // let infowindow = new google.maps.InfoWindow;
     let stroll = {city: '', length: ''};
 
     geocoder.geocode( {'location': {lat: this.polylines[0].latitude, lng: this.polylines[0].longitude}}, (rs, st) => {
@@ -601,7 +601,7 @@ export class ItemDetailPage {
 
   addLatLng(event) {
     this.currentPolyline = Object.assign({}, { poly: this.poly.getPath(), event: event.latLng });
-    this.currentPolylines = [];    var path = this.poly.getPath();
+    this.currentPolylines = [];
     var path = this.poly.getPath();
     path.push(event.latLng);
     this.paths = path;
@@ -610,7 +610,7 @@ export class ItemDetailPage {
 
   savePath() {
     let polylines = [];
-    let oldPolylines = [];
+    // let oldPolylines = [];
 
     if(this.currentPolyline && this.currentPolyline.poly && this.currentPolyline.poly.getArray() && this.currentPolyline.poly.getArray().length && this.currentPolyline.poly.getArray().length > 0) {
       this.currentPolyline.poly.forEach((path: any, index) => {
@@ -626,7 +626,6 @@ export class ItemDetailPage {
           this.items
             .deletePath(this.item.id, p.id)
             .subscribe(re => {
-              console.log('1.7');
               if(index == this.polylines.length-1) {
                 console.log('2', index, this.polylines.length-1);
                 this.saveNewPath(polylines);

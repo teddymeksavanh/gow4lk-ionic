@@ -1,12 +1,12 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Camera } from '@ionic-native/camera';
 import { Items } from '../../providers/items/items';
 import { Comments } from '../../providers/comments/comments';
 import { User } from '../../providers/user/user';
 import { Api } from '../../providers/api/api';
 import { NavParams, IonicPage, NavController, ViewController, ToastController, AlertController } from 'ionic-angular';
-import { IfStmt } from '../../../node_modules/@angular/compiler';
+// import { IfStmt } from '../../../node_modules/@angular/compiler';
 
 @IonicPage()
 @Component({

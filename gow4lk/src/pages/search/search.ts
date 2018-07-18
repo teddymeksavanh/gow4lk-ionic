@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-import { Item } from '../../models/item';
+// import { Item } from '../../models/item';
 import { Items, User } from '../../providers';
 import { Observable } from '../../../node_modules/rxjs';
 

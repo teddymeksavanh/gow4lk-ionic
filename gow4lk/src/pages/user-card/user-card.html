@@ -8,7 +8,7 @@
   <ion-content>
   
     <ion-card>
-      <img style="height: 350px; width: 100%; object-fit: cover;" [src]="user && user.picture && user.picture.url && 'http://0.0.0.0:3000/' + user.picture.url || '/assets/img/placeholder.png'">
+      <img style="height: 350px; width: 100%; object-fit: cover;" [src]="user && user.picture && user.picture.url && 'https://gowalkapi.herokuapp.com/' + user.picture.url || '/assets/img/placeholder.png'">
   
       <ion-card-content >
 
@@ -40,7 +40,7 @@
                   <!-- Direct Add Button as Fallback -->
                   <ion-item *ngIf="!child.children" ion-item detail-none class="child-item" text-wrap>
                     <ion-avatar item-start *ngIf="child && child.gallery && child.gallery.url">
-                        <img height="250" style="object-fit: cover;" [src]="child && child.gallery && child.gallery.url && 'http://0.0.0.0:3000/' + child.gallery.url || '/assets/img/advance-card-jp.jpg'" />
+                        <img height="250" style="object-fit: cover;" [src]="child && child.gallery && child.gallery.url && 'https://gowalkapi.herokuapp.com/' + child.gallery.url || '/assets/img/advance-card-jp.jpg'" />
                     </ion-avatar>
                     <h2 *ngIf="child && child.name">{{ child.name }}</h2>
                     <h2 *ngIf="child && child.description">{{ child.description }}</h2>
@@ -95,7 +95,7 @@
         <ion-list>
           <button ion-item (click)="openItem(item)" *ngFor="let item of user.strolls">
             <ion-avatar item-start>
-                <img height="250" style="object-fit: cover;" [src]="item && item.gallery && item.gallery.url && 'http://0.0.0.0:3000/' + item.gallery.url || '/assets/img/advance-card-jp.jpg'" />
+                <img height="250" style="object-fit: cover;" [src]="item && item.gallery && item.gallery.url && 'https://gowalkapi.herokuapp.com/' + item.gallery.url || '/assets/img/advance-card-jp.jpg'" />
             </ion-avatar>
             <h2>{{item.name}}</h2>
             <p>{{item.about}}</p>

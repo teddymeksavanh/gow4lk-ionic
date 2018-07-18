@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, ModalController, NavParams, ViewController } from 'ionic-angular';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { IonicPage, NavController, ModalController, ViewController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { Items } from '../../providers';
 import { ToastController } from 'ionic-angular';
@@ -33,8 +33,8 @@ export class PathCreatePage {
   private currentPolyline: any;
   // map: any;
   private map: Promise<any>;
-  private mapBounds: any;
-  private commonPolylineConfig: any = {};
+  mapBounds: any;
+  commonPolylineConfig: any = {};
   @Input() readonly = false;
   @Input() emitOnOverlayComplete = false;
   @Input() polylineDraggable = true;
@@ -46,12 +46,11 @@ export class PathCreatePage {
     public navCtrl: NavController,
     public viewCtrl: ViewController,
     public alertCtrl: AlertController,
-    navParams: NavParams,
+    // navParams: NavParams,
     public items: Items,
     public toastCtrl: ToastController,
     private mapLoader: MapsAPILoader,
-    public modalCtrl: ModalController,
-    private cd: ChangeDetectorRef,
+    public modalCtrl: ModalController
   ) {
     // this.item = navParams.get('item') || {};
     // this.user = navParams.get('user') || null;

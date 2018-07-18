@@ -1,7 +1,7 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 
-import { Item } from '../../models/item';
+// import { Item } from '../../models/item';
 import { Items, User, Comments } from '../../providers';
 import { Observable } from '../../../node_modules/rxjs';
 import { ToastController } from 'ionic-angular';
@@ -79,7 +79,6 @@ export class AdminPage {
   }
 
   desactivateItem(opener: any) {
-    console.log('opener', opener);
     let datas = {};
     let openerKeys = Object.keys(opener);
     let isUser = openerKeys.find(k => k === 'admin');

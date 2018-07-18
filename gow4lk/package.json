@@ -4,12 +4,18 @@
   "author": "Ionic Framework",
   "homepage": "http://ionicframework.com/",
   "private": true,
+  "engines": {
+    "node": "10.4.0",
+    "npm": "6.1.0"
+  },
   "scripts": {
+    "postinstall": "ionic-app-scripts build",
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
     "lint": "ionic-app-scripts lint",
     "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve"
+    "ionic:serve": "ionic-app-scripts serve",
+    "start": "ionic-app-scripts serve"
   },
   "dependencies": {
     "@agm/core": "^1.0.0-beta.3",
@@ -33,18 +39,22 @@
     "angular2-toaster": "^6.1.0",
     "angular4-fusioncharts": "^1.0.0",
     "blob-util": "^2.0.2",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
     "fusioncharts": "^3.12.2",
     "ionic-angular": "3.9.2",
     "ionicons": "3.0.0",
     "lodash": "^4.17.10",
+    "morgan": "^1.9.0",
     "ngx-cookie": "^4.0.2",
     "rxjs": "5.5.11",
     "sw-toolbox": "3.6.0",
-    "zone.js": "0.8.26"
-  },
-  "devDependencies": {
+    "zone.js": "0.8.26",
     "@ionic/app-scripts": "3.1.10",
     "typescript": "~2.6.2"
+  },
+  "devDependencies": {
   },
   "description": "An Ionic project"
 }
