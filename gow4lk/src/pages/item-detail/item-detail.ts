@@ -623,7 +623,6 @@ export class ItemDetailPage {
 
       this.polylines.map((p, index) => {
         if(p && p.id) {
-          console.log('1.5');
           this.items
             .deletePath(this.item.id, p.id)
             .subscribe(re => {
