@@ -26,6 +26,11 @@ install:
   - npm install
   - bower update
 
+deploy:
+  provider: heroku
+  api_key:
+    secure: "3055ad0d2e02335c5e21f1207fd2aa19aa16c92f13ad7d530852167bade0184d4e0103a8409ec00f939fcbe45dd72233da989ed56ab9c866928e2daccb40c68e"
+
 # before_script:
 #   - wget http://dl.google.com/android/android-sdk_r24.4-linux.tgz
 #   - tar -xvf android-sdk_r24.4-linux.tgz
