@@ -86,6 +86,17 @@ export class SettingsPage {
     }
   }
 
+  openTypes() {
+    console.log('this', this);
+    if(this.user && this.user.admin) {
+      let addModal = this.modalCtrl.create('ItemTypesPage', {user: this.user});
+      addModal.onDidDismiss(res => {
+        // this.refetch();
+      })
+      addModal.present();
+    }
+  }
+
   deleteAccount() {
     const prompt = this.alertCtrl.create({
       title: 'Supprimer son compte',

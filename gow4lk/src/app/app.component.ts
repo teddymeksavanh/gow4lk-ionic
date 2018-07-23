@@ -47,7 +47,8 @@ export class MyApp {
     { title: 'Search', component: 'SearchPage' },
     { title: 'Create Paths', component: 'CreatePathPage'},
     { title: 'User', component: 'UserCardPage' },
-    { title: 'Admin', component: 'AdminPage' }
+    { title: 'Admin', component: 'AdminPage' },
+    { title: 'Types', component: 'TypesPage' }    
   ]
 
   constructor(private headersService: HeadersService, private cookieService: CookieService, private translate: TranslateService, platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {
