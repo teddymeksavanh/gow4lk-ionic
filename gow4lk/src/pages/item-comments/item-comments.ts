@@ -122,7 +122,7 @@ export class ItemCommentsPage {
   }
 
   isAdmin(comment: any) {
-    if(this.user && this.user.id && comment && comment.created_by && this.user.id == comment.created_by) {
+    if(this.user && this.user.id && comment && comment.created_by && this.user.id == comment.created_by || this.user.admin || this.item && this.item.created_by && this.user.id == this.item.created_by) {
       return true;
     }
     return false;
