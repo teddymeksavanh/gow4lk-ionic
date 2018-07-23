@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Camera } from '@ionic-native/camera';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, AlertController } from 'ionic-angular';
 import { User } from '../../providers/user/user';
 
 import { Settings, Api } from '../../providers';
@@ -58,7 +58,8 @@ export class SettingsPage {
     public translate: TranslateService,
     public userService: User,
     public apiService: Api,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    public alertCtrl: AlertController
   ) {
   }
 
@@ -83,6 +84,35 @@ export class SettingsPage {
       })
       addModal.present();
     }
+  }
+
+  deleteAccount() {
+    const prompt = this.alertCtrl.create({
+      title: 'Supprimer son compte',
+      message: "Êtes-vous sûr ? Cette action sera irréversible.",
+      buttons: [
+        {
+          text: 'Annuler',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Confirmer',
+          handler: data => {
+            if(this.user && this.user.id) {
+              this.userService
+                  .deleteMe(this.user.id)
+                  .subscribe(u => {
+                    this.userService.logout();
+                    this.app.getRootNav().setRoot(FirstRunPage);
+                  });
+            }
+          }
+        }
+      ]
+    });
+    prompt.present();
   }
 
   fetchUser() {
@@ -193,8 +223,25 @@ export class SettingsPage {
   }
 
   disconnect() {
-    this.userService.logout();
-    this.app.getRootNav().setRoot(FirstRunPage);
+    const prompt = this.alertCtrl.create({
+      title: 'Se déconnecter',
+      buttons: [
+        {
+          text: 'Annuler',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Confirmer',
+          handler: data => {
+            this.userService.logout();
+            this.app.getRootNav().setRoot(FirstRunPage);
+          }
+        }
+      ]
+    });
+    prompt.present();
   }
 
   ngOnChanges() {

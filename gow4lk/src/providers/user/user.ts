@@ -147,6 +147,10 @@ export class User {
     return this.api.get(`allsforce`);
   }
 
+  deleteMe(userId) {
+    return this.api.delete(`users/${userId}`);
+  }
+
   deleteUser(userId) {
     let params = {};
     params['is_active'] = true;
