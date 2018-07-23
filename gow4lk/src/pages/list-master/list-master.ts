@@ -4,7 +4,7 @@ import { IonicPage, ModalController, NavController, NavParams, ToastController, 
 
 // declare const google: any;
 import { Item } from '../../models/item';
-import { Items, User, Comments, Notes } from '../../providers';
+import { Items, User, Comments, Notes, Api } from '../../providers';
 import { Observable } from 'rxjs';
 // import { removeSummaryDuplicates } from '@angular/compiler';
 
@@ -42,6 +42,7 @@ export class ListMasterPage {
   colored: any = 'dark';
   item: any;
   isReadyToSave: boolean;
+  baseApiUrl: string;
 
   commentForm: FormGroup;
 
@@ -58,8 +59,10 @@ export class ListMasterPage {
     public modalCtrl: ModalController,
     public userService: User,
     public notesService: Notes,
-    public toastCtrl: ToastController
+    public toastCtrl: ToastController,
+    public apiService: Api
   ) {
+    this.baseApiUrl = this.apiService.url + '/';
     if(navParams.get('item')) {
       this.currentItems.push(navParams.get('item'));
     }

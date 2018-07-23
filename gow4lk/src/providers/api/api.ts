@@ -8,7 +8,7 @@ import { HeadersService } from '../headers/headers';
  */
 @Injectable()
 export class Api {
-  url: string = 'https://gowalkapi.herokuapp.com';
+  public url: string = 'https://gowalkapi.herokuapp.com';
 
   constructor(
     public http: Http,

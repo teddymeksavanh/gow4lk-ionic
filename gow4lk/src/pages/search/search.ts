@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 // import { Item } from '../../models/item';
-import { Items, User } from '../../providers';
+import { Items, User, Api } from '../../providers';
 import { Observable } from '../../../node_modules/rxjs';
 
 @IonicPage()
@@ -14,8 +14,10 @@ export class SearchPage {
 
   currentItems: any = [];
   user: any;
+  baseApiUrl;
   result: any;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User) {
+  constructor(public apiService: Api, public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User) {
+    this.baseApiUrl = this.apiService.url + '/';
     this.userService
     .getMe()
     .subscribe((res: any) => {

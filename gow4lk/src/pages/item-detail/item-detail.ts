@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { AlertController } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
 declare const google: any;
-import { Items, User, Comments, Notes } from '../../providers';
+import { Items, User, Comments, Notes, Api } from '../../providers';
 
 import { LatLngLiteral, MapsAPILoader } from '@agm/core';
 export const Tab1Root = 'ListMasterPage';
@@ -27,6 +27,7 @@ export class ItemDetailPage {
   lng: number = 2.389659;
   zoom: number = 17;
   paths: LatLngLiteral[];
+  baseApiUrl: string;
 
   pathDetailsForm: FormGroup;
 
@@ -69,7 +70,9 @@ export class ItemDetailPage {
     public modalCtrl: ModalController,
     public userService: User,
     public notesService: Notes,
+    public apiService: Api
   ) {
+    this.baseApiUrl = this.apiService.url + '/';
     this.item = navParams.get('item') || {};
     this.user = navParams.get('user') || null;
     if(this.user && this.user.admin) {
@@ -312,7 +315,7 @@ export class ItemDetailPage {
 
           if(this.isAdmin()) {
             pictureShow = content.appendChild(document.createElement('img'));
-            pictureShow.src = pol && pol.photo && pol.photo.url && 'https://gowalkapi.herokuapp.com/' + pol.photo.url || '/assets/img/placeholder.png';
+            pictureShow.src = pol && pol.photo && pol.photo.url && this.baseApiUrl + pol.photo.url || '/assets/img/placeholder.png';
             pictureShow.style = "height: 150px; margin-top: 20px;";
 
             inputDescriptionTitle = content.appendChild(document.createElement('span'));
@@ -352,7 +355,7 @@ export class ItemDetailPage {
             });
           } else {
             pictureShow = content.appendChild(document.createElement('img'));
-            pictureShow.src = pol && pol.photo && pol.photo.url && 'https://gowalkapi.herokuapp.com/' + pol.photo.url || '/assets/img/placeholder.png';
+            pictureShow.src = pol && pol.photo && pol.photo.url && this.baseApiUrl + pol.photo.url || '/assets/img/placeholder.png';
             pictureShow.style = "height: 150px; margin-top: 20px;";
             
             inputDescriptionTitle = content.appendChild(document.createElement('span'));

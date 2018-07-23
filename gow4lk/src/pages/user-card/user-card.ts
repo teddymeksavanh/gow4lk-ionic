@@ -28,6 +28,7 @@ export class UserCardPage {
   width = 500;
   height = 400;
   type = 'doughnut2d';
+  baseApiUrl;
   dataFormat = 'json';
   dataSource;
   smallComments: any[] = [];
@@ -41,8 +42,9 @@ export class UserCardPage {
       public apiService: Api,
       public commentsService:  Comments,
       public itemService: Items,
-      public userService: User
+      public userService: User,
   ) {
+    this.baseApiUrl = this.apiService.url + '/';
     this.user = this.navParams.get('user') || undefined;
     this.userId = this.navParams.get('userId') || undefined;
 

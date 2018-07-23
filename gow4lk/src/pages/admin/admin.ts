@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 
 // import { Item } from '../../models/item';
-import { Items, User, Comments } from '../../providers';
+import { Items, User, Comments, Api } from '../../providers';
 import { Observable } from '../../../node_modules/rxjs';
 import { ToastController } from 'ionic-angular';
 
@@ -15,12 +15,14 @@ export class AdminPage {
 
   currentItems: any = [];
   result: any;
-
+  baseApiUrl;
   currentUsers: any = [];
   usersResult: any;
 
   user: any;
-  constructor(public cd: ChangeDetectorRef, public toastCtrl: ToastController, public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User, public commentsService: Comments, private alertCtrl: AlertController) {
+  constructor(public apiService: Api, public cd: ChangeDetectorRef, public toastCtrl: ToastController, public navCtrl: NavController, public navParams: NavParams, public items: Items, public userService: User, public commentsService: Comments, private alertCtrl: AlertController) {
+    this.baseApiUrl = apiService.url + '/';
+
     this.userService
     .getMe()
     .subscribe((res: any) => {

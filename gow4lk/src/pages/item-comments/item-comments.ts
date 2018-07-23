@@ -18,6 +18,7 @@ export class ItemCommentsPage {
   comments: any;
   user: any;
   item: any;
+  baseApiUrl;
   commentForm: FormGroup;
 
   form: FormGroup;
@@ -33,8 +34,9 @@ export class ItemCommentsPage {
       public itemService: Items,
       public userService: User,
       public alertCtrl: AlertController,
-      public toastCtrl: ToastController
+      public toastCtrl: ToastController,
   ) {
+    this.baseApiUrl = this.apiService.url + '/';
     this.comments = navParams.get('comments') || [];
     this.user = navParams.get('user') || undefined;
     this.item = navParams.get('item') || undefined;
