@@ -2,20 +2,29 @@
 <ion-header>
     <ion-navbar>
       <ion-title>Explorateur</ion-title>
+      <ion-buttons end>
+        <button ion-button icon-only navPop>
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
     </ion-navbar>
   </ion-header>
   
   <ion-content>
   
     <ion-card>
-      <img style="height: 350px; width: 100%; object-fit: cover;" [src]="user && user.picture && user.picture.url && baseApiUrl + user.picture.url || '/assets/img/placeholder.png'">
+      <div ion-item>
+        <ion-avatar style="display: flex; align-items: center; justify-content: center;">
+          <img style="height: 150px; width: 150px; margin-top: 20px; margin-bottom: 10px;" [src]="user && user.picture && user.picture.url && baseApiUrl + user.picture.url || '/assets/img/placeholder.png'">
+        </ion-avatar>
+      </div>
   
       <ion-card-content >
 
-          <ion-card-title>
+          <ion-card-title style="text-align: center">
             {{ user && user.name ? user.name : 'John' }}
           </ion-card-title>
-          <p *ngIf="user && user.created_at" style="margin-bottom: 25px;">Membre depuis le {{user.created_at | date:'short'}}</p>
+          <p *ngIf="user && user.created_at" style="margin-bottom: 25px; text-align: center;">Membre depuis le {{user.created_at | date:'short'}}</p>
 
           <ion-list class="accordion-list" *ngIf="accordions && user && user.strolls && user.strolls.length > 0">
             <!-- First Level -->

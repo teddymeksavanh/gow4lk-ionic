@@ -2,6 +2,11 @@
 
   <ion-navbar>
     <ion-title>Commentaires</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only navPop>
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
@@ -17,7 +22,7 @@
         <span style="display: block;" *ngIf="comment && comment.description">{{ comment.description }}
           <!-- <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="comment.created_at" *ngIf="comment && comment.created_at"></ion-datetime> -->
           <span style="display: block; font-size: 12px; opacity: 0.7; margin-top: 5px;" *ngIf="comment && comment.created_at">{{ comment.created_at | date:'short'}}</span>
-          <button *ngIf="isAdmin(comment)" ion-button color="danger" style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto 15px; z-index: 10;" (click)="deleteComments(comment)">Supprimer</button>
+          <button *ngIf="isAdmin(comment)" ion-button round color="danger" style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto 15px; z-index: 10;" (click)="deleteComments(comment)">Supprimer</button>
         </span>
       </div>  
     </ion-list>
@@ -26,7 +31,7 @@
       <form *ngIf="commentForm" [formGroup]="commentForm">
         <ion-input type="text" placeholder="Ajouter un commentaire" formControlName="description">
         </ion-input>
-        <button ion-button (click)="publish(item)" clear style="position: absolute; right: 0; z-index: 1; top: 0;">Publier</button>
+        <button ion-button round (click)="publish(item)" small style="position: absolute; right: 0; z-index: 1; top: 0;">Publier</button>
       </form>
     </div>
 </ion-content>

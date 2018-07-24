@@ -2,6 +2,11 @@
 
   <ion-navbar>
     <ion-title>Admin</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only navPop>
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
@@ -20,10 +25,10 @@
       <h2>{{item.name}}</h2>
       <p>{{item.city}}</p>
       <ion-note item-end *ngIf="item.note">{{item.note}}</ion-note>
-      <button ion-button color="{{ item && item.is_active ? 'secondary' : 'danger' }}" (click)="desactivateItem(item)" style="margin-top: 15px; left: right; margin-right: 5px;">
+      <button ion-button round color="{{ item && item.is_active ? 'secondary' : 'danger' }}" (click)="desactivateItem(item)" style="margin-top: 15px; left: right; margin-right: 5px;">
         {{ item && item.is_active ? 'Réactiver' : 'Désactiver' }}
       </button>
-      <button ion-button (click)="openItem(item)" style="margin-top: 15px; float: left; margin-right: 5px;">
+      <button ion-button round (click)="openItem(item)" style="margin-top: 15px; float: left; margin-right: 5px;">
         Voir
       </button>
     </div>
