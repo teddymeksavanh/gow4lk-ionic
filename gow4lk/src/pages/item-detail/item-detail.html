@@ -120,7 +120,10 @@
               <ion-col>
                 <button ion-button icon-start clear small color="{{isColored(item)}}" (click)="addNotes(item)">
                   <ion-icon name="thumbs-up"></ion-icon>
-                  <div>{{item && item.notes && item.notes.length}} Likes</div>
+                  <div>
+                    {{ item.notes.length }}
+                    {{ item.notes.length > 0 ? "J'aimes" : "J'aime" }}
+                  </div>
                 </button>
               </ion-col>
               <ion-col>
