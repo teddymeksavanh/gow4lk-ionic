@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Camera } from '@ionic-native/camera';
 import { Items } from '../../providers/items/items';
-import { Comments } from '../../providers/comments/comments';
 import { User } from '../../providers/user/user';
 import { Api } from '../../providers/api/api';
 import { NavParams, IonicPage, NavController, ViewController, ToastController, AlertController } from 'ionic-angular';
@@ -15,11 +14,11 @@ import { NavParams, IonicPage, NavController, ViewController, ToastController, A
 })
 export class ItemTypesPage {
   isReadyToSave: boolean;
-  comments: any;
+  types: any;
   user: any;
   item: any;
   baseApiUrl;
-  commentForm: FormGroup;
+  typeForm: FormGroup;
 
   form: FormGroup;
 
@@ -30,46 +29,55 @@ export class ItemTypesPage {
       navParams: NavParams,
       public camera: Camera,
       public apiService: Api,
-      public commentsService:  Comments,
       public itemService: Items,
       public userService: User,
       public alertCtrl: AlertController,
       public toastCtrl: ToastController,
   ) {
     this.baseApiUrl = this.apiService.url + '/';
-    this.comments = navParams.get('comments') || [];
     this.user = navParams.get('user') || undefined;
-    this.item = navParams.get('item') || undefined;
 
-    this.commentForm = formBuilder.group({
-      description: [''],
-      created_by: [this.user && this.user.id || '']
+    this.itemService
+        .getAllTypes()
+        .subscribe(types => {
+          this.types = types;
+        });
+
+    this.typeForm = formBuilder.group({
+      name: ['']
     });
   
     // Watch the form for changes, and
-    this.commentForm.valueChanges.subscribe((v) => {
-      this.isReadyToSave = this.commentForm.valid;
+    this.typeForm.valueChanges.subscribe((v) => {
+      this.isReadyToSave = this.typeForm.valid;
     });
   }
 
   ionViewWillEnter() {
 
-    this.commentForm = this.formBuilder.group({
-      description: [''],
-      created_by: [this.user && this.user.id || '']
+    this.typeForm = this.formBuilder.group({
+      name: ['']
     });
   
     // Watch the form for changes, and
-    this.commentForm.valueChanges.subscribe((v) => {
-      this.isReadyToSave = this.commentForm.valid;
+    this.typeForm.valueChanges.subscribe((v) => {
+      this.isReadyToSave = this.typeForm.valid;
     });
   }
 
-  deleteComments(comment: any) {
-    if(comment && comment.id && this.item && this.item.id) {
+  refetch() {
+    this.itemService
+        .getAllTypes()
+        .subscribe(types => {
+          this.types = types;
+        });
+  }
+
+  deleteTypes(type: any) {
+    if(type && type.id) {
       const confirm = this.alertCtrl.create({
         title: 'Supprimer?',
-        message: 'Attention, vous allez supprimer votre commentaire !',
+        message: 'Attention, vous allez supprimer votre type !',
         buttons: [
           {
             text: 'Annuler',
@@ -80,18 +88,20 @@ export class ItemTypesPage {
           {
             text: 'Confirmer',
             handler: () => {
-              this.commentsService
-                .deleteComment(this.item.id, comment.id)
-                .subscribe(erztery => {
-                  this.comments = this.comments.filter(com => comment.id !== com.id);
-                  const toast = this.toastCtrl.create({
-                    position: 'top',
-                    message: "Le commentaire a été supprimé.",
-                    duration: 3000
-                  });
-  
-                  toast.present();
-                });             
+              this.itemService
+                .deleteType(type.id)
+                .subscribe(
+                  erztery => {
+                    this.types = this.types.filter(com => type.id !== com.id);
+                    const toast = this.toastCtrl.create({
+                      position: 'top',
+                      message: "Le type a été supprimé.",
+                      duration: 3000
+                    });
+    
+                    toast.present();
+                  }
+                );             
             }
           }
         ]
@@ -100,31 +110,43 @@ export class ItemTypesPage {
     }
   }
 
-  publish(item: any) {
-    if(!this.commentForm.valid) { return; }
-    if(item && item.id && this.user && this.user.id) {
-      this.commentForm.get('created_by').setValue(this.user.id);
-      this.commentsService
-        .createComment(this.commentForm.value, item.id)
-        .subscribe(com => {
-          this.commentForm.get('description').setValue(null);
-          // com['user'] = this.user || null;
-          const toast = this.toastCtrl.create({
-            position: 'top',
-            message: "Le commentaire a été ajouté.",
-            duration: 3000
-          });
+  publish() {
+    if(!this.typeForm.valid) { return; }
+    if(this.typeForm && this.typeForm.value && this.typeForm.value.name) {
+      this.itemService
+        .addType(this.typeForm.value)
+        .subscribe(
+          com => {
+            this.typeForm.get('name').setValue(null);
+            // com['user'] = this.user || null;
+            const toast = this.toastCtrl.create({
+              position: 'top',
+              message: "Le type a été ajouté.",
+              duration: 3000
+            });
+    
+            toast.present();
+            this.types.push(com);
+          },
+          error => {
+            const toast = this.toastCtrl.create({
+              position: 'top',
+              message: 'Le nom existe déjà !',
+              duration: 3000
+            });
 
-          toast.present();
-          this.comments.push(com);
-        });
+            toast.present();
+          },
+          () => {}
+      );
     }
   }
 
-  isAdmin(comment: any) {
-    if(this.user && this.user.id && comment && comment.created_by && this.user.id == comment.created_by || this.user.admin || this.item && this.item.created_by && this.user.id == this.item.created_by) {
+  isAdmin() {
+    // if(this.user && this.user['admin']) {
+      // console.log('this', this);
       return true;
-    }
-    return false;
+    // }
+    // return false;
   }
 }

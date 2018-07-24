@@ -27,7 +27,7 @@
       </div>  
     </ion-list>
 
-    <div style="position: absolute; bottom: 0; width: 100%;">
+    <div style="position: fixed; bottom: 0; width: 100%;">
       <form *ngIf="commentForm" [formGroup]="commentForm">
         <ion-input type="text" placeholder="Ajouter un commentaire" formControlName="description">
         </ion-input>

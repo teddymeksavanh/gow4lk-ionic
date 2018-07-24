@@ -12,26 +12,26 @@
 </ion-header>
 
 <ion-content>
-    <ion-list>
-      <div ion-item *ngFor="let comment of comments" style="z-index: 1;">
-        <ion-avatar item-start>
-          <img [src]="comment && comment.user && comment.user.picture && comment.user.picture.url && baseApiUrl + comment.user.picture.url || '/assets/img/avatar-default.jpg'">
-        </ion-avatar>
-        <span style="font-size: 12px;" *ngIf="comment && comment.user && comment.user.name">{{comment.user.name}}</span>
+    <ion-list style="padding-bottom: 35px;">
+      <div ion-item *ngFor="let type of types" style="z-index: 1;">
+        <!-- <ion-avatar item-start>
+          <img [src]="type && type.user && type.user.picture && type.user.picture.url && baseApiUrl + type.user.picture.url || '/assets/img/avatar-default.jpg'">
+        </ion-avatar> -->
+        <span style="font-size: 12px; text-transform: titlecase;" *ngIf="type && type.name">{{type.name}}</span>
             <!-- <p>Paris, France</p> -->
-        <span style="display: block;" *ngIf="comment && comment.description">{{ comment.description }}
-          <!-- <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="comment.created_at" *ngIf="comment && comment.created_at"></ion-datetime> -->
-          <span style="display: block; font-size: 12px; opacity: 0.7; margin-top: 5px;" *ngIf="comment && comment.created_at">{{ comment.created_at | date:'short'}}</span>
-          <button *ngIf="isAdmin(comment)" ion-button color="danger" style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto 15px; z-index: 10;" (click)="deleteComments(comment)">Supprimer</button>
+        <span style="display: block;" *ngIf="type">
+          <!-- <ion-datetime displayFormat="MM/DD/YYYY" [(ngModel)]="type.created_at" *ngIf="type && type.created_at"></ion-datetime> -->
+          <span style="display: block; font-size: 12px; opacity: 0.7; margin-top: 5px;" *ngIf="type && type.created_at">{{ type.created_at | date:'short'}}</span>
+          <button *ngIf="isAdmin()" round ion-button color="danger" style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto 15px; z-index: 10;" (click)="deleteTypes(type)">Supprimer</button>
         </span>
       </div>  
     </ion-list>
 
-    <div style="position: absolute; bottom: 0; width: 100%;">
-      <form *ngIf="commentForm" [formGroup]="commentForm">
-        <ion-input type="text" placeholder="Ajouter un type" formControlName="description">
+    <div class="box-s" style="position: fixed; bottom: 0; width: 100%; z-index: 1000; background-color: white;">
+      <form *ngIf="typeForm" [formGroup]="typeForm">
+        <ion-input type="text" placeholder="Ajouter un type" formControlName="name">
         </ion-input>
-        <button ion-button (click)="publish(item)" clear style="position: absolute; right: 0; z-index: 1; top: 0;">Publier</button>
+        <button ion-button (click)="publish(item)" clear style="position: absolute; right: 0; z-index: 1; top: 0;">Ajouter</button>
       </form>
     </div>
 </ion-content>
