@@ -17,7 +17,10 @@ export class ItemCreatePage {
   isReadyToSave: boolean;
 
   item: any;
+  types: any;
+  type: any;
   polylines: any;
+  selectedType: any;
 
   form: FormGroup;
 
@@ -33,6 +36,12 @@ export class ItemCreatePage {
     this.item = navParams.get('item') || {};
     this.polylines = navParams.get('polylines') || [];
 
+    this.itemService
+        .getAllTypes()
+        .subscribe(types => {
+          this.types = types;
+        });
+
     this.form = formBuilder.group({
       gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
       name: [this.item && this.item.name || '', Validators.required],
@@ -43,6 +52,8 @@ export class ItemCreatePage {
       latitude: [22],
       longitude: [22]
     });
+
+    // this.selectedType = this.item && this.item.types && this.item.types[0] && this.item.types[0].id || '';
   
     // Watch the form for changes, and
     this.form.valueChanges.subscribe((v) => {
@@ -86,6 +97,8 @@ export class ItemCreatePage {
       latitude: [22],
       longitude: [22]
     });
+
+    // this.selectedType = this.item && this.item.types && this.item.types[0] && this.item.types[0].id || '';
   
     // Watch the form for changes, and
     this.form.valueChanges.subscribe((v) => {
@@ -118,6 +131,13 @@ export class ItemCreatePage {
         }
       }
     }
+  }
+
+  isSelected(id: number) {
+    if(this.item.types.find(t => t.id && id && t.id == id)) {
+      return true;
+    }
+    return false;
   }
 
   getPicture() {
@@ -164,7 +184,6 @@ export class ItemCreatePage {
    */
   done() {
     if (!this.form.valid) { return; }
-    console.log('this.form.value', this.form.value);  
-    this.viewCtrl.dismiss(this.form.value);
+    this.viewCtrl.dismiss(this.form.value, this.type);
   }
 }

@@ -46,52 +46,64 @@
           </ion-slides>
         
           <button class="list-button" style="background-color: white; padding-right: 0; width: 100%;" (click)="openItem(item)">
-            <ion-card-content>
+            <ion-card-content style="padding-left: 40px; padding-top: 25px; padding-right: 40px;">
                 <h4 style="text-align: left; font-size: 25px; text-transform: uppercase; letter-spacing: 2px;">
                   {{item.name}}
                 </h4>
+                <p style="text-align: left; margin-top: 15px; margin-bottom: 15px;">
+                  <span class="notag" [ngStyle]="{'background-color': type.color ? type.color : '#488aff'}" *ngFor="let type of item.types">
+                    #{{ type.name }}
+                  </span>
+                </p>
               <p style="text-align: left;">
                 {{item.description}}
               </p>
             </ion-card-content>
           </button>
         <ion-row>
-          <ion-col>
+          <ion-col style="padding-left: 25px;">
             <!-- <div style="position: relative;"> -->
                 <form *ngIf="commentForm" [formGroup]="commentForm">
                   <ion-input type="text" placeholder="Ajouter un commentaire" formControlName="description" style="padding: 0px 8px">
                   </ion-input>
-                  <button ion-button outline round (click)="publish(item)" style="position: absolute; right: 8px; z-index: 1; top: 4px;">Publier</button>
+                  <button ion-button outline round (click)="publish(item)" style="position: absolute; right: 40px; z-index: 1; top: 4px;">Publier</button>
                 </form>
               <!-- </div> -->
           </ion-col>
         </ion-row>
 
         <ion-row style="margin-bottom: 25px;">
-          <ion-col>
-            <button ion-button icon-start outline round color="{{isColored(item)}}" (click)="addNotes(item)">
+          <ion-col style="display: flex; align-items: center; justify-content: center;">
+            <button ion-button icon-start clear round color="{{isColored(item)}}" (click)="addNotes(item)">
               <ion-icon name="thumbs-up"></ion-icon>
               <div>
                 {{ item.notes.length }}
-                {{ item.notes.length > 0 ? "J'aimes" : "J'aime" }}
+                <!-- {{ item.notes.length > 0 ? "J'aimes" : "J'aime" }} -->
               </div>
             </button>
-          </ion-col>
-          <ion-col>
-            <!-- <button ion-button (click)="checkComments(item)">Voir les {{ item && item.comments && item.comments.length && item.comments.length > 0 ? item.comments.length : '' }} commentaires</button> -->
 
-            <button ion-button icon-start outline round (click)="checkComments(item)" *ngIf="item && item.comments && item.comments.length && item.comments.length > 0">
+            <button ion-button icon-start clear round (click)="checkComments(item)" *ngIf="item && item.comments && item.comments.length && item.comments.length > 0">
               <ion-icon name="text"></ion-icon>
               <div>
                 {{ item.comments.length }}
-                {{ item.comments.length > 0 ? 'Commentaires' : 'Commentaires'}}
+                <!-- {{ item.comments.length > 0 ? 'Commentaires' : 'Commentaires'}} -->
               </div>
             </button>
-          </ion-col>
-          <ion-col style="display: flex; align-items: center; justify-content: center;" center text-center *ngIf="item.comments && item.comments.length > 0 && item.comments[item.comments.length-1] && item.comments[item.comments.length-1].created_at">
-            <ion-note>
-              {{ item.comments && item.comments.length > 0 && item.comments[item.comments.length-1] && item.comments[item.comments.length-1].created_at && item.comments[item.comments.length-1].created_at | date:'short' }}
-            </ion-note>
+
+            <button ion-button icon-start clear round color="dark" style="opacity: 0.5" *ngIf="item.comments && item.comments.length > 0 && item.comments[item.comments.length-1] && item.comments[item.comments.length-1].created_at">
+              <div>
+                  <!-- {{ item.comments && item.comments.length > 0 && item.comments[item.comments.length-1] && item.comments[item.comments.length-1].created_at && item.comments[item.comments.length-1].created_at | date:'short' }} -->
+                <!-- {{ item.comments.length > 0 ? 'Commentaires' : 'Commentaires'}} -->
+                {{ item.comments && item.comments.length > 0 && item.comments[item.comments.length-1] && item.comments[item.comments.length-1].created_at && item.comments[item.comments.length-1].created_at | date:'short' }}
+              </div>
+            </button>
+
+            <!-- <span style="display: flex; align-items: center; justify-content: center;" center text-center *ngIf="item.comments && item.comments.length > 0 && item.comments[item.comments.length-1] && item.comments[item.comments.length-1].created_at">
+              <ion-note>
+                {{ item.comments && item.comments.length > 0 && item.comments[item.comments.length-1] && item.comments[item.comments.length-1].created_at && item.comments[item.comments.length-1].created_at | date:'short' }}
+              </ion-note>
+            </span> -->
+
           </ion-col>
         </ion-row>
       

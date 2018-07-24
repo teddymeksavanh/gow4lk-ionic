@@ -486,20 +486,77 @@ export class ItemDetailPage {
 
   editStroll() {
     let addModal = this.modalCtrl.create('ItemCreatePage', {item: this.item, polylines: this.polylines});
-      addModal.onDidDismiss(item => {
-        // console.log('item', item, this);
+      addModal.onDidDismiss((item: any, types: any) => {
         let newItem = {
           name: item && item.name,
           description: item && item.description,
           gallery: item && item.gallery
         };
+
+        if(types && types.length > 0) {
+          let newTypes;
+          let deletedTypes;
+
+          newTypes = types.filter(t => {
+            if(this.item.types.find(itemType => itemType.id == t.id)) {
+              return false;
+            }
+            return true;
+          });
+
+          deletedTypes = this.item.types.filter(t => {
+            if(types.find(itemType => itemType.id == t.id)) {
+              return false;
+            }
+            return true;
+          });
+
+          if(deletedTypes && deletedTypes.length > 0) {
+            deletedTypes.map(typo => {
+              this.items
+                  .deleteStrollType(this.item.id, typo)
+                  .subscribe(ty => {
+                    console.log('deleted');
+                  });
+            });
+          }
+
+          if(newTypes && newTypes.length > 0) {
+            newTypes.map(typo => {
+              this.items
+                .addStrollType(this.item.id, typo)
+                .subscribe(ty => {
+                  console.log('pushed');
+                });
+            });
+          }
+        }
+
         if (newItem && this.item && this.item.id) {
+          // if(types && types.name && this.item && this.item.types && this.item.types[0] && this.item.types[0].id) {       
+          //     this.items
+          //       .deleteType(this.item && this.item.types && this.item.types[0] && this.item.types[0].id)
+          //       .subscribe(azaz => {
+          //         this.items
+          //           .addStrollType(this.item.id, types)
+          //           .subscribe(ty => {
+          //             this.refetch();
+          //           });
+          //       });
+          // } else {
+            if(types && types.name) {
+              // this.items
+              //   .addStrollType(this.item.id, types)
+              //   .subscribe(ty => {
+              //     this.refetch();
+              //   });
+            }
+          // }
+
           this.items
             .updateStroll(newItem, this.item.id)
             .subscribe(res => {
               this.refetch();
-              // if (res) this.item = res;
-              // this.viewCtrl.dismiss(res);
             });
         }
       })

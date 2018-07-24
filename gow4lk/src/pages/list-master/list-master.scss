@@ -16,4 +16,75 @@ page-list-master {
     ion-label {
         margin: 0;
     }
+    .tag{
+        display: inline-block;
+        color: #FFF;
+        padding: 5px 10px;
+        margin:2px 2px 2px 20px;
+        font: normal 16px sans-serif;
+        position: relative;
+        cursor: default;
+        box-shadow:1px 1px 0 rgba(0,0,0,.2);
+    }
+    
+    .tag:before{
+        content: "";
+        position: absolute;
+        width: 0;
+        background: inherit;
+        height: 10px;
+        border: 10px solid #fafafa;
+        border-right-color: transparent;
+        -webkit-border-radius: 10px 0 0 10px;
+        -moz-border-radius:10px 0 0 10px;
+        border-radius:10px 0 0 10px;
+        left: -20px;
+        top: 0;
+    }
+    
+    .tag:after{
+        content: "";
+        width: 6px;
+        height: 6px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        background: #FFF;
+        position: absolute;
+        left: -3px;
+        top: 12px;
+        box-shadow:inset 1px 1px 0 #CCC;
+    }
+    
+    .tag .close{
+        position: absolute;
+        background: inherit;
+        left: -4px;
+        z-index: 3;
+        visibility: hidden;
+    }
+    
+    .tag:hover .close{
+     visibility: visible;
+    }
+    
+    .close:hover {
+        color: rgba(0,0,0,.5);
+    }
+    
+    .colors {
+        list-style:none;
+    }
+    .colors li{
+        display: inline-block;
+        width:15px;
+        height: 15px;
+    }
+
+    .notag {
+        padding: 5px 15px;
+        color: white;
+        border-radius: 20px;
+        margin-right: 10px;
+    }
 }

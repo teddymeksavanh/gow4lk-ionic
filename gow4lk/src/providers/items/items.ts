@@ -68,6 +68,14 @@ export class Items {
     return this.api.post(`types`, type);
   }
 
+  addStrollType(strollId: number, type: any) {
+    return this.api.post(`types/stroll/${strollId}`, type);
+  }
+
+  deleteStrollType(strollId: number, typo) {
+    return this.api.delete(`types/${typo.id}/stroll/${strollId}`);
+  }
+
   deleteType(typeId: number) {
     return this.api.delete(`types/${typeId}`);
   }
