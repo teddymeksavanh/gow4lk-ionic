@@ -315,7 +315,7 @@ export class ItemDetailPage {
 
           if(this.isAdmin()) {
             pictureShow = content.appendChild(document.createElement('img'));
-            pictureShow.src = pol && pol.photo && pol.photo.url && this.baseApiUrl + pol.photo.url || '/assets/img/placeholder.png';
+            pictureShow.src = pol && pol.photo && pol.photo.url && this.baseApiUrl + pol.photo.url || pol.photo_seed || '/assets/img/placeholder.png';
             pictureShow.style = "height: 150px; margin-top: 20px;";
 
             inputDescriptionTitle = content.appendChild(document.createElement('span'));

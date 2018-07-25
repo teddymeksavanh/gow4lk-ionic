@@ -43,7 +43,7 @@ export class ItemCreatePage {
       });
 
     this.form = formBuilder.group({
-      gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
+      gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || this.item && this.item.gallery_seed || ''],
       name: [this.item && this.item.name || '', Validators.required],
       description: [this.item && this.item.description || ''],
       city: [this.item && this.item.city || ''],
@@ -88,7 +88,7 @@ export class ItemCreatePage {
 
   ionViewDidEnter() {
     this.form = this.formBuilder.group({
-      gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
+      gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || this.item && this.item.gallery_seed || ''],
       name: [this.item && this.item.name || '', Validators.required],
       description: [this.item && this.item.description || ''],
       city: [this.item && this.item.city || ''],

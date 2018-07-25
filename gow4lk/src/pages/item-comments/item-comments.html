@@ -15,7 +15,7 @@
     <ion-list>
       <div ion-item *ngFor="let comment of comments" style="z-index: 1;">
         <ion-avatar item-start>
-          <img [src]="comment && comment.user && comment.user.picture && comment.user.picture.url && baseApiUrl + comment.user.picture.url || '/assets/img/avatar-default.jpg'">
+          <img [src]="comment && comment.user && comment.user.picture && comment.user.picture.url && baseApiUrl + comment.user.picture.url || comment.user.picture_seed || '/assets/img/avatar-default.jpg'">
         </ion-avatar>
         <span style="font-size: 12px;" *ngIf="comment && comment.user && comment.user.name">{{comment.user.name}}</span>
             <!-- <p>Paris, France</p> -->

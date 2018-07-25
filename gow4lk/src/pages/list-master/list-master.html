@@ -20,7 +20,7 @@
         <button class="list-button" (click)="openUser(item && item.user, item.created_by)" style="z-index: 1000; width: 100%; padding-right: 0;">
           <ion-item>
             <ion-avatar item-start>
-              <img [src]="item && item.user && item.user.picture && item.user.picture.url && baseApiUrl + item.user.picture.url || '/assets/img/placeholder.png'">
+              <img [src]="item && item.user && item.user.picture && item.user.picture.url && baseApiUrl + item.user.picture.url || item.user.picture_seed || '/assets/img/placeholder.png'">
             </ion-avatar>
             <h2 *ngIf="item && item.user && item.user.name">{{item.user.name}}</h2>
             <p *ngIf="item && item.city">{{item.city}}</p>
@@ -31,14 +31,14 @@
         <ion-slides pager style="height: 350px;">
             <ion-slide>
               <button class="list-button" style="background-color: white; padding-right: 0; width: 100%;" (click)="openItem(item)">
-                <img style="height: 350px; width: 100%; object-fit: cover; margin: auto;" [src]="item && item.gallery && item.gallery.url && baseApiUrl + item.gallery.url || '/assets/img/placeholder.png'" />
+                <img style="height: 350px; width: 100%; object-fit: cover; margin: auto;" [src]="item && item.gallery && item.gallery.url && baseApiUrl + item.gallery.url || item.gallery_seed || '/assets/img/placeholder.png'" />
               </button>
             </ion-slide>
 
             <ng-container *ngIf="item && item.paths && item.paths.length > 0">
               <ion-slide *ngFor="let path of item.paths">
                   <button class="list-button" style="background-color: white; padding-right: 0; width: 100%;" (click)="openItem(item)">
-                    <img style="object-fit: cover; height: 500px !important; margin: auto;" [src]="path && path.photo && path.photo.url && baseApiUrl + path.photo.url || '/assets/img/placeholder.png'" />
+                    <img style="object-fit: cover; height: 500px !important; margin: auto;" [src]="path && path.photo && path.photo.url && baseApiUrl + path.photo.url || path.photo_seed || '/assets/img/placeholder.png'" />
                   </button>
               </ion-slide>
             </ng-container>

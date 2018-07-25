@@ -15,7 +15,7 @@
     <ion-card>
       <div ion-item>
         <ion-avatar style="display: flex; align-items: center; justify-content: center;">
-          <img style="height: 150px; width: 150px; margin-top: 20px; margin-bottom: 10px;" [src]="user && user.picture && user.picture.url && baseApiUrl + user.picture.url || '/assets/img/placeholder.png'">
+          <img style="height: 150px; width: 150px; margin-top: 20px; margin-bottom: 10px;" [src]="user && user.picture && user.picture.url && baseApiUrl + user.picture.url || user.picture_seed || '/assets/img/placeholder.png'">
         </ion-avatar>
       </div>
   
