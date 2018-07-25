@@ -487,13 +487,17 @@ export class ItemDetailPage {
   editStroll() {
     let addModal = this.modalCtrl.create('ItemCreatePage', {item: this.item, polylines: this.polylines});
       addModal.onDidDismiss((item: any, types: any) => {
-        let newItem = {
-          name: item && item.name,
-          description: item && item.description,
-          gallery: item && item.gallery
-        };
+        let newItem;
+        
+        if(item) {
+          newItem = {
+            name: item && item.name,
+            description: item && item.description,
+            gallery: item && item.gallery
+          };
+        }
 
-        if(types) {
+        if(item && types) {
           let newTypes;
           let deletedTypes;
 

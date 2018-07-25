@@ -217,8 +217,8 @@ export class PathCreatePage {
       // this.navCtrl.push('ItemCreatePage');
       // this.viewCtrl.dismiss();
       let addModal = this.modalCtrl.create('ItemCreatePage', { polylines: polylines });
-      addModal.onDidDismiss(item => {
-        console.log('item', item);
+      addModal.onDidDismiss((item: any, types: any) => {
+
         if (item) {
           this.items
               .create(item)
@@ -226,6 +226,18 @@ export class PathCreatePage {
                 // if (res) this.items.push(res);
                 console.log('res', res);
                 if(res && res.id) {
+
+                  if(types && types.length > 0) {
+                    console.log('types', types);
+                    types.map(typo => {
+                      this.items
+                        .createStrollType(res.id, typo)
+                        .subscribe(ty => {
+                          console.log('pushed');
+                        });
+                    });
+                  }
+
                   polylines.map(po => {
                     this.items
                       .createPath(po, res.id)

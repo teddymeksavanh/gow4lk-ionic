@@ -134,10 +134,12 @@ export class ItemCreatePage {
   }
 
   isSelected(id: number) {
-    if(this.item.strolltypes.find(t => t && t.type && t.type.id && id && t.type.id == id)) {
-      return true;
+    if(this.item && this.item.strolltypes && this.item.strolltypes.length > 0) {
+      if(this.item.strolltypes.find(t => t && t.type && t.type.id && id && t.type.id == id)) {
+        return true;
+      }
+      return false;
     }
-    return false;
   }
 
   getPicture() {

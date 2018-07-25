@@ -106,7 +106,7 @@
               <h4 style="text-align: left; font-size: 25px; text-transform: uppercase; letter-spacing: 2px;">
                 {{item.name}}
               </h4>
-              <p style="text-align: left; margin-top: 15px; margin-bottom: 15px;" *ngIf="item.strolltypes && item.strolltypes.length > 0">
+              <p style="text-align: left; margin-top: 15px; margin-bottom: 15px; margin-bottom: 15px;" *ngIf="item.strolltypes && item.strolltypes.length > 0">
                 <span class="notag" [ngStyle]="{'background-color': type && type.type && type.type.color ? type.type.color : '#488aff'}" *ngFor="let type of item.strolltypes">
                   #{{ type.type.name }}
                 </span>
