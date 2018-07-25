@@ -146,7 +146,7 @@ export class UserCardPage {
           },
           {
             "name": "Derniers commentaires",
-            "open": false,
+            "open": true,
             "children": this.smallComments
           }
         ]
@@ -214,7 +214,7 @@ export class UserCardPage {
               },
               {
                 "name": "Derniers commentaires",
-                "open": false,
+                "open": true,
                 "children": this.smallComments
               }
             ]

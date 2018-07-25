@@ -90,17 +90,19 @@
   <div class="item-detail">
     <ion-list>
         <ion-card style="margin: 0; width: 100%" class="list-ion-card">
-            <ion-item>
-              <ion-avatar item-start>
-                <img [src]="item && item.user && item.user.picture && item.user.picture.url && baseApiUrl + item.user.picture.url || item.user.picture_seed || '/assets/img/placeholder.png'">
-              </ion-avatar>
-              <h2 *ngIf="item && item.user && item.user.name">{{item.user.name}}</h2>
-              <p *ngIf="item && item.city">{{item.city}}</p>
-              <p *ngIf="item && item.length" style="font-size: 11px;">{{item.length}} m <ion-icon name="walk" style="margin-left: 5px;"></ion-icon></p>
-              <button style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto 15px;" float-right *ngIf="isAdmin()" ion-button (click)="editStroll()">
-                  <ion-icon name="folder"></ion-icon>
-                </button>
-            </ion-item>
+            <button class="list-button" (click)="openUser(item && item.user, item.created_by)" style="z-index: 1000; width: 100%; padding-right: 0;">
+              <ion-item>
+                <ion-avatar item-start>
+                  <img [src]="item && item.user && item.user.picture && item.user.picture.url && baseApiUrl + item.user.picture.url || item.user.picture_seed || '/assets/img/placeholder.png'">
+                </ion-avatar>
+                <h2 *ngIf="item && item.user && item.user.name">{{item.user.name}}</h2>
+                <p *ngIf="item && item.city">{{item.city}}</p>
+                <p *ngIf="item && item.length" style="font-size: 11px;">{{item.length}} m <ion-icon name="walk" style="margin-left: 5px;"></ion-icon></p>
+                <button style="position: absolute; right: 0; top: 0; bottom: 0; margin: auto 15px;" float-right *ngIf="isAdmin()" ion-button (click)="editStroll()">
+                    <ion-icon name="folder"></ion-icon>
+                  </button>
+              </ion-item>
+            </button>
                     
             <ion-card-content style="padding-left: 40px; padding-top: 25px; padding-right: 40px;">
               <h4 style="text-align: left; font-size: 25px; text-transform: uppercase; letter-spacing: 2px;">

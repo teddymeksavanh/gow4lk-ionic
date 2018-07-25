@@ -488,7 +488,7 @@ export class ItemDetailPage {
     let addModal = this.modalCtrl.create('ItemCreatePage', {item: this.item, polylines: this.polylines});
       addModal.onDidDismiss((item: any, types: any) => {
         let newItem;
-        
+
         if(item) {
           newItem = {
             name: item && item.name,
@@ -563,6 +563,16 @@ export class ItemDetailPage {
         }
       })
       addModal.present();
+  }
+
+  openUser(user: any, userId: any) {
+    if(user && userId) {
+      let addModal = this.modalCtrl.create('UserCardPage', {user: user, userId: userId});
+      addModal.onDidDismiss(res => {
+        // this.refetch();
+      })
+      addModal.present();
+    }
   }
 
   updateStroll(item, itemId: number) {
