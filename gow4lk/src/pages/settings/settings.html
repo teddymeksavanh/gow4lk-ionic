@@ -22,6 +22,9 @@
     <button *ngIf="user && user.admin" ion-item class="ion-btn-param" (click)="openTypes()">
       Admin (types) Beta~v1.01
     </button>
+    <button ion-item class="ion-btn-param" (click)="openUser(user, user.id)">
+      Mon profil
+    </button>
     <button ion-item class="ion-btn-param" [navPush]="subSettings" [navParams]="profileSettings">
       Editer son profil
     </button>

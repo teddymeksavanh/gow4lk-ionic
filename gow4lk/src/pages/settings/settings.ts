@@ -254,6 +254,16 @@ export class SettingsPage {
     prompt.present();
   }
 
+  openUser(user: any, userId: any) {
+    if(user && userId) {
+      let addModal = this.modalCtrl.create('UserCardPage', {user: user, userId: userId});
+      addModal.onDidDismiss(res => {
+        // this.refetch();
+      })
+      addModal.present();
+    }
+  }
+
   ngOnChanges() {
     console.log('Ng All Changes');
   }

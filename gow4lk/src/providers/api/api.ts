@@ -9,7 +9,7 @@ import { HeadersService } from '../headers/headers';
 @Injectable()
 export class Api {
   // public url: string = 'https://gowalkapi.herokuapp.com';
-  public url = 'http://0.0.0.0:3000';
+  public url = 'https://gowalk-front.herokuapp.com/';
 
   constructor(
     public http: Http,
