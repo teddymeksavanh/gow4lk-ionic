@@ -37,10 +37,10 @@ export class ItemCreatePage {
     this.polylines = navParams.get('polylines') || [];
 
     this.itemService
-        .getAllTypes()
-        .subscribe(types => {
-          this.types = types;
-        });
+      .getTypes()
+      .subscribe(types => {
+        this.types = types;
+      });
 
     this.form = formBuilder.group({
       gallery: [this.item && this.item.gallery && this.item.gallery.url && (this.apiService.url + this.item.gallery.url) || ''],
@@ -134,7 +134,7 @@ export class ItemCreatePage {
   }
 
   isSelected(id: number) {
-    if(this.item.types.find(t => t.id && id && t.id == id)) {
+    if(this.item.strolltypes.find(t => t && t.type && t.type.id && id && t.type.id == id)) {
       return true;
     }
     return false;

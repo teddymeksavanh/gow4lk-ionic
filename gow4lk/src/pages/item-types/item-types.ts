@@ -38,7 +38,7 @@ export class ItemTypesPage {
     this.user = navParams.get('user') || undefined;
 
     this.itemService
-        .getAllTypes()
+        .getTypes()
         .subscribe(types => {
           this.types = types;
         });
@@ -67,7 +67,7 @@ export class ItemTypesPage {
 
   refetch() {
     this.itemService
-        .getAllTypes()
+        .getTypes()
         .subscribe(types => {
           this.types = types;
         });
@@ -114,7 +114,7 @@ export class ItemTypesPage {
     if(!this.typeForm.valid) { return; }
     if(this.typeForm && this.typeForm.value && this.typeForm.value.name) {
       this.itemService
-        .addType(this.typeForm.value)
+        .createType(this.typeForm.value)
         .subscribe(
           com => {
             this.typeForm.get('name').setValue(null);

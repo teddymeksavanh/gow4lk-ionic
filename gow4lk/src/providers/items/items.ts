@@ -56,27 +56,74 @@ export class Items {
     return this.api.delete(`strolls/${strollId}`);
   }
 
-  getTypes(strollId: number) {
-    return this.api.get(`strolls/${strollId}/types`);
-  }
+  // getTypes(strollId: number) {
+  //   return this.api.get(`strolls/${strollId}/types`);
+  // }
 
-  getAllTypes() {
+  // getAllTypes() {
+  //   return this.api.get(`types`);
+  // }
+
+  // addType(type) {
+  //   return this.api.post(`types`, type);
+  // }
+
+  // addStrollType(strollId: number, type: any) {
+  //   return this.api.post(`types/stroll/${strollId}`, type);
+  // }
+
+  // deleteStrollType(strollId: number, typo) {
+  //   return this.api.delete(`types/${typo.id}/stroll/${strollId}`);
+  // }
+
+  // deleteType(typeId: number) {
+  //   return this.api.delete(`types/${typeId}`);
+  // }
+
+  /**
+   * TYPES
+   */
+  getTypes() {
     return this.api.get(`types`);
   }
 
-  addType(type) {
+  getType(typeId: number) {
+    return this.api.get(`types/${typeId}`);
+  }
+
+  updateType(typeId: number, type) {
+    return this.api.put(`types/${typeId}`, type);
+  }
+
+  createType(type) {
     return this.api.post(`types`, type);
-  }
-
-  addStrollType(strollId: number, type: any) {
-    return this.api.post(`types/stroll/${strollId}`, type);
-  }
-
-  deleteStrollType(strollId: number, typo) {
-    return this.api.delete(`types/${typo.id}/stroll/${strollId}`);
   }
 
   deleteType(typeId: number) {
     return this.api.delete(`types/${typeId}`);
+  }
+
+  /**
+   * STROLLS TYPES
+   */
+  getStrollTypes(strollId: number) {
+    return this.api.get(`strolls/${strollId}/types`);
+  }
+
+  getStrollType(strollId: number, typeId: number) {
+    return this.api.get(`strolls/${strollId}/types/${typeId}`);
+  }
+
+  updateStrollType(strollId: number, typeId: number, type) {
+    return this.api.put(`strolls/${strollId}/types/${typeId}`, type);
+  }
+
+  createStrollType(strollId: number, type) {
+    let typeId = type && type.id && {type_id: type.id};
+    return this.api.post(`strolls/${strollId}/types`, typeId);
+  }
+
+  deleteStrollType(strollId: number, typeId: number) {
+    return this.api.delete(`strolls/${strollId}/types/${typeId}`);
   }
 }

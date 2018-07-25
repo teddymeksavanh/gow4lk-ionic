@@ -493,38 +493,42 @@ export class ItemDetailPage {
           gallery: item && item.gallery
         };
 
-        if(types && types.length > 0) {
+        if(types) {
           let newTypes;
           let deletedTypes;
 
           newTypes = types.filter(t => {
-            if(this.item.types.find(itemType => itemType.id == t.id)) {
+            if(this.item.strolltypes.find(st => st && st.type && st.type.id && t && t.id && st.type.id == t.id)) {
               return false;
+            } else {
+              return true;
             }
-            return true;
           });
 
-          deletedTypes = this.item.types.filter(t => {
-            if(types.find(itemType => itemType.id == t.id)) {
+          deletedTypes = this.item.strolltypes.filter(st => {
+            if(types.find(t => t && t.id && st && st.type && st.type.id && t.id == st.type.id)) {
               return false;
+            } else {
+              return true;
             }
-            return true;
           });
 
           if(deletedTypes && deletedTypes.length > 0) {
             deletedTypes.map(typo => {
-              this.items
-                  .deleteStrollType(this.item.id, typo)
-                  .subscribe(ty => {
-                    console.log('deleted');
-                  });
+              if(typo && typo.id) {
+                this.items
+                    .deleteStrollType(this.item.id, typo.id)
+                    .subscribe(ty => {
+                      console.log('deleted');
+                    });
+              }
             });
           }
 
           if(newTypes && newTypes.length > 0) {
             newTypes.map(typo => {
               this.items
-                .addStrollType(this.item.id, typo)
+                .createStrollType(this.item.id, typo)
                 .subscribe(ty => {
                   console.log('pushed');
                 });
@@ -544,13 +548,7 @@ export class ItemDetailPage {
           //           });
           //       });
           // } else {
-            if(types && types.name) {
-              // this.items
-              //   .addStrollType(this.item.id, types)
-              //   .subscribe(ty => {
-              //     this.refetch();
-              //   });
-            }
+
           // }
 
           this.items
